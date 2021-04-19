@@ -1,0 +1,1 @@
+export { isValidMove } from './isValidMove';
