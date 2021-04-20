@@ -41,14 +41,14 @@ export type WallMove = {
 
 export type Move = PieceMove | WallMove;
 
-type Player = 1 | 2;
+export type Player = 1 | 2;
 
 export type PlayerMatrix = Record<
   HorizontalPiecePosition,
   Record<VerticalPiecePosition, Player | 0>
 >;
 
-type WallMatrix = Record<
+export type WallMatrix = Record<
   HorizontalWallPosition,
   Record<VerticalWallPosition, { h: boolean; v: boolean }>
 >;
@@ -65,7 +65,7 @@ export type Game = {
   turn: Player;
   playerPositions: Record<
     Player,
-    PiecePosition & { previousPosition: PiecePosition }
+    PiecePosition & { previousPosition?: PiecePosition }
   >;
   playerWallCounts: Record<Player, WallCount>;
 };

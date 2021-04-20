@@ -1,9 +1,6 @@
 import {
   Game,
-  HorizontalPosition,
   Move,
-  Position,
-  VerticalPosition,
   WallMove,
   PlayerMatrix,
   PiecePosition,
@@ -12,14 +9,16 @@ import {
   HorizontalPiecePosition,
   VerticalWallPosition,
   VerticalPiecePosition,
+  Player,
 } from './types';
+import { aStar } from './aStar';
 
-const letterToNumber = (letter: HorizontalPosition) => {
-  return (letter.charCodeAt(0) - 96) as VerticalPosition;
+const letterToNumber = (letter: HorizontalPiecePosition) => {
+  return (letter.charCodeAt(0) - 96) as VerticalPiecePosition;
 };
 
-const numberToLetter = (number: VerticalPosition) => {
-  return String.fromCharCode(96 + number) as HorizontalPosition;
+const numberToLetter = (number: VerticalPiecePosition) => {
+  return String.fromCharCode(96 + number) as HorizontalPiecePosition;
 };
 
 const decrementHorizontalWallPosition = (
@@ -243,7 +242,7 @@ const getOppositePlayer = (player: Player) => {
   return player === 1 ? 2 : 1;
 };
 
-const unvalidatedMove = (game: Game, move: Move) => {
+export const unvalidatedMove = (game: Game, move: Move): Game => {
   const currentPosition = game.playerPositions[game.turn];
   if (isWallMove(move)) {
     // If wall move
@@ -378,6 +377,17 @@ const isUpRightMove = (currentPosition: PiecePosition, move: PieceMove) => {
   return false;
 };
 
+// Why do I have this one that is almost identical to the previous one? I don't know.
+const isRightUpMove = (currentPosition: PiecePosition, move: PieceMove) => {
+  if (
+    currentPosition.y - move.y === -1 &&
+    letterToNumber(currentPosition.x) - letterToNumber(move.x) === -1
+  ) {
+    return true;
+  }
+  return false;
+};
+
 const hasWallToTheLeft = (game: Game, { x, y }: PieceMove) => {
   if (
     (y < 9 &&
@@ -414,9 +424,141 @@ const isDoubleRightMove = (currentPosition: PiecePosition, move: PieceMove) => {
   return false;
 };
 
+const hasOpponentToTheRight = (game: Game, position: PiecePosition) => {
+  if (
+    game.pieceMatrix[incrementHorizontalPiecePosition(position.x)][
+      position.y
+    ] === getOppositePlayer(game.turn)
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const isRightDownMove = (currentPosition: PiecePosition, move: PieceMove) => {
+  if (
+    currentPosition.y - move.y === 1 &&
+    letterToNumber(currentPosition.x) - letterToNumber(move.x) === -1
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const hasWallBelow = (game: Game, { x, y }: PieceMove) => {
+  if (
+    game.wallMatrix[x as HorizontalWallPosition][
+      (y - 1) as VerticalWallPosition
+    ].h ||
+    (letterToNumber(x) > 1 &&
+      game.wallMatrix[decrementHorizontalPiecePosition(x)][
+        (y - 1) as VerticalWallPosition
+      ].h)
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const isSingleDownMove = (currentPosition: PiecePosition, move: PieceMove) => {
+  if (currentPosition.y - move.y === 1 && currentPosition.x === move.x) {
+    return true;
+  }
+  return false;
+};
+
+const isDoubleDownMove = (currentPosition: PiecePosition, move: PieceMove) => {
+  if (currentPosition.y - move.y === 2 && currentPosition.x === move.x) {
+    return true;
+  }
+  return false;
+};
+
+const hasOpponentBelow = (game: Game, position: PiecePosition) => {
+  if (
+    game.pieceMatrix[position.x][decrementVerticalPiecePosition(position.y)] ===
+    getOppositePlayer(game.turn)
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const isDownRightMove = (currentPosition: PiecePosition, move: PieceMove) => {
+  if (
+    currentPosition.y - move.y === 1 &&
+    letterToNumber(currentPosition.x) - letterToNumber(move.x) === -1
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const isDownLeftMove = (currentPosition: PiecePosition, move: PieceMove) => {
+  if (
+    currentPosition.y - move.y === 1 &&
+    letterToNumber(currentPosition.x) - letterToNumber(move.x) === 1
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const isSingleLeftMove = (currentPosition: PiecePosition, move: PieceMove) => {
+  if (
+    letterToNumber(currentPosition.x) - letterToNumber(move.x) == 1 &&
+    currentPosition.y === move.y
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const isDoubleLeftMove = (currentPosition: PiecePosition, move: PieceMove) => {
+  if (
+    letterToNumber(currentPosition.x) - letterToNumber(move.x) == 2 &&
+    currentPosition.y === move.y
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const hasOpponentToTheLeft = (game: Game, position: PiecePosition) => {
+  if (
+    game.pieceMatrix[decrementHorizontalPiecePosition(position.x)][
+      position.y
+    ] === getOppositePlayer(game.turn)
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const isLeftDownMove = (currentPosition: PiecePosition, move: PieceMove) => {
+  if (
+    currentPosition.y - move.y === 1 &&
+    letterToNumber(currentPosition.x) - letterToNumber(move.x) === 1
+  ) {
+    return true;
+  }
+  return false;
+};
+
+// Why do I have isLeftUpMove when I already have isUpLeftMove? I don't know.
+const isLeftUpMove = (currentPosition: PiecePosition, move: PieceMove) => {
+  if (
+    currentPosition.y - move.y === -1 &&
+    letterToNumber(currentPosition.x) - letterToNumber(move.x) === 1
+  ) {
+    return true;
+  }
+  return false;
+};
+
 const isValidNormalMove = (
   game: Game,
-  currentPosition: Position,
+  currentPosition: PiecePosition,
   move: Move,
 ) => {
   const x = currentPosition.x;
@@ -449,18 +591,22 @@ const isValidNormalMove = (
     isUpLeftMove(currentPosition, move) &&
     hasOpponentAbove(game, currentPosition)
   ) {
-    if (!hasWallAbove(game, { x, y: y + 1 })) return false;
+    if (!hasWallAbove(game, { x, y: incrementVerticalPiecePosition(y) }))
+      return false;
     if (hasWallAbove(game, currentPosition)) return false;
-    if (hasWallToTheRight(game, { x, y: y + 1 })) return false;
+    if (hasWallToTheRight(game, { x, y: incrementVerticalPiecePosition(y) }))
+      return false;
     return true;
   }
   if (
     isUpRightMove(currentPosition, move) &&
     hasOpponentAbove(game, currentPosition)
   ) {
-    if (!hasWallAbove(game, { x, y: y + 1 })) return false;
+    if (!hasWallAbove(game, { x, y: incrementVerticalPiecePosition(y) }))
+      return false;
     if (hasWallAbove(game, currentPosition)) return false;
-    if (hasWallToTheLeft(game, { x, y: y + 1 })) return false;
+    if (hasWallToTheLeft(game, { x, y: incrementVerticalPiecePosition(y) }))
+      return false;
     return true;
   }
 
@@ -471,107 +617,120 @@ const isValidNormalMove = (
   }
   if (
     isDoubleRightMove(currentPosition, move) &&
-    this._hasOpponentToTheRight(currentPosition)
+    hasOpponentToTheRight(game, currentPosition)
   ) {
-    if (this._hasWallToTheRight(currentPosition)) return false;
-    if (this._hasWallToTheRight({ x: this._incrementLetter(x), y }))
+    if (hasWallToTheRight(game, currentPosition)) return false;
+    if (hasWallToTheRight(game, { x: incrementHorizontalPiecePosition(x), y }))
       return false;
     return true;
   }
   if (
-    this._isRightUpMove(currentPosition, move) &&
-    this._hasOpponentToTheRight(currentPosition)
+    isRightUpMove(currentPosition, move) &&
+    hasOpponentToTheRight(game, currentPosition)
   ) {
-    if (!this._hasWallToTheRight({ x: this._incrementLetter(x), y }))
+    if (!hasWallToTheRight(game, { x: incrementHorizontalPiecePosition(x), y }))
       return false;
-    if (this._hasWallToTheRight(currentPosition)) return false;
-    if (this._hasWallAbove({ x: this._incrementLetter(x), y })) return false;
+    if (hasWallToTheRight(game, currentPosition)) return false;
+    if (hasWallAbove(game, { x: incrementHorizontalPiecePosition(x), y }))
+      return false;
     return true;
   }
   if (
-    this._isRightDownMove(currentPosition, move) &&
-    this._hasOpponentToTheRight(currentPosition)
+    isRightDownMove(currentPosition, move) &&
+    hasOpponentToTheRight(game, currentPosition)
   ) {
-    if (!this._hasWallToTheRight({ x: this._incrementLetter(x), y }))
+    if (!hasWallToTheRight(game, { x: incrementHorizontalPiecePosition(x), y }))
       return false;
-    if (this._hasWallToTheRight(currentPosition)) return false;
-    if (this._hasWallBelow({ x: this._incrementLetter(x), y })) return false;
+    if (hasWallToTheRight(game, currentPosition)) return false;
+    if (hasWallBelow(game, { x: incrementHorizontalPiecePosition(x), y }))
+      return false;
     return true;
   }
 
   // If down move
-  if (this._isSingleDownMove(currentPosition, move)) {
-    if (this._hasWallBelow({ x, y: y })) return false;
+  if (isSingleDownMove(currentPosition, move)) {
+    if (hasWallBelow(game, { x, y: y })) return false;
     return true;
   }
   if (
-    this._isDoubleDownMove(currentPosition, move) &&
-    this._hasOpponentBelow(currentPosition)
+    isDoubleDownMove(currentPosition, move) &&
+    hasOpponentBelow(game, currentPosition)
   ) {
-    if (this._hasWallBelow(currentPosition)) return false;
-    if (this._hasWallBelow({ x, y: y - 1 })) return false;
+    if (hasWallBelow(game, currentPosition)) return false;
+    if (hasWallBelow(game, { x, y: decrementVerticalPiecePosition(y) }))
+      return false;
     return true;
   }
   if (
-    this._isDownRightMove(currentPosition, move) &&
-    this._hasOpponentBelow(currentPosition)
+    isDownRightMove(currentPosition, move) &&
+    hasOpponentBelow(game, currentPosition)
   ) {
-    if (!this._hasWallBelow({ x, y: y - 1 })) return false;
-    if (this._hasWallBelow(currentPosition)) return false;
-    if (this._hasWallToTheRight({ x, y: y - 1 })) return false;
+    if (!hasWallBelow(game, { x, y: decrementVerticalPiecePosition(y) }))
+      return false;
+    if (hasWallBelow(game, currentPosition)) return false;
+    if (hasWallToTheRight(game, { x, y: decrementVerticalPiecePosition(y) }))
+      return false;
     return true;
   }
   if (
-    this._isDownLeftMove(currentPosition, move) &&
-    this._hasOpponentBelow(currentPosition)
+    isDownLeftMove(currentPosition, move) &&
+    hasOpponentBelow(game, currentPosition)
   ) {
-    if (!this._hasWallBelow({ x, y: y - 1 })) return false;
-    if (this._hasWallBelow(currentPosition)) return false;
-    if (this._hasWallToTheLeft({ x, y: y - 1 })) return false;
+    if (!hasWallBelow(game, { x, y: decrementVerticalPiecePosition(y) }))
+      return false;
+    if (hasWallBelow(game, currentPosition)) return false;
+    if (hasWallToTheLeft(game, { x, y: decrementVerticalPiecePosition(y) }))
+      return false;
     return true;
   }
 
   // If left move
-  if (this._isSingleLeftMove(currentPosition, move)) {
-    if (this._hasWallToTheLeft(currentPosition)) return false;
+  if (isSingleLeftMove(currentPosition, move)) {
+    if (hasWallToTheLeft(game, currentPosition)) return false;
     return true;
   }
   if (
-    this._isDoubleLeftMove(currentPosition, move) &&
-    this._hasOpponentToTheLeft(currentPosition)
+    isDoubleLeftMove(currentPosition, move) &&
+    hasOpponentToTheLeft(game, currentPosition)
   ) {
-    if (this._hasWallToTheLeft(currentPosition)) return false;
-    if (this._hasWallToTheLeft({ x: this._decrementLetter(x), y }))
+    if (hasWallToTheLeft(game, currentPosition)) return false;
+    if (hasWallToTheLeft(game, { x: decrementHorizontalPiecePosition(x), y }))
       return false;
     return true;
   }
   if (
-    this._isLeftDownMove(currentPosition, move) &&
-    this._hasOpponentToTheLeft(currentPosition)
+    isLeftDownMove(currentPosition, move) &&
+    hasOpponentToTheLeft(game, currentPosition)
   ) {
-    if (!this._hasWallToTheLeft({ x: this._decrementLetter(x), y }))
+    if (!hasWallToTheLeft(game, { x: decrementHorizontalPiecePosition(x), y }))
       return false;
-    if (this._hasWallToTheLeft(currentPosition)) return false;
-    if (this._hasWallBelow({ x: this._decrementLetter(x), y })) return false;
+    if (hasWallToTheLeft(game, currentPosition)) return false;
+    if (hasWallBelow(game, { x: decrementHorizontalPiecePosition(x), y }))
+      return false;
     return true;
   }
   if (
-    this._isLeftUpMove(currentPosition, move) &&
-    this._hasOpponentToTheLeft(currentPosition)
+    isLeftUpMove(currentPosition, move) &&
+    hasOpponentToTheLeft(game, currentPosition)
   ) {
-    if (!this._hasWallToTheLeft({ x: this._decrementLetter(x), y }))
+    if (!hasWallToTheLeft(game, { x: decrementHorizontalPiecePosition(x), y }))
       return false;
-    if (this._hasWallToTheLeft(currentPosition)) return false;
-    if (this._hasWallAbove({ x: this._decrementLetter(x), y })) return false;
+    if (hasWallToTheLeft(game, currentPosition)) return false;
+    if (hasWallAbove(game, { x: decrementHorizontalPiecePosition(x), y }))
+      return false;
     return true;
   }
 
   return false;
 };
 
+const shortestPath = (game: Game, player: Player) => {
+  return aStar(game.pieceMatrix, game.wallMatrix, player);
+};
+
 export const isValidMove = (
   game: Game,
-  currentPosition: Position,
+  currentPosition: PiecePosition,
   move: Move,
 ) => {
   // Handle wall moves
