@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/OyvindSabo/quoridor.js#readme",
   "devDependencies": {
-    "@types/jest": "^26.0.15",
+    "@types/jest": "^26.0.22",
     "jest": "^26.6.1",
     "prettier": "^2.1.2",
     "ts-jest": "^26.4.2",
