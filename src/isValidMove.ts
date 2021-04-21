@@ -17,10 +17,6 @@ const letterToNumber = (letter: HorizontalPiecePosition) => {
   return (letter.charCodeAt(0) - 96) as VerticalPiecePosition;
 };
 
-const numberToLetter = (number: VerticalPiecePosition) => {
-  return String.fromCharCode(96 + number) as HorizontalPiecePosition;
-};
-
 const decrementHorizontalWallPosition = (
   horizontalWallPosition: HorizontalWallPosition,
 ) => {
@@ -325,7 +321,7 @@ const hasWallAbove = (game: Game, { x, y }: PiecePosition) => {
 
 const isDoubleUpMove = (currentPosition: PiecePosition, move: PieceMove) => {
   if (
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) == -2 &&
+    letterToNumber(currentPosition.x) - letterToNumber(move.x) === -2 &&
     currentPosition.x === move.x
   ) {
     return true;
@@ -406,7 +402,7 @@ const hasWallToTheLeft = (game: Game, { x, y }: PieceMove) => {
 
 const isSingleRightMove = (currentPosition: PiecePosition, move: PieceMove) => {
   if (
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) == -1 &&
+    letterToNumber(currentPosition.x) - letterToNumber(move.x) === -1 &&
     currentPosition.y === move.y
   ) {
     return true;
@@ -416,7 +412,7 @@ const isSingleRightMove = (currentPosition: PiecePosition, move: PieceMove) => {
 
 const isDoubleRightMove = (currentPosition: PiecePosition, move: PieceMove) => {
   if (
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) == -2 &&
+    letterToNumber(currentPosition.x) - letterToNumber(move.x) === -2 &&
     currentPosition.y === move.y
   ) {
     return true;
@@ -506,7 +502,7 @@ const isDownLeftMove = (currentPosition: PiecePosition, move: PieceMove) => {
 
 const isSingleLeftMove = (currentPosition: PiecePosition, move: PieceMove) => {
   if (
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) == 1 &&
+    letterToNumber(currentPosition.x) - letterToNumber(move.x) === 1 &&
     currentPosition.y === move.y
   ) {
     return true;
@@ -516,7 +512,7 @@ const isSingleLeftMove = (currentPosition: PiecePosition, move: PieceMove) => {
 
 const isDoubleLeftMove = (currentPosition: PiecePosition, move: PieceMove) => {
   if (
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) == 2 &&
+    letterToNumber(currentPosition.x) - letterToNumber(move.x) === 2 &&
     currentPosition.y === move.y
   ) {
     return true;
@@ -649,7 +645,7 @@ const isValidNormalMove = (
 
   // If down move
   if (isSingleDownMove(currentPosition, move)) {
-    if (hasWallBelow(game, { x, y: y })) return false;
+    if (hasWallBelow(game, { x, y })) return false;
     return true;
   }
   if (

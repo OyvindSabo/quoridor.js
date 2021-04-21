@@ -18,11 +18,9 @@ class Node {
   _reachedFrom?: Node;
   constructor(y: number, x: number, value: Player) {
     this._value = value;
-    this._coordinates = { y: y, x: x };
+    this._coordinates = { y, x };
     this._distanceFromStart = Infinity;
-    this._distanceToGoal;
     this._neighbours = [];
-    this._reachedFrom;
   }
   get distanceFromStart() {
     return this._distanceFromStart;
@@ -59,7 +57,7 @@ class Node {
   }
   relax() {
     const cost = { 0: 1, 1: 0, 2: 0 };
-    for (let neighbourNode of this._neighbours) {
+    for (const neighbourNode of this._neighbours) {
       if (
         (neighbourNode.distanceFromStart &&
           neighbourNode.distanceFromStart >
@@ -85,9 +83,9 @@ const quoridorDistance = (
 
 /* Create matrix of node objects from board */
 const boardToNodeMatrix = (
-  board: any, //PlayerMatrix,
-  walls: any, //WallMatrix,
-  startPiece: any, //Player,
+  board: any, // PlayerMatrix,
+  walls: any, // WallMatrix,
+  startPiece: any, // Player,
 ) => {
   const mapIntMatrix = Object.keys(board).map((columnKey: any) =>
     Object.keys(board[columnKey as HorizontalPiecePosition]).map(
@@ -101,9 +99,9 @@ const boardToNodeMatrix = (
 
   /* Create a matrix of nodes */
   const nodeMatrix = [];
-  for (let y of Object.keys(mapIntMatrix).map(Number)) {
-    let nodeRow = [];
-    for (let x of Object.keys(mapIntMatrix[y]).map(Number)) {
+  for (const y of Object.keys(mapIntMatrix).map(Number)) {
+    const nodeRow = [];
+    for (const x of Object.keys(mapIntMatrix[y]).map(Number)) {
       nodeRow.push(new Node(y, x, mapIntMatrix[y][x]));
     }
     nodeMatrix.push(nodeRow);
@@ -113,8 +111,8 @@ const boardToNodeMatrix = (
   // Coordinates are give according to the board, not how it is visualized.
   // x
   //
-  for (let x of Object.keys(nodeMatrix).map(Number)) {
-    for (let y of Object.keys(nodeMatrix[x]).map(Number)) {
+  for (const x of Object.keys(nodeMatrix).map(Number)) {
+    for (const y of Object.keys(nodeMatrix[x]).map(Number)) {
       if (
         x > 0 &&
         !(
@@ -134,10 +132,9 @@ const boardToNodeMatrix = (
           (wallIntMatrix[x][y].h || (x > 0 && wallIntMatrix[x - 1][y].h))
         )
       ) {
-        //new
+        // new
         nodeMatrix[x][y].addNeighbour(nodeMatrix[x][y + 1]); // Add neighbour above
       }
-      console.log('wallIntMatrix: ', wallIntMatrix);
       // TODO: There is something very fishy here
       if (
         x < nodeMatrix.length - 1 &&
@@ -164,12 +161,9 @@ const boardToNodeMatrix = (
   }
 
   /* Add manhattanDistanceToGoal to each node */
-  for (let y of Object.keys(nodeMatrix).map(Number)) {
-    for (let x of Object.keys(nodeMatrix[y]).map(Number)) {
-      nodeMatrix[y][x].distanceToGoal = quoridorDistance(
-        { y: y, x: x },
-        startPiece,
-      );
+  for (const y of Object.keys(nodeMatrix).map(Number)) {
+    for (const x of Object.keys(nodeMatrix[y]).map(Number)) {
+      nodeMatrix[y][x].distanceToGoal = quoridorDistance({ y, x }, startPiece);
     }
   }
 
@@ -178,8 +172,8 @@ const boardToNodeMatrix = (
 
 /* Find start node */
 const getStartNode = (nodeMatrix: Node[][], startPiece: Player) => {
-  for (let y of Object.keys(nodeMatrix).map(Number)) {
-    for (let x of Object.keys(nodeMatrix[y]).map(Number)) {
+  for (const y of Object.keys(nodeMatrix).map(Number)) {
+    for (const x of Object.keys(nodeMatrix[y]).map(Number)) {
       if (nodeMatrix[y][x].value === startPiece) {
         nodeMatrix[y][x].distanceFromStart = 0;
         return nodeMatrix[y][x];
@@ -192,7 +186,7 @@ const getStartNode = (nodeMatrix: Node[][], startPiece: Player) => {
 const getMostPromisingNode = (discoveredNodes: Node[]) => {
   let lowestDistance = Infinity;
   let mostPromisingNode;
-  for (let node of discoveredNodes) {
+  for (const node of discoveredNodes) {
     if (node.distanceFromStart < lowestDistance) {
       lowestDistance = node.distanceFromStart;
       mostPromisingNode = node;
@@ -207,13 +201,13 @@ const hasReachedGoal = (node: any, startPiece: any) => {
 };
 
 const visualizeOpenedCells = (openCells: any[]) => {
-  for (let cell of openCells) {
+  for (const cell of openCells) {
     cell.value = 'x';
   }
 };
 
-const numberToLetter = (number: number) => {
-  return String.fromCharCode(96 + number);
+const numberToLetter = (num: number) => {
+  return String.fromCharCode(96 + num);
 };
 
 const getPath = (goalNode: Node, startPiece: Player) => {
@@ -235,15 +229,15 @@ export const aStar = (
   walls: WallMatrix,
   startPiece: Player,
 ) => {
-  let nodeMatrix = boardToNodeMatrix(board, walls, startPiece); // Create a matrix of nodes from mapString
+  const nodeMatrix = boardToNodeMatrix(board, walls, startPiece); // Create a matrix of nodes from mapString
   const startNode: Node = getStartNode(nodeMatrix, startPiece) as Node; // Find startNode and set its distance to itself to 0
-  let discoveredNodes = [startNode]; // Create a list to which discovered nodes can be added
-  let relaxedNodes: Node[] = []; // Create a list to which keep track of which nodes have already been relaxed
+  const discoveredNodes = [startNode]; // Create a list to which discovered nodes can be added
+  const relaxedNodes: Node[] = []; // Create a list to which keep track of which nodes have already been relaxed
   let reachedGoal = false;
   let goalNode;
   while (!reachedGoal) {
     // While goal is not reached
-    let mostPromisingNode = getMostPromisingNode(
+    const mostPromisingNode = getMostPromisingNode(
       discoveredNodes.filter((node) => relaxedNodes.indexOf(node) === -1),
     ); // Choose the nodes whose distance from start is lowest
     if (!mostPromisingNode) {
@@ -260,9 +254,8 @@ export const aStar = (
       goalNode = mostPromisingNode;
     }
   }
-  //visualizePath(goalNode); // Give all nodes in path the value 'O'
+  // visualizePath(goalNode); // Give all nodes in path the value 'O'
   const path = getPath(goalNode as Node, startPiece);
-  console.log('path: ', path);
   visualizeOpenedCells(
     discoveredNodes.filter(
       (node) => node !== undefined && '12O'.indexOf(`${node.value}`) === -1,
