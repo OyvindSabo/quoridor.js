@@ -242,8 +242,6 @@ export const unvalidatedMove = (game: Game, move: Move): Game => {
   const currentPosition = game.playerPositions[game.turn];
   if (isWallMove(move)) {
     // If wall move
-    game.wallMatrix[move.x][move.y][move.w] = true;
-    game.playerWallCounts[game.turn]--;
     return {
       ...game,
       wallMatrix: {
