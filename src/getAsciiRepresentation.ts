@@ -131,6 +131,5 @@ export const getAsciiRepresentation = (game: Game) => {
       board += `───`;
     }
   }
-  board += '\n';
   return board;
 };
