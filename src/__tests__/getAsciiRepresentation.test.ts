@@ -2,7 +2,14 @@ import { createGameFromMoves } from '../createGameFromMoves';
 import { getAsciiRepresentation } from '../getAsciiRepresentation';
 
 test('Test that initial game is correctly visualized', () => {
-  expect(getAsciiRepresentation(createGameFromMoves([]))).toStrictEqual({
+  expect(
+    getAsciiRepresentation(
+      createGameFromMoves([
+        { x: 'e', y: 4, w: 'h' },
+        { x: 'd', y: 5, w: 'v' },
+      ]),
+    ),
+  ).toStrictEqual({
     a: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
     b: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
     c: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },

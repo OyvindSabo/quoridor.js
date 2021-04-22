@@ -6,22 +6,26 @@ import {
   VerticalWallPosition,
 } from './types';
 
+const numberToLetter = (num: number) => {
+  return String.fromCharCode(96 + num);
+};
+
 export const getAsciiRepresentation = (game: Game) => {
-  let board = '┏━━━';
+  let board = '┌───';
   for (let wallIndex = 1; wallIndex <= 10; wallIndex++) {
     if (game.playerWallCounts[2] >= wallIndex) {
-      board += '║';
+      board += '╫';
     } else {
-      board += '━';
+      board += '─';
     }
     if (wallIndex === 10) {
-      board += '━━━┓';
+      board += '───┐';
     } else {
-      board += '━━━';
+      board += '───';
     }
   }
   board += '\n';
-  board += '┃   ';
+  board += '│   ';
   for (let wallIndex = 1; wallIndex <= 10; wallIndex++) {
     if (game.playerWallCounts[2] >= wallIndex) {
       board += '║';
@@ -29,15 +33,15 @@ export const getAsciiRepresentation = (game: Game) => {
       board += ' ';
     }
     if (wallIndex === 10) {
-      board += '   ┃';
+      board += '   │';
     } else {
       board += '   ';
     }
   }
   board += '\n';
-  board += '┃   ┌───┬───┬───┬───┬───┬───┬───┬───┬───┐   ┃\n';
+  board += '│   ┌───┬───┬───┬───┬───┬───┬───┬───┬───┐   │\n';
   for (let y: VerticalPiecePosition = 9; y > 0; y--) {
-    let row = '┃   │';
+    let row = `│ ${y} │`;
     Object.keys(game.pieceMatrix)
       .map((x) => x as HorizontalPiecePosition)
       .forEach((x) => {
@@ -62,9 +66,9 @@ export const getAsciiRepresentation = (game: Game) => {
           row += '│';
         }
       });
-    board += `${row}   ┃\n`;
+    board += `${row}   │\n`;
     if (y > 1) {
-      row = '┃   ├';
+      row = '│   ├';
       Object.keys(game.pieceMatrix)
         .map((x) => x as HorizontalPiecePosition)
         .forEach((x, index, array) => {
@@ -86,22 +90,22 @@ export const getAsciiRepresentation = (game: Game) => {
               y < 9 &&
               game.wallMatrix[x][(y - 1) as VerticalWallPosition].h
             ) {
-              row += '═';
+              row += '╪';
             } else if (
               y > 1 &&
               game.wallMatrix[x][(y - 1) as VerticalWallPosition].v
             ) {
-              row += '║';
+              row += '╫';
             } else {
               row += '┼';
             }
           }
         });
       row += '┤';
-      board += `${row}   ┃\n`;
+      board += `${row}   │\n`;
     }
   }
-  board += `┃   └───┴───┴───┴───┴───┴───┴───┴───┴───┘   ┃\n┃   `;
+  board += `│   └───┴───┴───┴───┴───┴───┴───┴───┴───┘   │\n│   `;
   for (let wallIndex = 1; wallIndex <= 10; wallIndex++) {
     if (game.playerWallCounts[1] >= wallIndex) {
       board += '║';
@@ -109,22 +113,22 @@ export const getAsciiRepresentation = (game: Game) => {
       board += ' ';
     }
     if (wallIndex === 10) {
-      board += '   ┃';
+      board += '   │';
     } else {
-      board += '   ';
+      board += ` ${numberToLetter(wallIndex).toUpperCase()} `;
     }
   }
-  board += '\n┗━━━';
+  board += '\n└───';
   for (let wallIndex = 1; wallIndex <= 10; wallIndex++) {
     if (game.playerWallCounts[1] >= wallIndex) {
-      board += '║';
+      board += '╫';
     } else {
-      board += `━`;
+      board += `─`;
     }
     if (wallIndex === 10) {
-      board += `━━━┛`;
+      board += `───┘`;
     } else {
-      board += `━━━`;
+      board += `───`;
     }
   }
   board += '\n';
