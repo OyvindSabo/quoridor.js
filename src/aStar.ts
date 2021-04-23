@@ -9,13 +9,13 @@ import {
  * Utility functions for the aStar function and the Node
  ******************************************************************************/
 
-class Node {
+export class QuoridorNode {
   _value: Player;
   _coordinates: { x: number; y: number };
   _distanceFromStart: number;
   _distanceToGoal?: number;
-  _neighbours: Node[]; // A bit unsure if this is the right type
-  _reachedFrom?: Node;
+  _neighbours: QuoridorNode[]; // A bit unsure if this is the right type
+  _reachedFrom?: QuoridorNode;
   constructor(y: number, x: number, value: Player) {
     this._value = value;
     this._coordinates = { y, x };
@@ -46,7 +46,7 @@ class Node {
   get neighbours() {
     return this._neighbours;
   }
-  addNeighbour(neighbour: Node) {
+  addNeighbour(neighbour: QuoridorNode) {
     this._neighbours.push(neighbour);
   }
   get value() {
@@ -102,7 +102,7 @@ const boardToNodeMatrix = (
   for (const y of Object.keys(mapIntMatrix).map(Number)) {
     const nodeRow = [];
     for (const x of Object.keys(mapIntMatrix[y]).map(Number)) {
-      nodeRow.push(new Node(y, x, mapIntMatrix[y][x]));
+      nodeRow.push(new QuoridorNode(y, x, mapIntMatrix[y][x]));
     }
     nodeMatrix.push(nodeRow);
   }
@@ -171,7 +171,7 @@ const boardToNodeMatrix = (
 };
 
 /* Find start node */
-const getStartNode = (nodeMatrix: Node[][], startPiece: Player) => {
+const getStartNode = (nodeMatrix: QuoridorNode[][], startPiece: Player) => {
   for (const y of Object.keys(nodeMatrix).map(Number)) {
     for (const x of Object.keys(nodeMatrix[y]).map(Number)) {
       if (nodeMatrix[y][x].value === startPiece) {
@@ -183,7 +183,7 @@ const getStartNode = (nodeMatrix: Node[][], startPiece: Player) => {
 };
 
 /* Return the node whose distanceFromStart is smallest */
-const getMostPromisingNode = (discoveredNodes: Node[]) => {
+const getMostPromisingNode = (discoveredNodes: QuoridorNode[]) => {
   let lowestDistance = Infinity;
   let mostPromisingNode;
   for (const node of discoveredNodes) {
@@ -210,7 +210,7 @@ const numberToLetter = (num: number) => {
   return String.fromCharCode(96 + num);
 };
 
-const getPath = (goalNode: Node, startPiece: Player) => {
+const getPath = (goalNode: QuoridorNode, startPiece: Player) => {
   if (goalNode.distanceFromStart === 0) return [goalNode];
   const path = [goalNode.coordinates].map(({ x, y }) => ({
     x: numberToLetter(y),
@@ -230,9 +230,12 @@ export const aStar = (
   startPiece: Player,
 ) => {
   const nodeMatrix = boardToNodeMatrix(board, walls, startPiece); // Create a matrix of nodes from mapString
-  const startNode: Node = getStartNode(nodeMatrix, startPiece) as Node; // Find startNode and set its distance to itself to 0
+  const startNode: QuoridorNode = getStartNode(
+    nodeMatrix,
+    startPiece,
+  ) as QuoridorNode; // Find startNode and set its distance to itself to 0
   const discoveredNodes = [startNode]; // Create a list to which discovered nodes can be added
-  const relaxedNodes: Node[] = []; // Create a list to which keep track of which nodes have already been relaxed
+  const relaxedNodes: QuoridorNode[] = []; // Create a list to which keep track of which nodes have already been relaxed
   let reachedGoal = false;
   let goalNode;
   while (!reachedGoal) {
@@ -246,7 +249,7 @@ export const aStar = (
     relaxedNodes.push(mostPromisingNode.relax()); // Relax the most promising node and push it to relaxedNodes
     discoveredNodes.push(
       ...mostPromisingNode.neighbours.filter(
-        (node: Node) => discoveredNodes.indexOf(node) === -1,
+        (node: QuoridorNode) => discoveredNodes.indexOf(node) === -1,
       ),
     ); // Add all previouly unrelaxed neighbours of the most promising node
     reachedGoal = hasReachedGoal(mostPromisingNode, startPiece);
@@ -255,7 +258,7 @@ export const aStar = (
     }
   }
   // visualizePath(goalNode); // Give all nodes in path the value 'O'
-  const path = getPath(goalNode as Node, startPiece);
+  const path = getPath(goalNode as QuoridorNode, startPiece);
   visualizeOpenedCells(
     discoveredNodes.filter(
       (node) => node !== undefined && '12O'.indexOf(`${node.value}`) === -1,
