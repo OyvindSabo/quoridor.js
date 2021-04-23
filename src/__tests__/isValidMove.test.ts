@@ -8,15 +8,7 @@ test('Test that taking one step forward with no obstacles is a valid move', () =
 test('Test that stepping forward on opponent is not a valid move', () => {
   expect(
     isValidMove(
-      createGameFromMoves([
-        { x: 'e', y: 2 },
-        { x: 'e', y: 8 },
-        { x: 'e', y: 3 },
-        { x: 'e', y: 7 },
-        { x: 'e', y: 4 },
-        { x: 'e', y: 6 },
-        { x: 'e', y: 5 },
-      ]),
+      createGameFromMoves(['e2', 'e8', 'e3', 'e7', 'e4', 'e6', 'e5']),
       { x: 'e', y: 5 },
     ),
   ).toBe(false);
@@ -26,15 +18,15 @@ test('Test that stepping to the right on opponent is not a valid move', () => {
   expect(
     isValidMove(
       createGameFromMoves([
-        { x: 'e', y: 2 },
-        { x: 'e', y: 8 },
-        { x: 'e', y: 3 },
-        { x: 'e', y: 7 },
-        { x: 'e', y: 4 },
-        { x: 'e', y: 6 },
-        { x: 'f', y: 4 },
-        { x: 'e', y: 5 },
-        { x: 'f', y: 5 },
+        'e2',
+        'e8',
+        'e3',
+        'e7',
+        'e4',
+        'e6',
+        'f4',
+        'e5',
+        'f5',
       ]),
       { x: 'f', y: 5 },
     ),
@@ -44,16 +36,7 @@ test('Test that stepping to the right on opponent is not a valid move', () => {
 test('Test that jumping forward over opponent is a valid move', () => {
   expect(
     isValidMove(
-      createGameFromMoves([
-        { x: 'e', y: 2 },
-        { x: 'e', y: 8 },
-        { x: 'e', y: 3 },
-        { x: 'e', y: 7 },
-        { x: 'e', y: 4 },
-        { x: 'e', y: 6 },
-        { x: 'a', y: 1, w: 'h' },
-        { x: 'e', y: 5 },
-      ]),
+      createGameFromMoves(['e2', 'e8', 'e3', 'e7', 'e4', 'e6', 'a1h', 'e5']),
       { x: 'e', y: 6 },
     ),
   ).toBe(false);

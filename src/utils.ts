@@ -4,7 +4,8 @@ import {
   HorizontalPiecePosition,
   HorizontalWallPosition,
   Move,
-  PieceMove,
+  MoveObject,
+  PawnMoveObject,
   PiecePosition,
   Player,
   PlayerMatrix,
@@ -12,6 +13,19 @@ import {
   VerticalWallPosition,
   WallMoveObject,
 } from './types';
+
+export const moveToMoveObject = (move: Move) => {
+  if (move.length === 3)
+    return {
+      x: move.charAt(0),
+      y: parseInt(move.charAt(1), 10),
+      w: move.charAt(2),
+    };
+  return {
+    x: move.charAt(0),
+    y: parseInt(move.charAt(1), 10),
+  };
+};
 
 const letterToNumber = (letter: HorizontalPiecePosition) => {
   return (letter.charCodeAt(0) - 96) as VerticalPiecePosition;
@@ -233,7 +247,7 @@ export const doesWallMoveOverlapExistingWall = (
   return false;
 };
 
-export const isWallMove = (move: Move): move is WallMoveObject => {
+export const isWallMove = (move: MoveObject): move is WallMoveObject => {
   return Boolean((move as WallMoveObject).w);
 };
 
@@ -241,7 +255,7 @@ export const getOppositePlayer = (player: Player) => {
   return player === 1 ? 2 : 1;
 };
 
-export const unvalidatedMove = (game: Game, move: Move): Game => {
+export const unvalidatedMove = (game: Game, move: MoveObject): Game => {
   const currentPosition = game.playerPositions[game.turn];
   if (isWallMove(move)) {
     // If wall move
@@ -300,14 +314,17 @@ export const unvalidatedMove = (game: Game, move: Move): Game => {
   }
 };
 
-const isSingleUpMove = (currentPosition: PiecePosition, move: PieceMove) => {
+const isSingleUpMove = (
+  currentPosition: PiecePosition,
+  move: PawnMoveObject,
+) => {
   if (currentPosition.y - move.y === -1 && currentPosition.x === move.x) {
     return true;
   }
   return false;
 };
 
-const hasWallAbove = (game: Game, { x, y }: PiecePosition) => {
+const hasWallAbove = (game: Game, { x, y }: PawnMoveObject) => {
   if (
     game.wallMatrix[x as HorizontalWallPosition][y as VerticalWallPosition].h ||
     (letterToNumber(x) > 1 &&
@@ -320,7 +337,10 @@ const hasWallAbove = (game: Game, { x, y }: PiecePosition) => {
   return false;
 };
 
-const isDoubleUpMove = (currentPosition: PiecePosition, move: PieceMove) => {
+const isDoubleUpMove = (
+  currentPosition: PiecePosition,
+  move: PawnMoveObject,
+) => {
   if (
     letterToNumber(currentPosition.x) - letterToNumber(move.x) === -2 &&
     currentPosition.x === move.x
@@ -330,7 +350,7 @@ const isDoubleUpMove = (currentPosition: PiecePosition, move: PieceMove) => {
   return false;
 };
 
-const hasOpponentAbove = (game: Game, position: PiecePosition) => {
+const hasOpponentAbove = (game: Game, position: PawnMoveObject) => {
   if (
     game.pieceMatrix[position.x][incrementVerticalPiecePosition(position.y)] ===
     getOppositePlayer(game.turn)
@@ -340,7 +360,7 @@ const hasOpponentAbove = (game: Game, position: PiecePosition) => {
   return false;
 };
 
-const isUpLeftMove = (currentPosition: PiecePosition, move: PieceMove) => {
+const isUpLeftMove = (currentPosition: PiecePosition, move: PawnMoveObject) => {
   if (
     currentPosition.y - move.y === -1 &&
     letterToNumber(currentPosition.x) - letterToNumber(move.x) === 1
@@ -350,7 +370,7 @@ const isUpLeftMove = (currentPosition: PiecePosition, move: PieceMove) => {
   return false;
 };
 
-const hasWallToTheRight = (game: Game, { x, y }: PiecePosition) => {
+const hasWallToTheRight = (game: Game, { x, y }: PawnMoveObject) => {
   if (
     (y < 9 &&
       game.wallMatrix[x as HorizontalWallPosition][y as VerticalWallPosition]
@@ -364,7 +384,10 @@ const hasWallToTheRight = (game: Game, { x, y }: PiecePosition) => {
   }
 };
 
-const isUpRightMove = (currentPosition: PiecePosition, move: PieceMove) => {
+const isUpRightMove = (
+  currentPosition: PiecePosition,
+  move: PawnMoveObject,
+) => {
   if (
     currentPosition.y - move.y === -1 &&
     letterToNumber(currentPosition.x) - letterToNumber(move.x) === -1
@@ -375,7 +398,10 @@ const isUpRightMove = (currentPosition: PiecePosition, move: PieceMove) => {
 };
 
 // Why do I have this one that is almost identical to the previous one? I don't know.
-const isRightUpMove = (currentPosition: PiecePosition, move: PieceMove) => {
+const isRightUpMove = (
+  currentPosition: PiecePosition,
+  move: PawnMoveObject,
+) => {
   if (
     currentPosition.y - move.y === -1 &&
     letterToNumber(currentPosition.x) - letterToNumber(move.x) === -1
@@ -385,7 +411,7 @@ const isRightUpMove = (currentPosition: PiecePosition, move: PieceMove) => {
   return false;
 };
 
-const hasWallToTheLeft = (game: Game, { x, y }: PieceMove) => {
+const hasWallToTheLeft = (game: Game, { x, y }: PawnMoveObject) => {
   if (
     (y < 9 &&
       game.wallMatrix[
@@ -401,7 +427,10 @@ const hasWallToTheLeft = (game: Game, { x, y }: PieceMove) => {
   return false;
 };
 
-const isSingleRightMove = (currentPosition: PiecePosition, move: PieceMove) => {
+const isSingleRightMove = (
+  currentPosition: PiecePosition,
+  move: PawnMoveObject,
+) => {
   if (
     letterToNumber(currentPosition.x) - letterToNumber(move.x) === -1 &&
     currentPosition.y === move.y
@@ -411,7 +440,10 @@ const isSingleRightMove = (currentPosition: PiecePosition, move: PieceMove) => {
   return false;
 };
 
-const isDoubleRightMove = (currentPosition: PiecePosition, move: PieceMove) => {
+const isDoubleRightMove = (
+  currentPosition: PiecePosition,
+  move: PawnMoveObject,
+) => {
   if (
     letterToNumber(currentPosition.x) - letterToNumber(move.x) === -2 &&
     currentPosition.y === move.y
@@ -421,7 +453,7 @@ const isDoubleRightMove = (currentPosition: PiecePosition, move: PieceMove) => {
   return false;
 };
 
-const hasOpponentToTheRight = (game: Game, position: PiecePosition) => {
+const hasOpponentToTheRight = (game: Game, position: PawnMoveObject) => {
   if (
     game.pieceMatrix[incrementHorizontalPiecePosition(position.x)][
       position.y
@@ -432,7 +464,10 @@ const hasOpponentToTheRight = (game: Game, position: PiecePosition) => {
   return false;
 };
 
-const isRightDownMove = (currentPosition: PiecePosition, move: PieceMove) => {
+const isRightDownMove = (
+  currentPosition: PiecePosition,
+  move: PawnMoveObject,
+) => {
   if (
     currentPosition.y - move.y === 1 &&
     letterToNumber(currentPosition.x) - letterToNumber(move.x) === -1
@@ -442,7 +477,7 @@ const isRightDownMove = (currentPosition: PiecePosition, move: PieceMove) => {
   return false;
 };
 
-const hasWallBelow = (game: Game, { x, y }: PieceMove) => {
+const hasWallBelow = (game: Game, { x, y }: PawnMoveObject) => {
   if (
     game.wallMatrix[x as HorizontalWallPosition][
       (y - 1) as VerticalWallPosition
@@ -457,14 +492,20 @@ const hasWallBelow = (game: Game, { x, y }: PieceMove) => {
   return false;
 };
 
-const isSingleDownMove = (currentPosition: PiecePosition, move: PieceMove) => {
+const isSingleDownMove = (
+  currentPosition: PiecePosition,
+  move: PawnMoveObject,
+) => {
   if (currentPosition.y - move.y === 1 && currentPosition.x === move.x) {
     return true;
   }
   return false;
 };
 
-const isDoubleDownMove = (currentPosition: PiecePosition, move: PieceMove) => {
+const isDoubleDownMove = (
+  currentPosition: PiecePosition,
+  move: PawnMoveObject,
+) => {
   if (currentPosition.y - move.y === 2 && currentPosition.x === move.x) {
     return true;
   }
@@ -481,7 +522,10 @@ const hasOpponentBelow = (game: Game, position: PiecePosition) => {
   return false;
 };
 
-const isDownRightMove = (currentPosition: PiecePosition, move: PieceMove) => {
+const isDownRightMove = (
+  currentPosition: PiecePosition,
+  move: PawnMoveObject,
+) => {
   if (
     currentPosition.y - move.y === 1 &&
     letterToNumber(currentPosition.x) - letterToNumber(move.x) === -1
@@ -491,7 +535,10 @@ const isDownRightMove = (currentPosition: PiecePosition, move: PieceMove) => {
   return false;
 };
 
-const isDownLeftMove = (currentPosition: PiecePosition, move: PieceMove) => {
+const isDownLeftMove = (
+  currentPosition: PiecePosition,
+  move: PawnMoveObject,
+) => {
   if (
     currentPosition.y - move.y === 1 &&
     letterToNumber(currentPosition.x) - letterToNumber(move.x) === 1
@@ -501,7 +548,10 @@ const isDownLeftMove = (currentPosition: PiecePosition, move: PieceMove) => {
   return false;
 };
 
-const isSingleLeftMove = (currentPosition: PiecePosition, move: PieceMove) => {
+const isSingleLeftMove = (
+  currentPosition: PiecePosition,
+  move: PawnMoveObject,
+) => {
   if (
     letterToNumber(currentPosition.x) - letterToNumber(move.x) === 1 &&
     currentPosition.y === move.y
@@ -511,7 +561,10 @@ const isSingleLeftMove = (currentPosition: PiecePosition, move: PieceMove) => {
   return false;
 };
 
-const isDoubleLeftMove = (currentPosition: PiecePosition, move: PieceMove) => {
+const isDoubleLeftMove = (
+  currentPosition: PiecePosition,
+  move: PawnMoveObject,
+) => {
   if (
     letterToNumber(currentPosition.x) - letterToNumber(move.x) === 2 &&
     currentPosition.y === move.y
@@ -521,7 +574,7 @@ const isDoubleLeftMove = (currentPosition: PiecePosition, move: PieceMove) => {
   return false;
 };
 
-const hasOpponentToTheLeft = (game: Game, position: PiecePosition) => {
+const hasOpponentToTheLeft = (game: Game, position: PawnMoveObject) => {
   if (
     game.pieceMatrix[decrementHorizontalPiecePosition(position.x)][
       position.y
@@ -532,7 +585,10 @@ const hasOpponentToTheLeft = (game: Game, position: PiecePosition) => {
   return false;
 };
 
-const isLeftDownMove = (currentPosition: PiecePosition, move: PieceMove) => {
+const isLeftDownMove = (
+  currentPosition: PiecePosition,
+  move: PawnMoveObject,
+) => {
   if (
     currentPosition.y - move.y === 1 &&
     letterToNumber(currentPosition.x) - letterToNumber(move.x) === 1
@@ -543,7 +599,7 @@ const isLeftDownMove = (currentPosition: PiecePosition, move: PieceMove) => {
 };
 
 // Why do I have isLeftUpMove when I already have isUpLeftMove? I don't know.
-const isLeftUpMove = (currentPosition: PiecePosition, move: PieceMove) => {
+const isLeftUpMove = (currentPosition: PiecePosition, move: PawnMoveObject) => {
   if (
     currentPosition.y - move.y === -1 &&
     letterToNumber(currentPosition.x) - letterToNumber(move.x) === 1
@@ -556,7 +612,7 @@ const isLeftUpMove = (currentPosition: PiecePosition, move: PieceMove) => {
 export const isValidNormalMove = (
   game: Game,
   currentPosition: PiecePosition,
-  move: Move,
+  move: MoveObject,
 ) => {
   const x = currentPosition.x;
   const y = currentPosition.y;

@@ -30,9 +30,7 @@ test('Test that initial game position is correctly visualized', () => {
 });
 
 test('Test that a horizontal wall placed by player 1 is correctly visualized', () => {
-  expect(
-    getAsciiRepresentation(createGameFromMoves([{ x: 'a', y: 1, w: 'h' }])),
-  ).toBe(
+  expect(getAsciiRepresentation(createGameFromMoves(['a1h']))).toBe(
     `┌───╫───╫───╫───╫───╫───╫───╫───╫───╫───╫───┐
 │   ║   ║   ║   ║   ║   ║   ║   ║   ║   ║   │
 │   ┌───┬───┬───┬───┬───┬───┬───┬───┬───┐   │

@@ -16,12 +16,7 @@ test('Test that game is correctly initialized', () => {
 
 test('Test that game is correctly initialized from array of forward moves', () => {
   expect(
-    createGameFromMoves([
-      { x: 'e', y: 2 },
-      { x: 'e', y: 8 },
-      { x: 'e', y: 3 },
-      { x: 'e', y: 7 },
-    ]).pieceMatrix,
+    createGameFromMoves(['e2', 'e8', 'e3', 'e7']).pieceMatrix,
   ).toStrictEqual({
     a: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
     b: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },

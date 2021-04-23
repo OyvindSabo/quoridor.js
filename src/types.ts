@@ -241,7 +241,9 @@ export type WallMove =
   | 'h8h'
   | 'h8v';
 
-export type PieceMove = {
+export type Move = PawnMove | WallMove;
+
+export type PawnMoveObject = {
   x: HorizontalPiecePosition;
   y: VerticalPiecePosition;
 };
@@ -252,7 +254,7 @@ export type WallMoveObject = {
   w: 'h' | 'v';
 };
 
-export type Move = PieceMove | WallMoveObject;
+export type MoveObject = PawnMoveObject | WallMoveObject;
 
 export type Player = 1 | 2;
 
@@ -266,7 +268,7 @@ export type WallMatrix = Record<
   Record<VerticalWallPosition, { h: boolean; v: boolean }>
 >;
 
-type History = Record<Player, Move[]>;
+type History = Record<Player, MoveObject[]>;
 
 type WallCount = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 

@@ -1,4 +1,4 @@
-import { Game, Move } from './types';
+import { Game, MoveObject } from './types';
 import {
   doesWallMoveOverlapExistingWall,
   getOppositePlayer,
@@ -8,7 +8,7 @@ import {
   unvalidatedMove,
 } from './utils';
 
-export const isValidMove = (game: Game, move: Move) => {
+export const isValidMove = (game: Game, move: MoveObject) => {
   // Handle wall moves
   const currentPosition = game.playerPositions[game.turn];
   if (isWallMove(move)) {
