@@ -10,7 +10,7 @@ import {
   PlayerMatrix,
   VerticalPiecePosition,
   VerticalWallPosition,
-  WallMove,
+  WallMoveObject,
 } from './types';
 
 const letterToNumber = (letter: HorizontalPiecePosition) => {
@@ -203,7 +203,7 @@ const incrementVerticalPiecePosition = (
 
 export const doesWallMoveOverlapExistingWall = (
   game: Game,
-  wallMove: WallMove,
+  wallMove: WallMoveObject,
 ) => {
   const x = wallMove.x;
   const y = wallMove.y;
@@ -233,8 +233,8 @@ export const doesWallMoveOverlapExistingWall = (
   return false;
 };
 
-export const isWallMove = (move: Move): move is WallMove => {
-  return Boolean((move as WallMove).w);
+export const isWallMove = (move: Move): move is WallMoveObject => {
+  return Boolean((move as WallMoveObject).w);
 };
 
 export const getOppositePlayer = (player: Player) => {
@@ -955,11 +955,11 @@ const getAllWallMoves = () => {
     { x: 'h', y: 7, w: 'v' },
     { x: 'h', y: 8, w: 'h' },
     { x: 'h', y: 8, w: 'v' },
-  ] as WallMove[];
+  ] as WallMoveObject[];
   return allWallMoves;
 };
 
-const overlapsWall = (game: Game, wallMove: WallMove) => {
+const overlapsWall = (game: Game, wallMove: WallMoveObject) => {
   const x = wallMove.x;
   const y = wallMove.y;
   if (wallMove.w === 'h') {
