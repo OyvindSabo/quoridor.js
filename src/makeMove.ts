@@ -1,8 +1,8 @@
 import { isValidMove } from './isValidMove';
 import { Game, MoveObject } from './types';
-import { unvalidatedMove } from './utils';
+import { moveObjectToMove, unvalidatedMove } from './utils';
 
-export const makeMove = (game: Game, move: MoveObject) => {
-  if (!isValidMove(game, move)) return game;
-  return unvalidatedMove(game, move);
+export const makeMove = (game: Game, moveObject: MoveObject) => {
+  if (!isValidMove(game, moveObject)) return game;
+  return unvalidatedMove(game, moveObjectToMove(moveObject));
 };

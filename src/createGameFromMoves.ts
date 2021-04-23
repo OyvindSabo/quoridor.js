@@ -1,5 +1,5 @@
 import { Game, Move, MoveObject, PlayerMatrix } from './types';
-import { moveToMoveObject, unvalidatedMove } from './utils';
+import { unvalidatedMove } from './utils';
 
 const createNewPieceMatrix = (): PlayerMatrix => ({
   a: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
@@ -97,7 +97,6 @@ export const createNewWallMatrix = () => ({
 });
 
 export const createGameFromMoves = (moves: Move[]) => {
-  const moveObjects = moves.map(moveToMoveObject);
   const game: Game = {
     pieceMatrix: createNewPieceMatrix(),
     wallMatrix: createNewWallMatrix(),
@@ -106,7 +105,7 @@ export const createGameFromMoves = (moves: Move[]) => {
     playerPositions: { 1: { x: 'e', y: 1 }, 2: { x: 'e', y: 9 } },
     playerWallCounts: { 1: 10, 2: 10 },
   };
-  return moveObjects.reduce((game, moveObject) => {
-    return unvalidatedMove(game, moveObject as MoveObject);
+  return moves.reduce((game, move) => {
+    return unvalidatedMove(game, move);
   }, game);
 };

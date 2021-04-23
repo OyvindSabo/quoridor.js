@@ -5,12 +5,14 @@ import {
   HorizontalWallPosition,
   Move,
   MoveObject,
+  PawnMove,
   PawnMoveObject,
   PiecePosition,
   Player,
   PlayerMatrix,
   VerticalPiecePosition,
   VerticalWallPosition,
+  WallMove,
   WallMoveObject,
 } from './types';
 
@@ -20,11 +22,20 @@ export const moveToMoveObject = (move: Move) => {
       x: move.charAt(0),
       y: parseInt(move.charAt(1), 10),
       w: move.charAt(2),
-    };
+    } as WallMoveObject;
   return {
     x: move.charAt(0),
     y: parseInt(move.charAt(1), 10),
-  };
+  } as PawnMoveObject;
+};
+
+export const moveObjectToMove = (moveObject: MoveObject) => {
+  if ((moveObject as WallMoveObject).w) {
+    return `${moveObject.x}${moveObject.y}${
+      (moveObject as WallMoveObject).w
+    }` as WallMove;
+  }
+  return `${moveObject.x}${moveObject.y}` as PawnMove;
 };
 
 const letterToNumber = (letter: HorizontalPiecePosition) => {
@@ -255,19 +266,20 @@ export const getOppositePlayer = (player: Player) => {
   return player === 1 ? 2 : 1;
 };
 
-export const unvalidatedMove = (game: Game, move: MoveObject): Game => {
+export const unvalidatedMove = (game: Game, move: Move): Game => {
+  const moveObject = moveToMoveObject(move);
   const currentPosition = game.playerPositions[game.turn];
-  if (isWallMove(move)) {
+  if (isWallMove(moveObject)) {
     // If wall move
     return {
       ...game,
       wallMatrix: {
         ...game.wallMatrix,
-        [move.x]: {
-          ...game.wallMatrix[move.x],
-          [move.y]: {
-            ...game.wallMatrix[move.x][move.y],
-            [move.w]: true,
+        [moveObject.x]: {
+          ...game.wallMatrix[moveObject.x],
+          [moveObject.y]: {
+            ...game.wallMatrix[moveObject.x][moveObject.y],
+            [moveObject.w]: true,
           },
         },
       },
@@ -277,7 +289,7 @@ export const unvalidatedMove = (game: Game, move: MoveObject): Game => {
       },
       history: {
         ...game.history,
-        [game.turn]: [...game.history[game.turn], move],
+        [game.turn]: [...game.history[game.turn], moveObject],
       },
       turn: game.turn === 1 ? 2 : 1,
     };
@@ -294,19 +306,19 @@ export const unvalidatedMove = (game: Game, move: MoveObject): Game => {
       playerPositions: {
         ...game.playerPositions,
         [game.turn]: {
-          ...move,
+          ...moveObject,
           previousPosition: game.playerPositions[game.turn],
         },
       },
       history: {
         ...game.history,
-        [game.turn]: [...game.history[game.turn], move],
+        [game.turn]: [...game.history[game.turn], moveObject],
       },
       pieceMatrix: {
         ...pieceMatrixWithRemovedPiece,
-        [move.x]: {
-          ...pieceMatrixWithRemovedPiece[move.x],
-          [move.y]: game.turn, // Add piece to new position
+        [moveObject.x]: {
+          ...pieceMatrixWithRemovedPiece[moveObject.x],
+          [moveObject.y]: game.turn, // Add piece to new position
         },
       },
       turn: getOppositePlayer(game.turn),
@@ -1052,11 +1064,14 @@ export const getValidWallMoveArray = (game: Game) => {
   if (game.playerWallCounts[game.turn] < 1) {
     return [];
   }
-  return getAllWallMoves().filter((wallMove) => {
-    if (overlapsWall(game, wallMove)) {
+  return getAllWallMoves().filter((wallMoveObject) => {
+    if (overlapsWall(game, wallMoveObject)) {
       return false;
     }
-    const gameWithUnvalidatedMove = unvalidatedMove(game, wallMove);
+    const gameWithUnvalidatedMove = unvalidatedMove(
+      game,
+      moveObjectToMove(wallMoveObject),
+    );
     const thisTurn = game.turn;
     const thatTurn = getOppositePlayer(game.turn);
     const thisShortestPath = shortestPath(gameWithUnvalidatedMove, thisTurn);
