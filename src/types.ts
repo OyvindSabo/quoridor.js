@@ -28,7 +28,7 @@ export type PiecePosition = {
   y: VerticalPiecePosition;
 };
 
-export type PawnMove =
+export type PawnPosition =
   | 'a1'
   | 'a2'
   | 'a3'
@@ -110,6 +110,8 @@ export type PawnMove =
   | 'i7'
   | 'i8'
   | 'i9';
+
+export type PawnMove = PawnPosition;
 
 export type WallMove =
   | 'a1h'

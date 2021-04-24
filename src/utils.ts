@@ -7,6 +7,7 @@ import {
   MoveObject,
   PawnMove,
   PawnMoveObject,
+  PawnPosition,
   PiecePosition,
   Player,
   PlayerMatrix,
@@ -335,17 +336,19 @@ export const unvalidatedMove = (game: Game, move: Move): Game => {
   }
 };
 
-const isSingleUpMove = (
-  currentPosition: PiecePosition,
-  move: PawnMoveObject,
-) => {
-  if (currentPosition.y - move.y === -1 && currentPosition.x === move.x) {
+const isSingleUpMove = (currentPosition: PiecePosition, move: PawnMove) => {
+  const moveObject = moveToMoveObject(move);
+  if (
+    currentPosition.y - moveObject.y === -1 &&
+    currentPosition.x === moveObject.x
+  ) {
     return true;
   }
   return false;
 };
 
-const hasWallAbove = (game: Game, { x, y }: PawnMoveObject) => {
+const hasWallAbove = (game: Game, move: PawnMove) => {
+  const { x, y } = moveToMoveObject(move);
   if (
     game.wallMatrix[x as HorizontalWallPosition][y as VerticalWallPosition].h ||
     (letterToNumber(x) > 1 &&
@@ -358,40 +361,42 @@ const hasWallAbove = (game: Game, { x, y }: PawnMoveObject) => {
   return false;
 };
 
-const isDoubleUpMove = (
-  currentPosition: PiecePosition,
-  move: PawnMoveObject,
-) => {
+const isDoubleUpMove = (currentPosition: PiecePosition, move: PawnMove) => {
+  const moveObject = moveToMoveObject(move);
   if (
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) === -2 &&
-    currentPosition.x === move.x
+    letterToNumber(currentPosition.x) - letterToNumber(moveObject.x) === -2 &&
+    currentPosition.x === moveObject.x
   ) {
     return true;
   }
   return false;
 };
 
-const hasOpponentAbove = (game: Game, position: PawnMoveObject) => {
+const hasOpponentAbove = (game: Game, position: PawnMove) => {
+  const positionObject = moveToMoveObject(position);
   if (
-    game.pieceMatrix[position.x][incrementVerticalPiecePosition(position.y)] ===
-    getOppositePlayer(game.turn)
+    game.pieceMatrix[positionObject.x][
+      incrementVerticalPiecePosition(positionObject.y)
+    ] === getOppositePlayer(game.turn)
   ) {
     return true;
   }
   return false;
 };
 
-const isUpLeftMove = (currentPosition: PiecePosition, move: PawnMoveObject) => {
+const isUpLeftMove = (currentPosition: PiecePosition, move: PawnMove) => {
+  const moveObject = moveToMoveObject(move);
   if (
-    currentPosition.y - move.y === -1 &&
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) === 1
+    currentPosition.y - moveObject.y === -1 &&
+    letterToNumber(currentPosition.x) - letterToNumber(moveObject.x) === 1
   ) {
     return true;
   }
   return false;
 };
 
-const hasWallToTheRight = (game: Game, { x, y }: PawnMoveObject) => {
+const hasWallToTheRight = (game: Game, move: PawnMove) => {
+  const { x, y } = moveToMoveObject(move);
   if (
     (y < 9 &&
       game.wallMatrix[x as HorizontalWallPosition][y as VerticalWallPosition]
@@ -405,13 +410,11 @@ const hasWallToTheRight = (game: Game, { x, y }: PawnMoveObject) => {
   }
 };
 
-const isUpRightMove = (
-  currentPosition: PiecePosition,
-  move: PawnMoveObject,
-) => {
+const isUpRightMove = (currentPosition: PiecePosition, move: PawnMove) => {
+  const moveObject = moveToMoveObject(move);
   if (
-    currentPosition.y - move.y === -1 &&
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) === -1
+    currentPosition.y - moveObject.y === -1 &&
+    letterToNumber(currentPosition.x) - letterToNumber(moveObject.x) === -1
   ) {
     return true;
   }
@@ -419,20 +422,19 @@ const isUpRightMove = (
 };
 
 // Why do I have this one that is almost identical to the previous one? I don't know.
-const isRightUpMove = (
-  currentPosition: PiecePosition,
-  move: PawnMoveObject,
-) => {
+const isRightUpMove = (currentPosition: PiecePosition, move: PawnMove) => {
+  const moveObject = moveToMoveObject(move);
   if (
-    currentPosition.y - move.y === -1 &&
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) === -1
+    currentPosition.y - moveObject.y === -1 &&
+    letterToNumber(currentPosition.x) - letterToNumber(moveObject.x) === -1
   ) {
     return true;
   }
   return false;
 };
 
-const hasWallToTheLeft = (game: Game, { x, y }: PawnMoveObject) => {
+const hasWallToTheLeft = (game: Game, move: PawnMove) => {
+  const { x, y } = moveToMoveObject(move);
   if (
     (y < 9 &&
       game.wallMatrix[
@@ -448,36 +450,33 @@ const hasWallToTheLeft = (game: Game, { x, y }: PawnMoveObject) => {
   return false;
 };
 
-const isSingleRightMove = (
-  currentPosition: PiecePosition,
-  move: PawnMoveObject,
-) => {
+const isSingleRightMove = (currentPosition: PiecePosition, move: PawnMove) => {
+  const moveObject = moveToMoveObject(move);
   if (
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) === -1 &&
-    currentPosition.y === move.y
+    letterToNumber(currentPosition.x) - letterToNumber(moveObject.x) === -1 &&
+    currentPosition.y === moveObject.y
   ) {
     return true;
   }
   return false;
 };
 
-const isDoubleRightMove = (
-  currentPosition: PiecePosition,
-  move: PawnMoveObject,
-) => {
+const isDoubleRightMove = (currentPosition: PiecePosition, move: PawnMove) => {
+  const moveObject = moveToMoveObject(move);
   if (
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) === -2 &&
-    currentPosition.y === move.y
+    letterToNumber(currentPosition.x) - letterToNumber(moveObject.x) === -2 &&
+    currentPosition.y === moveObject.y
   ) {
     return true;
   }
   return false;
 };
 
-const hasOpponentToTheRight = (game: Game, position: PawnMoveObject) => {
+const hasOpponentToTheRight = (game: Game, position: PawnPosition) => {
+  const positionObject = moveToMoveObject(position);
   if (
-    game.pieceMatrix[incrementHorizontalPiecePosition(position.x)][
-      position.y
+    game.pieceMatrix[incrementHorizontalPiecePosition(positionObject.x)][
+      positionObject.y
     ] === getOppositePlayer(game.turn)
   ) {
     return true;
@@ -485,20 +484,19 @@ const hasOpponentToTheRight = (game: Game, position: PawnMoveObject) => {
   return false;
 };
 
-const isRightDownMove = (
-  currentPosition: PiecePosition,
-  move: PawnMoveObject,
-) => {
+const isRightDownMove = (currentPosition: PiecePosition, move: PawnMove) => {
+  const moveObject = moveToMoveObject(move);
   if (
-    currentPosition.y - move.y === 1 &&
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) === -1
+    currentPosition.y - moveObject.y === 1 &&
+    letterToNumber(currentPosition.x) - letterToNumber(moveObject.x) === -1
   ) {
     return true;
   }
   return false;
 };
 
-const hasWallBelow = (game: Game, { x, y }: PawnMoveObject) => {
+const hasWallBelow = (game: Game, move: PawnMove) => {
+  const { x, y } = moveToMoveObject(move);
   if (
     game.wallMatrix[x as HorizontalWallPosition][
       (y - 1) as VerticalWallPosition
@@ -515,90 +513,34 @@ const hasWallBelow = (game: Game, { x, y }: PawnMoveObject) => {
 
 const isSingleDownMove = (
   currentPosition: PiecePosition,
-  move: PawnMoveObject,
+  move: PawnPosition,
 ) => {
-  if (currentPosition.y - move.y === 1 && currentPosition.x === move.x) {
-    return true;
-  }
-  return false;
-};
-
-const isDoubleDownMove = (
-  currentPosition: PiecePosition,
-  move: PawnMoveObject,
-) => {
-  if (currentPosition.y - move.y === 2 && currentPosition.x === move.x) {
-    return true;
-  }
-  return false;
-};
-
-const hasOpponentBelow = (game: Game, position: PiecePosition) => {
+  const moveObject = moveToMoveObject(move);
   if (
-    game.pieceMatrix[position.x][decrementVerticalPiecePosition(position.y)] ===
-    getOppositePlayer(game.turn)
+    currentPosition.y - moveObject.y === 1 &&
+    currentPosition.x === moveObject.x
   ) {
     return true;
   }
   return false;
 };
 
-const isDownRightMove = (
-  currentPosition: PiecePosition,
-  move: PawnMoveObject,
-) => {
+const isDoubleDownMove = (currentPosition: PiecePosition, move: PawnMove) => {
+  const moveObject = moveToMoveObject(move);
   if (
-    currentPosition.y - move.y === 1 &&
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) === -1
+    currentPosition.y - moveObject.y === 2 &&
+    currentPosition.x === moveObject.x
   ) {
     return true;
   }
   return false;
 };
 
-const isDownLeftMove = (
-  currentPosition: PiecePosition,
-  move: PawnMoveObject,
-) => {
+const hasOpponentBelow = (game: Game, position: PawnPosition) => {
+  const positionObject = moveToMoveObject(position);
   if (
-    currentPosition.y - move.y === 1 &&
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) === 1
-  ) {
-    return true;
-  }
-  return false;
-};
-
-const isSingleLeftMove = (
-  currentPosition: PiecePosition,
-  move: PawnMoveObject,
-) => {
-  if (
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) === 1 &&
-    currentPosition.y === move.y
-  ) {
-    return true;
-  }
-  return false;
-};
-
-const isDoubleLeftMove = (
-  currentPosition: PiecePosition,
-  move: PawnMoveObject,
-) => {
-  if (
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) === 2 &&
-    currentPosition.y === move.y
-  ) {
-    return true;
-  }
-  return false;
-};
-
-const hasOpponentToTheLeft = (game: Game, position: PawnMoveObject) => {
-  if (
-    game.pieceMatrix[decrementHorizontalPiecePosition(position.x)][
-      position.y
+    game.pieceMatrix[positionObject.x][
+      decrementVerticalPiecePosition(positionObject.y)
     ] === getOppositePlayer(game.turn)
   ) {
     return true;
@@ -606,13 +548,67 @@ const hasOpponentToTheLeft = (game: Game, position: PawnMoveObject) => {
   return false;
 };
 
-const isLeftDownMove = (
-  currentPosition: PiecePosition,
-  move: PawnMoveObject,
-) => {
+const isDownRightMove = (currentPosition: PiecePosition, move: PawnMove) => {
+  const moveObject = moveToMoveObject(move);
   if (
-    currentPosition.y - move.y === 1 &&
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) === 1
+    currentPosition.y - moveObject.y === 1 &&
+    letterToNumber(currentPosition.x) - letterToNumber(moveObject.x) === -1
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const isDownLeftMove = (currentPosition: PiecePosition, move: PawnMove) => {
+  const moveObject = moveToMoveObject(move);
+  if (
+    currentPosition.y - moveObject.y === 1 &&
+    letterToNumber(currentPosition.x) - letterToNumber(moveObject.x) === 1
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const isSingleLeftMove = (currentPosition: PiecePosition, move: PawnMove) => {
+  const moveObject = moveToMoveObject(move);
+  if (
+    letterToNumber(currentPosition.x) - letterToNumber(moveObject.x) === 1 &&
+    currentPosition.y === moveObject.y
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const isDoubleLeftMove = (currentPosition: PiecePosition, move: PawnMove) => {
+  const moveObject = moveToMoveObject(move);
+  if (
+    letterToNumber(currentPosition.x) - letterToNumber(moveObject.x) === 2 &&
+    currentPosition.y === moveObject.y
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const hasOpponentToTheLeft = (game: Game, position: PawnPosition) => {
+  const positionObject = moveToMoveObject(position);
+  if (
+    game.pieceMatrix[decrementHorizontalPiecePosition(positionObject.x)][
+      positionObject.y
+    ] === getOppositePlayer(game.turn)
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const isLeftDownMove = (currentPosition: PiecePosition, move: PawnMove) => {
+  const moveObject = moveToMoveObject(move);
+  if (
+    currentPosition.y - moveObject.y === 1 &&
+    letterToNumber(currentPosition.x) - letterToNumber(moveObject.x) === 1
   ) {
     return true;
   }
@@ -620,10 +616,11 @@ const isLeftDownMove = (
 };
 
 // Why do I have isLeftUpMove when I already have isUpLeftMove? I don't know.
-const isLeftUpMove = (currentPosition: PiecePosition, move: PawnMoveObject) => {
+const isLeftUpMove = (currentPosition: PiecePosition, move: PawnMove) => {
+  const moveObject = moveToMoveObject(move);
   if (
-    currentPosition.y - move.y === -1 &&
-    letterToNumber(currentPosition.x) - letterToNumber(move.x) === 1
+    currentPosition.y - moveObject.y === -1 &&
+    letterToNumber(currentPosition.x) - letterToNumber(moveObject.x) === 1
   ) {
     return true;
   }
@@ -632,11 +629,14 @@ const isLeftUpMove = (currentPosition: PiecePosition, move: PawnMoveObject) => {
 
 export const isValidNormalMove = (
   game: Game,
-  currentPosition: PiecePosition,
-  move: Move,
+  currentPositionObject: PiecePosition,
+  move: PawnMove,
 ) => {
-  const x = currentPosition.x;
-  const y = currentPosition.y;
+  const x = currentPositionObject.x;
+  const y = currentPositionObject.y;
+  const currentPosition = moveObjectToMove(
+    currentPositionObject,
+  ) as PawnPosition;
 
   // If move is outside board
   if (
@@ -656,149 +656,311 @@ export const isValidNormalMove = (
   }
 
   // If up move
-  if (isSingleUpMove(currentPosition, moveToMoveObject(move))) {
+  if (isSingleUpMove(currentPositionObject, move)) {
     if (hasWallAbove(game, currentPosition)) return false;
     return true;
   }
   if (
-    isDoubleUpMove(currentPosition, moveToMoveObject(move)) &&
+    isDoubleUpMove(currentPositionObject, move) &&
     hasOpponentAbove(game, currentPosition)
   ) {
     if (hasWallAbove(game, currentPosition)) return false;
-    if (hasWallAbove(game, { x, y: incrementVerticalPiecePosition(y) }))
+    if (
+      hasWallAbove(
+        game,
+        moveObjectToMove({
+          x,
+          y: incrementVerticalPiecePosition(y),
+        }) as PawnPosition,
+      )
+    )
       return false;
     return true;
   }
   if (
-    isUpLeftMove(currentPosition, moveToMoveObject(move)) &&
+    isUpLeftMove(currentPositionObject, move) &&
     hasOpponentAbove(game, currentPosition)
   ) {
-    if (!hasWallAbove(game, { x, y: incrementVerticalPiecePosition(y) }))
+    if (
+      !hasWallAbove(
+        game,
+        moveObjectToMove({
+          x,
+          y: incrementVerticalPiecePosition(y),
+        }) as PawnPosition,
+      )
+    )
       return false;
     if (hasWallAbove(game, currentPosition)) return false;
-    if (hasWallToTheRight(game, { x, y: incrementVerticalPiecePosition(y) }))
+    if (
+      hasWallToTheRight(
+        game,
+        moveObjectToMove({
+          x,
+          y: incrementVerticalPiecePosition(y),
+        }) as PawnPosition,
+      )
+    )
       return false;
     return true;
   }
   if (
-    isUpRightMove(currentPosition, moveToMoveObject(move)) &&
+    isUpRightMove(currentPositionObject, move) &&
     hasOpponentAbove(game, currentPosition)
   ) {
-    if (!hasWallAbove(game, { x, y: incrementVerticalPiecePosition(y) }))
+    if (
+      !hasWallAbove(
+        game,
+        moveObjectToMove({
+          x,
+          y: incrementVerticalPiecePosition(y),
+        }) as PawnMove,
+      )
+    )
       return false;
     if (hasWallAbove(game, currentPosition)) return false;
-    if (hasWallToTheLeft(game, { x, y: incrementVerticalPiecePosition(y) }))
+    if (
+      hasWallToTheLeft(
+        game,
+        moveObjectToMove({
+          x,
+          y: incrementVerticalPiecePosition(y),
+        }) as PawnMove,
+      )
+    )
       return false;
     return true;
   }
 
   // If right move
-  if (isSingleRightMove(currentPosition, moveToMoveObject(move))) {
+  if (isSingleRightMove(currentPositionObject, move)) {
     if (hasWallToTheRight(game, currentPosition)) return false;
     return true;
   }
   if (
-    isDoubleRightMove(currentPosition, moveToMoveObject(move)) &&
+    isDoubleRightMove(currentPositionObject, move) &&
     hasOpponentToTheRight(game, currentPosition)
   ) {
     if (hasWallToTheRight(game, currentPosition)) return false;
-    if (hasWallToTheRight(game, { x: incrementHorizontalPiecePosition(x), y }))
+    if (
+      hasWallToTheRight(
+        game,
+        moveObjectToMove({
+          x: incrementHorizontalPiecePosition(x),
+          y,
+        }) as PawnMove,
+      )
+    )
       return false;
     return true;
   }
   if (
-    isRightUpMove(currentPosition, moveToMoveObject(move)) &&
+    isRightUpMove(currentPositionObject, move) &&
     hasOpponentToTheRight(game, currentPosition)
   ) {
-    if (!hasWallToTheRight(game, { x: incrementHorizontalPiecePosition(x), y }))
+    if (
+      !hasWallToTheRight(
+        game,
+        moveObjectToMove({
+          x: incrementHorizontalPiecePosition(x),
+          y,
+        }) as PawnMove,
+      )
+    )
       return false;
     if (hasWallToTheRight(game, currentPosition)) return false;
-    if (hasWallAbove(game, { x: incrementHorizontalPiecePosition(x), y }))
+    if (
+      hasWallAbove(
+        game,
+        moveObjectToMove({
+          x: incrementHorizontalPiecePosition(x),
+          y,
+        }) as PawnMove,
+      )
+    )
       return false;
     return true;
   }
   if (
-    isRightDownMove(currentPosition, moveToMoveObject(move)) &&
+    isRightDownMove(currentPositionObject, move) &&
     hasOpponentToTheRight(game, currentPosition)
   ) {
-    if (!hasWallToTheRight(game, { x: incrementHorizontalPiecePosition(x), y }))
+    if (
+      !hasWallToTheRight(
+        game,
+        moveObjectToMove({
+          x: incrementHorizontalPiecePosition(x),
+          y,
+        }) as PawnMove,
+      )
+    )
       return false;
     if (hasWallToTheRight(game, currentPosition)) return false;
-    if (hasWallBelow(game, { x: incrementHorizontalPiecePosition(x), y }))
+    if (
+      hasWallBelow(
+        game,
+        moveObjectToMove({
+          x: incrementHorizontalPiecePosition(x),
+          y,
+        }) as PawnMove,
+      )
+    )
       return false;
     return true;
   }
 
   // If down move
-  if (isSingleDownMove(currentPosition, moveToMoveObject(move))) {
-    if (hasWallBelow(game, { x, y })) return false;
+  if (isSingleDownMove(currentPositionObject, move)) {
+    if (hasWallBelow(game, moveObjectToMove({ x, y }) as PawnMove)) {
+      return false;
+    }
     return true;
   }
   if (
-    isDoubleDownMove(currentPosition, moveToMoveObject(move)) &&
+    isDoubleDownMove(currentPositionObject, move) &&
     hasOpponentBelow(game, currentPosition)
   ) {
     if (hasWallBelow(game, currentPosition)) return false;
-    if (hasWallBelow(game, { x, y: decrementVerticalPiecePosition(y) }))
+    if (
+      hasWallBelow(
+        game,
+        moveObjectToMove({
+          x,
+          y: decrementVerticalPiecePosition(y),
+        }) as PawnMove,
+      )
+    )
       return false;
     return true;
   }
   if (
-    isDownRightMove(currentPosition, moveToMoveObject(move)) &&
+    isDownRightMove(currentPositionObject, move) &&
     hasOpponentBelow(game, currentPosition)
   ) {
-    if (!hasWallBelow(game, { x, y: decrementVerticalPiecePosition(y) }))
+    if (
+      !hasWallBelow(
+        game,
+        moveObjectToMove({
+          x,
+          y: decrementVerticalPiecePosition(y),
+        }) as PawnMove,
+      )
+    )
       return false;
     if (hasWallBelow(game, currentPosition)) return false;
-    if (hasWallToTheRight(game, { x, y: decrementVerticalPiecePosition(y) }))
+    if (
+      hasWallToTheRight(
+        game,
+        moveObjectToMove({
+          x,
+          y: decrementVerticalPiecePosition(y),
+        }) as PawnMove,
+      )
+    )
       return false;
     return true;
   }
   if (
-    isDownLeftMove(currentPosition, moveToMoveObject(move)) &&
+    isDownLeftMove(currentPositionObject, move) &&
     hasOpponentBelow(game, currentPosition)
   ) {
-    if (!hasWallBelow(game, { x, y: decrementVerticalPiecePosition(y) }))
+    if (
+      !hasWallBelow(
+        game,
+        moveObjectToMove({
+          x,
+          y: decrementVerticalPiecePosition(y),
+        }) as PawnMove,
+      )
+    )
       return false;
     if (hasWallBelow(game, currentPosition)) return false;
-    if (hasWallToTheLeft(game, { x, y: decrementVerticalPiecePosition(y) }))
+    if (
+      hasWallToTheLeft(
+        game,
+        moveObjectToMove({
+          x,
+          y: decrementVerticalPiecePosition(y),
+        }) as PawnMove,
+      )
+    )
       return false;
     return true;
   }
 
   // If left move
-  if (isSingleLeftMove(currentPosition, moveToMoveObject(move))) {
+  if (isSingleLeftMove(currentPositionObject, move)) {
     if (hasWallToTheLeft(game, currentPosition)) return false;
     return true;
   }
   if (
-    isDoubleLeftMove(currentPosition, moveToMoveObject(move)) &&
+    isDoubleLeftMove(currentPositionObject, move) &&
     hasOpponentToTheLeft(game, currentPosition)
   ) {
     if (hasWallToTheLeft(game, currentPosition)) return false;
-    if (hasWallToTheLeft(game, { x: decrementHorizontalPiecePosition(x), y }))
+    if (
+      hasWallToTheLeft(
+        game,
+        moveObjectToMove({
+          x: decrementHorizontalPiecePosition(x),
+          y,
+        }) as PawnMove,
+      )
+    )
       return false;
     return true;
   }
   if (
-    isLeftDownMove(currentPosition, moveToMoveObject(move)) &&
+    isLeftDownMove(currentPositionObject, move) &&
     hasOpponentToTheLeft(game, currentPosition)
   ) {
-    if (!hasWallToTheLeft(game, { x: decrementHorizontalPiecePosition(x), y }))
+    if (
+      !hasWallToTheLeft(
+        game,
+        moveObjectToMove({
+          x: decrementHorizontalPiecePosition(x),
+          y,
+        }) as PawnMove,
+      )
+    )
       return false;
     if (hasWallToTheLeft(game, currentPosition)) return false;
-    if (hasWallBelow(game, { x: decrementHorizontalPiecePosition(x), y }))
+    if (
+      hasWallBelow(
+        game,
+        moveObjectToMove({
+          x: decrementHorizontalPiecePosition(x),
+          y,
+        }) as PawnMove,
+      )
+    )
       return false;
     return true;
   }
   if (
-    isLeftUpMove(currentPosition, moveToMoveObject(move)) &&
+    isLeftUpMove(currentPositionObject, move) &&
     hasOpponentToTheLeft(game, currentPosition)
   ) {
-    if (!hasWallToTheLeft(game, { x: decrementHorizontalPiecePosition(x), y }))
+    if (
+      !hasWallToTheLeft(
+        game,
+        moveObjectToMove({
+          x: decrementHorizontalPiecePosition(x),
+          y,
+        }) as PawnMove,
+      )
+    )
       return false;
     if (hasWallToTheLeft(game, currentPosition)) return false;
-    if (hasWallAbove(game, { x: decrementHorizontalPiecePosition(x), y }))
+    if (
+      hasWallAbove(
+        game,
+        moveObjectToMove({
+          x: decrementHorizontalPiecePosition(x),
+          y,
+        }) as PawnMove,
+      )
+    )
       return false;
     return true;
   }
@@ -822,68 +984,74 @@ const incrementLetter = (letter: HorizontalPiecePosition) => {
   return numberToLetter(letterToNumber(letter) + 1);
 };
 
-const getPositionFromNorthMove = (currentPosition: PiecePosition) => {
-  return {
-    x: currentPosition.x,
-    y: (currentPosition.y + 1) as VerticalPiecePosition,
-  };
+const getPositionFromNorthMove = (currentPosition: PawnPosition) => {
+  const currentPositionObject = moveToMoveObject(currentPosition);
+  return moveObjectToMove({
+    x: currentPositionObject.x,
+    y: (currentPositionObject.y + 1) as VerticalPiecePosition,
+  }) as PawnMove;
 };
 
-const getPositionFromNorthNorthMove = (currentPosition: PiecePosition) => {
+const getPositionFromNorthNorthMove = (currentPosition: PawnPosition) => {
   return getPositionFromNorthMove(getPositionFromNorthMove(currentPosition));
 };
 
-const getPositionFromEastMove = (currentPosition: PiecePosition) => {
-  return {
-    x: incrementLetter(currentPosition.x) as HorizontalPiecePosition,
-    y: currentPosition.y,
-  };
+const getPositionFromEastMove = (currentPosition: PawnPosition) => {
+  const currentPositionObject = moveToMoveObject(currentPosition);
+  return moveObjectToMove({
+    x: incrementLetter(currentPositionObject.x) as HorizontalPiecePosition,
+    y: currentPositionObject.y,
+  }) as PawnMove;
 };
 
-const getPositionFromNorthEastMove = (currentPosition: PiecePosition) => {
+const getPositionFromNorthEastMove = (currentPosition: PawnPosition) => {
   return getPositionFromNorthMove(getPositionFromEastMove(currentPosition));
 };
 
-const getPositionFromEastEastMove = (currentPosition: PiecePosition) => {
+const getPositionFromEastEastMove = (currentPosition: PawnPosition) => {
   return getPositionFromEastMove(getPositionFromEastMove(currentPosition));
 };
 
-const getPositionFromSouthMove = (currentPosition: PiecePosition) => {
-  return {
-    x: currentPosition.x,
-    y: (currentPosition.y - 1) as VerticalPiecePosition,
-  };
+const getPositionFromSouthMove = (currentPosition: PawnPosition) => {
+  const currentPositionObject = moveToMoveObject(currentPosition);
+  return moveObjectToMove({
+    x: currentPositionObject.x,
+    y: (currentPositionObject.y - 1) as VerticalPiecePosition,
+  }) as PawnMove;
 };
 
-const getPositionFromSouthEastMove = (currentPosition: PiecePosition) => {
+const getPositionFromSouthEastMove = (currentPosition: PawnPosition) => {
   return getPositionFromSouthMove(getPositionFromEastMove(currentPosition));
 };
 
-const getPositionFromSouthSouthMove = (currentPosition: PiecePosition) => {
+const getPositionFromSouthSouthMove = (currentPosition: PawnPosition) => {
   return getPositionFromSouthMove(getPositionFromSouthMove(currentPosition));
 };
 
-const getPositionFromWestMove = (currentPosition: PiecePosition) => {
-  return {
-    x: decrementLetter(currentPosition.x) as HorizontalPiecePosition,
-    y: currentPosition.y,
-  };
+const getPositionFromWestMove = (currentPosition: PawnPosition) => {
+  const currentPositionObject = moveToMoveObject(currentPosition);
+  return moveObjectToMove({
+    x: decrementLetter(currentPositionObject.x) as HorizontalPiecePosition,
+    y: currentPositionObject.y,
+  }) as PawnMove;
 };
 
-const getPositionFromSouthWestMove = (currentPosition: PiecePosition) => {
+const getPositionFromSouthWestMove = (currentPosition: PawnPosition) => {
   return getPositionFromSouthMove(getPositionFromWestMove(currentPosition));
 };
 
-const getPositionFromWestWestMove = (currentPosition: PiecePosition) => {
+const getPositionFromWestWestMove = (currentPosition: PawnPosition) => {
   return getPositionFromWestMove(getPositionFromWestMove(currentPosition));
 };
 
-const getPositionFromNorthWestMove = (currentPosition: PiecePosition) => {
+const getPositionFromNorthWestMove = (currentPosition: PawnPosition) => {
   return getPositionFromNorthMove(getPositionFromWestMove(currentPosition));
 };
 
 export const getValidPawnMoveArray = (game: Game) => {
-  const currentPosition = game.playerPositions[game.turn];
+  const currentPosition = moveObjectToMove(
+    game.playerPositions[game.turn],
+  ) as PawnPosition;
   const validPawnMoveArray = [
     getPositionFromNorthMove(currentPosition),
     getPositionFromNorthNorthMove(currentPosition),
@@ -898,7 +1066,7 @@ export const getValidPawnMoveArray = (game: Game) => {
     getPositionFromWestWestMove(currentPosition),
     getPositionFromNorthWestMove(currentPosition),
   ].filter((newPosition) =>
-    isValidNormalMove(game, currentPosition, moveObjectToMove(newPosition)),
+    isValidNormalMove(game, moveToMoveObject(currentPosition), newPosition),
   );
   return validPawnMoveArray;
 };
@@ -1081,18 +1249,15 @@ export const getValidWallMoveArray = (game: Game) => {
   if (game.playerWallCounts[game.turn] < 1) {
     return [];
   }
-  return getAllWallMoves().filter((wallMoveObject) => {
-    if (overlapsWall(game, moveObjectToMove(wallMoveObject) as WallMove)) {
-      return false;
-    }
-    const gameWithUnvalidatedMove = unvalidatedMove(
-      game,
-      moveObjectToMove(wallMoveObject),
-    );
-    const thisTurn = game.turn;
-    const thatTurn = getOppositePlayer(game.turn);
-    const thisShortestPath = shortestPath(gameWithUnvalidatedMove, thisTurn);
-    const thatShortestPath = shortestPath(gameWithUnvalidatedMove, thatTurn);
-    return Boolean(thisShortestPath && thatShortestPath);
-  });
+  return getAllWallMoves()
+    .map((moveObject) => moveObjectToMove(moveObject) as WallMove)
+    .filter((wallMove) => {
+      if (overlapsWall(game, wallMove)) return false;
+      const gameWithUnvalidatedMove = unvalidatedMove(game, wallMove);
+      const thisTurn = game.turn;
+      const thatTurn = getOppositePlayer(game.turn);
+      const thisShortestPath = shortestPath(gameWithUnvalidatedMove, thisTurn);
+      const thatShortestPath = shortestPath(gameWithUnvalidatedMove, thatTurn);
+      return Boolean(thisShortestPath && thatShortestPath);
+    });
 };
