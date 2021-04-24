@@ -258,8 +258,8 @@ export const doesWallMoveOverlapExistingWall = (
   return false;
 };
 
-export const isWallMove = (move: MoveObject): move is WallMoveObject => {
-  return Boolean((move as WallMoveObject).w);
+export const isWallMove = (move: Move): move is WallMove => {
+  return move.length === 3;
 };
 
 export const getOppositePlayer = (player: Player) => {
@@ -269,17 +269,19 @@ export const getOppositePlayer = (player: Player) => {
 export const unvalidatedMove = (game: Game, move: Move): Game => {
   const moveObject = moveToMoveObject(move);
   const currentPosition = game.playerPositions[game.turn];
-  if (isWallMove(moveObject)) {
+  if (isWallMove(move)) {
     // If wall move
     return {
       ...game,
       wallMatrix: {
         ...game.wallMatrix,
         [moveObject.x]: {
-          ...game.wallMatrix[moveObject.x],
+          ...game.wallMatrix[(moveObject as WallMoveObject).x],
           [moveObject.y]: {
-            ...game.wallMatrix[moveObject.x][moveObject.y],
-            [moveObject.w]: true,
+            ...game.wallMatrix[(moveObject as WallMoveObject).x][
+              (moveObject as WallMoveObject).y
+            ],
+            [(moveObject as WallMoveObject).w]: true,
           },
         },
       },

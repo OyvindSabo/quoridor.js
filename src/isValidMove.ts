@@ -12,7 +12,7 @@ import {
 export const isValidMove = (game: Game, move: Move) => {
   // Handle wall moves
   const currentPosition = game.playerPositions[game.turn];
-  if (isWallMove(moveToMoveObject(move))) {
+  if (isWallMove(move)) {
     if (game.playerWallCounts[game.turn] < 1) return false; // Check that player has enough walls
     if (
       doesWallMoveOverlapExistingWall(
