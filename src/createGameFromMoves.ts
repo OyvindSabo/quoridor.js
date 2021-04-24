@@ -1,4 +1,4 @@
-import { Game, Move, MoveObject, PlayerMatrix } from './types';
+import { Game, Move, PlayerMatrix } from './types';
 import { unvalidatedMove } from './utils';
 
 const createNewPieceMatrix = (): PlayerMatrix => ({
