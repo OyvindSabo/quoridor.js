@@ -1044,10 +1044,10 @@ const getAllWallMoves = () => {
   return allWallMoves;
 };
 
-const overlapsWall = (game: Game, wallMove: WallMoveObject) => {
-  const x = wallMove.x;
-  const y = wallMove.y;
-  if (wallMove.w === 'h') {
+const overlapsWall = (game: Game, wallMove: WallMove) => {
+  const x = moveToMoveObject(wallMove).x as HorizontalWallPosition;
+  const y = moveToMoveObject(wallMove).y as VerticalWallPosition;
+  if (isHorizontalWallMove(wallMove)) {
     // A horizontal wall
     if (
       game.wallMatrix[x][y].h ||
@@ -1064,7 +1064,7 @@ const overlapsWall = (game: Game, wallMove: WallMoveObject) => {
       return true;
     }
   }
-  if (wallMove.w === 'v') {
+  if (isVerticalWallMove(wallMove)) {
     if (
       game.wallMatrix[x][y].h ||
       game.wallMatrix[x][y].v ||
@@ -1082,7 +1082,7 @@ export const getValidWallMoveArray = (game: Game) => {
     return [];
   }
   return getAllWallMoves().filter((wallMoveObject) => {
-    if (overlapsWall(game, wallMoveObject)) {
+    if (overlapsWall(game, moveObjectToMove(wallMoveObject) as WallMove)) {
       return false;
     }
     const gameWithUnvalidatedMove = unvalidatedMove(
