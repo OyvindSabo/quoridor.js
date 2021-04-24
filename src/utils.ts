@@ -226,14 +226,21 @@ const incrementVerticalPiecePosition = (
   throw Error(`${verticalPiecePosition} cannot be incremented.`);
 };
 
+const isHorizontalWallMove = (wallMove: WallMove) => {
+  return wallMove.charAt(2) === 'h';
+};
+
+const isVerticalWallMove = (wallMove: WallMove) => {
+  return wallMove.charAt(2) === 'v';
+};
+
 export const doesWallMoveOverlapExistingWall = (
   game: Game,
-  wallMove: WallMoveObject,
+  wallMove: WallMove,
 ) => {
-  const x = wallMove.x;
-  const y = wallMove.y;
-  if (wallMove.w === 'h') {
-    // A horizontal wall
+  const x = moveToMoveObject(wallMove).x as HorizontalWallPosition;
+  const y = moveToMoveObject(wallMove).y as VerticalWallPosition;
+  if (isHorizontalWallMove(wallMove)) {
     if (
       game.wallMatrix[x][y].h ||
       game.wallMatrix[x][y].v ||
@@ -245,7 +252,7 @@ export const doesWallMoveOverlapExistingWall = (
       return true;
     }
   }
-  if (wallMove.w === 'v') {
+  if (isVerticalWallMove(wallMove)) {
     if (
       game.wallMatrix[x][y].h ||
       game.wallMatrix[x][y].v ||
