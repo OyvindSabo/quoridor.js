@@ -30,5 +30,5 @@ export const isValidMove = (game: Game, move: Move) => {
     }
     return false;
   }
-  return isValidNormalMove(game, currentPosition, moveToMoveObject(move));
+  return isValidNormalMove(game, currentPosition, move);
 };

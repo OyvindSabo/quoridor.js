@@ -624,27 +624,35 @@ const isLeftUpMove = (currentPosition: PiecePosition, move: PawnMoveObject) => {
 export const isValidNormalMove = (
   game: Game,
   currentPosition: PiecePosition,
-  move: MoveObject,
+  move: Move,
 ) => {
   const x = currentPosition.x;
   const y = currentPosition.y;
 
   // If move is outside board
-  if (letterToNumber(move.x) < 1 || letterToNumber(move.x) > 9) return false;
-  if (move.y < 1 || move.y > 9) return false;
+  if (
+    letterToNumber(moveToMoveObject(move).x) < 1 ||
+    letterToNumber(moveToMoveObject(move).x) > 9
+  )
+    return false;
+  if (moveToMoveObject(move).y < 1 || moveToMoveObject(move).y > 9)
+    return false;
 
   // If the move lands on top of the opponent
-  if (game.pieceMatrix[move.x][move.y] === getOppositePlayer(game.turn)) {
+  if (
+    game.pieceMatrix[moveToMoveObject(move).x][moveToMoveObject(move).y] ===
+    getOppositePlayer(game.turn)
+  ) {
     return false;
   }
 
   // If up move
-  if (isSingleUpMove(currentPosition, move)) {
+  if (isSingleUpMove(currentPosition, moveToMoveObject(move))) {
     if (hasWallAbove(game, currentPosition)) return false;
     return true;
   }
   if (
-    isDoubleUpMove(currentPosition, move) &&
+    isDoubleUpMove(currentPosition, moveToMoveObject(move)) &&
     hasOpponentAbove(game, currentPosition)
   ) {
     if (hasWallAbove(game, currentPosition)) return false;
@@ -653,7 +661,7 @@ export const isValidNormalMove = (
     return true;
   }
   if (
-    isUpLeftMove(currentPosition, move) &&
+    isUpLeftMove(currentPosition, moveToMoveObject(move)) &&
     hasOpponentAbove(game, currentPosition)
   ) {
     if (!hasWallAbove(game, { x, y: incrementVerticalPiecePosition(y) }))
@@ -664,7 +672,7 @@ export const isValidNormalMove = (
     return true;
   }
   if (
-    isUpRightMove(currentPosition, move) &&
+    isUpRightMove(currentPosition, moveToMoveObject(move)) &&
     hasOpponentAbove(game, currentPosition)
   ) {
     if (!hasWallAbove(game, { x, y: incrementVerticalPiecePosition(y) }))
@@ -676,12 +684,12 @@ export const isValidNormalMove = (
   }
 
   // If right move
-  if (isSingleRightMove(currentPosition, move)) {
+  if (isSingleRightMove(currentPosition, moveToMoveObject(move))) {
     if (hasWallToTheRight(game, currentPosition)) return false;
     return true;
   }
   if (
-    isDoubleRightMove(currentPosition, move) &&
+    isDoubleRightMove(currentPosition, moveToMoveObject(move)) &&
     hasOpponentToTheRight(game, currentPosition)
   ) {
     if (hasWallToTheRight(game, currentPosition)) return false;
@@ -690,7 +698,7 @@ export const isValidNormalMove = (
     return true;
   }
   if (
-    isRightUpMove(currentPosition, move) &&
+    isRightUpMove(currentPosition, moveToMoveObject(move)) &&
     hasOpponentToTheRight(game, currentPosition)
   ) {
     if (!hasWallToTheRight(game, { x: incrementHorizontalPiecePosition(x), y }))
@@ -701,7 +709,7 @@ export const isValidNormalMove = (
     return true;
   }
   if (
-    isRightDownMove(currentPosition, move) &&
+    isRightDownMove(currentPosition, moveToMoveObject(move)) &&
     hasOpponentToTheRight(game, currentPosition)
   ) {
     if (!hasWallToTheRight(game, { x: incrementHorizontalPiecePosition(x), y }))
@@ -713,12 +721,12 @@ export const isValidNormalMove = (
   }
 
   // If down move
-  if (isSingleDownMove(currentPosition, move)) {
+  if (isSingleDownMove(currentPosition, moveToMoveObject(move))) {
     if (hasWallBelow(game, { x, y })) return false;
     return true;
   }
   if (
-    isDoubleDownMove(currentPosition, move) &&
+    isDoubleDownMove(currentPosition, moveToMoveObject(move)) &&
     hasOpponentBelow(game, currentPosition)
   ) {
     if (hasWallBelow(game, currentPosition)) return false;
@@ -727,7 +735,7 @@ export const isValidNormalMove = (
     return true;
   }
   if (
-    isDownRightMove(currentPosition, move) &&
+    isDownRightMove(currentPosition, moveToMoveObject(move)) &&
     hasOpponentBelow(game, currentPosition)
   ) {
     if (!hasWallBelow(game, { x, y: decrementVerticalPiecePosition(y) }))
@@ -738,7 +746,7 @@ export const isValidNormalMove = (
     return true;
   }
   if (
-    isDownLeftMove(currentPosition, move) &&
+    isDownLeftMove(currentPosition, moveToMoveObject(move)) &&
     hasOpponentBelow(game, currentPosition)
   ) {
     if (!hasWallBelow(game, { x, y: decrementVerticalPiecePosition(y) }))
@@ -750,12 +758,12 @@ export const isValidNormalMove = (
   }
 
   // If left move
-  if (isSingleLeftMove(currentPosition, move)) {
+  if (isSingleLeftMove(currentPosition, moveToMoveObject(move))) {
     if (hasWallToTheLeft(game, currentPosition)) return false;
     return true;
   }
   if (
-    isDoubleLeftMove(currentPosition, move) &&
+    isDoubleLeftMove(currentPosition, moveToMoveObject(move)) &&
     hasOpponentToTheLeft(game, currentPosition)
   ) {
     if (hasWallToTheLeft(game, currentPosition)) return false;
@@ -764,7 +772,7 @@ export const isValidNormalMove = (
     return true;
   }
   if (
-    isLeftDownMove(currentPosition, move) &&
+    isLeftDownMove(currentPosition, moveToMoveObject(move)) &&
     hasOpponentToTheLeft(game, currentPosition)
   ) {
     if (!hasWallToTheLeft(game, { x: decrementHorizontalPiecePosition(x), y }))
@@ -775,7 +783,7 @@ export const isValidNormalMove = (
     return true;
   }
   if (
-    isLeftUpMove(currentPosition, move) &&
+    isLeftUpMove(currentPosition, moveToMoveObject(move)) &&
     hasOpponentToTheLeft(game, currentPosition)
   ) {
     if (!hasWallToTheLeft(game, { x: decrementHorizontalPiecePosition(x), y }))
@@ -881,7 +889,7 @@ export const getValidPawnMoveArray = (game: Game) => {
     getPositionFromWestWestMove(currentPosition),
     getPositionFromNorthWestMove(currentPosition),
   ].filter((newPosition) =>
-    isValidNormalMove(game, currentPosition, newPosition),
+    isValidNormalMove(game, currentPosition, moveObjectToMove(newPosition)),
   );
   return validPawnMoveArray;
 };
