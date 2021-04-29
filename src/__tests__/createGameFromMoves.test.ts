@@ -1,5 +1,4 @@
 import { createGameFromMoves } from '../createGameFromMoves';
-import { createNewBoard } from '../createNewBoard';
 
 test('Test that game is correctly initialized', () => {
   expect(createGameFromMoves([])).toStrictEqual({
