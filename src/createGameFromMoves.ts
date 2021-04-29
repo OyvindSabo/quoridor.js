@@ -102,7 +102,7 @@ export const createGameFromMoves = (moves: Move[]) => {
     board: createNewBoard(),
     pieceMatrix: createNewPieceMatrix(),
     wallMatrix: createNewWallMatrix(),
-    history: { 1: [], 2: [] },
+    history: [],
     turn: 1,
     playerPositions: { 1: { x: 'e', y: 1 }, 2: { x: 'e', y: 9 } },
     playerWallCounts: { 1: 10, 2: 10 },

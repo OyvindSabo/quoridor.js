@@ -299,10 +299,7 @@ export const unvalidatedMove = (game: Game, move: Move): Game => {
         ...game.playerWallCounts,
         [game.turn]: game.playerWallCounts[game.turn] - 1,
       },
-      history: {
-        ...game.history,
-        [game.turn]: [...game.history[game.turn], moveObject],
-      },
+      history: [...game.history, move],
       turn: game.turn === 1 ? 2 : 1,
     };
   } else {
@@ -328,10 +325,7 @@ export const unvalidatedMove = (game: Game, move: Move): Game => {
           previousPosition: game.playerPositions[game.turn],
         },
       },
-      history: {
-        ...game.history,
-        [game.turn]: [...game.history[game.turn], moveObject],
-      },
+      history: [...game.history, move],
       pieceMatrix: {
         ...pieceMatrixWithRemovedPiece,
         [moveObject.x]: {

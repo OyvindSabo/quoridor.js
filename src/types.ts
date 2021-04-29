@@ -277,8 +277,6 @@ export type WallMatrix = Record<
   Record<VerticalWallPosition, { h: boolean; v: boolean }>
 >;
 
-type History = Record<Player, MoveObject[]>;
-
 type WallCount = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
 // I have renamed board to piece
@@ -286,7 +284,7 @@ export type Game = {
   board: Board;
   pieceMatrix: PlayerMatrix;
   wallMatrix: WallMatrix;
-  history: History;
+  history: Move[];
   turn: Player;
   playerPositions: Record<
     Player,
