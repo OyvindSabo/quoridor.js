@@ -1,5 +1,6 @@
 import { Game, Move, PlayerMatrix } from './types';
 import { unvalidatedMove } from './utils';
+import { createNewBoard } from './createNewBoard';
 
 const createNewPieceMatrix = (): PlayerMatrix => ({
   a: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
@@ -98,6 +99,7 @@ export const createNewWallMatrix = () => ({
 
 export const createGameFromMoves = (moves: Move[]) => {
   const game: Game = {
+    board: createNewBoard(),
     pieceMatrix: createNewPieceMatrix(),
     wallMatrix: createNewWallMatrix(),
     history: { 1: [], 2: [] },

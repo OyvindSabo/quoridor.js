@@ -113,7 +113,7 @@ export type PawnPosition =
 
 export type PawnMove = PawnPosition;
 
-export type WallMove =
+export type WallPosition =
   | 'a1h'
   | 'a1v'
   | 'a2h'
@@ -243,7 +243,14 @@ export type WallMove =
   | 'h8h'
   | 'h8v';
 
+export type Board = Record<PawnPosition, Player | null> &
+  Record<WallPosition, boolean>;
+
+export type WallMove = WallPosition;
+
 export type Move = PawnMove | WallMove;
+
+export type Position = PawnPosition | WallPosition;
 
 export type PawnMoveObject = {
   x: HorizontalPiecePosition;
@@ -276,6 +283,7 @@ type WallCount = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
 // I have renamed board to piece
 export type Game = {
+  board: Board;
   pieceMatrix: PlayerMatrix;
   wallMatrix: WallMatrix;
   history: History;

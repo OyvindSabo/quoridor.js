@@ -3,7 +3,7 @@ import {
   doesWallMoveOverlapExistingWall,
   getOppositePlayer,
   isValidNormalMove,
-  isWallMove,
+  isWallPosition,
   shortestPath,
   unvalidatedMove,
 } from './utils';
@@ -11,7 +11,7 @@ import {
 export const isValidMove = (game: Game, move: Move) => {
   // Handle wall moves
   const currentPosition = game.playerPositions[game.turn];
-  if (isWallMove(move)) {
+  if (isWallPosition(move)) {
     if (game.playerWallCounts[game.turn] < 1) return false; // Check that player has enough walls
     if (doesWallMoveOverlapExistingWall(game, move)) return false; // Check that wall does not overlap other walls
     const gameWithUnvalidatedMove = unvalidatedMove(game, move);

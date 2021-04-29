@@ -1,5 +1,6 @@
 import { aStar, QuoridorNode } from './aStar';
 import {
+  Board,
   Game,
   HorizontalPiecePosition,
   HorizontalWallPosition,
@@ -266,7 +267,7 @@ export const doesWallMoveOverlapExistingWall = (
   return false;
 };
 
-export const isWallMove = (move: Move): move is WallMove => {
+export const isWallPosition = (move: Move): move is WallMove => {
   return move.length === 3;
 };
 
@@ -277,10 +278,11 @@ export const getOppositePlayer = (player: Player) => {
 export const unvalidatedMove = (game: Game, move: Move): Game => {
   const moveObject = moveToMoveObject(move);
   const currentPosition = game.playerPositions[game.turn];
-  if (isWallMove(move)) {
+  if (isWallPosition(move)) {
     // If wall move
     return {
       ...game,
+      board: { ...game.board, [move]: true },
       wallMatrix: {
         ...game.wallMatrix,
         [moveObject.x]: {
@@ -313,6 +315,12 @@ export const unvalidatedMove = (game: Game, move: Move): Game => {
     } as PlayerMatrix;
     return {
       ...game,
+      board: Object.fromEntries(
+        Object.entries(game.board).map(([pos, val]) => [
+          pos,
+          pos === move ? game.turn : val === game.turn ? null : val,
+        ]),
+      ) as Board,
       playerPositions: {
         ...game.playerPositions,
         [game.turn]: {
