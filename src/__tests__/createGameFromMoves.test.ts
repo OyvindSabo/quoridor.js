@@ -307,7 +307,6 @@ test('Test that game is correctly initialized', () => {
       },
     },
     history: [],
-    turn: 1,
     playerPositions: { 1: { x: 'e', y: 1 }, 2: { x: 'e', y: 9 } },
     playerWallCounts: { 1: 10, 2: 10 },
   });
@@ -620,7 +619,6 @@ test('Test that game is correctly initialized from array of forward moves', () =
       },
     },
     history: ['e2', 'e8', 'e3', 'e7'],
-    turn: 1,
     playerPositions: {
       1: {
         x: 'e',

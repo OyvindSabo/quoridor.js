@@ -1,4 +1,5 @@
 import { aStar, QuoridorNode } from './aStar';
+import { getTurn } from './getTurn';
 import {
   Board,
   Game,
@@ -277,7 +278,7 @@ export const getOppositePlayer = (player: Player) => {
 
 export const unvalidatedMove = (game: Game, move: Move): Game => {
   const moveObject = moveToMoveObject(move);
-  const currentPosition = game.playerPositions[game.turn];
+  const currentPosition = game.playerPositions[getTurn(game)];
   if (isWallPosition(move)) {
     // If wall move
     return {
@@ -297,10 +298,9 @@ export const unvalidatedMove = (game: Game, move: Move): Game => {
       },
       playerWallCounts: {
         ...game.playerWallCounts,
-        [game.turn]: game.playerWallCounts[game.turn] - 1,
+        [getTurn(game)]: game.playerWallCounts[getTurn(game)] - 1,
       },
       history: [...game.history, move],
-      turn: game.turn === 1 ? 2 : 1,
     };
   } else {
     const pieceMatrixWithRemovedPiece = {
@@ -315,14 +315,14 @@ export const unvalidatedMove = (game: Game, move: Move): Game => {
       board: Object.fromEntries(
         Object.entries(game.board).map(([pos, val]) => [
           pos,
-          pos === move ? game.turn : val === game.turn ? null : val,
+          pos === move ? getTurn(game) : val === getTurn(game) ? null : val,
         ]),
       ) as Board,
       playerPositions: {
         ...game.playerPositions,
-        [game.turn]: {
+        [getTurn(game)]: {
           ...moveObject,
-          previousPosition: game.playerPositions[game.turn],
+          previousPosition: game.playerPositions[getTurn(game)],
         },
       },
       history: [...game.history, move],
@@ -330,10 +330,9 @@ export const unvalidatedMove = (game: Game, move: Move): Game => {
         ...pieceMatrixWithRemovedPiece,
         [moveObject.x]: {
           ...pieceMatrixWithRemovedPiece[moveObject.x],
-          [moveObject.y]: game.turn, // Add piece to new position
+          [moveObject.y]: getTurn(game), // Add piece to new position
         },
       },
-      turn: getOppositePlayer(game.turn),
     };
   }
 };
@@ -379,7 +378,7 @@ const hasOpponentAbove = (game: Game, position: PawnMove) => {
   if (
     game.pieceMatrix[positionObject.x][
       incrementVerticalPiecePosition(positionObject.y)
-    ] === getOppositePlayer(game.turn)
+    ] === getOppositePlayer(getTurn(game))
   ) {
     return true;
   }
@@ -479,7 +478,7 @@ const hasOpponentToTheRight = (game: Game, position: PawnPosition) => {
   if (
     game.pieceMatrix[incrementHorizontalPiecePosition(positionObject.x)][
       positionObject.y
-    ] === getOppositePlayer(game.turn)
+    ] === getOppositePlayer(getTurn(game))
   ) {
     return true;
   }
@@ -543,7 +542,7 @@ const hasOpponentBelow = (game: Game, position: PawnPosition) => {
   if (
     game.pieceMatrix[positionObject.x][
       decrementVerticalPiecePosition(positionObject.y)
-    ] === getOppositePlayer(game.turn)
+    ] === getOppositePlayer(getTurn(game))
   ) {
     return true;
   }
@@ -599,7 +598,7 @@ const hasOpponentToTheLeft = (game: Game, position: PawnPosition) => {
   if (
     game.pieceMatrix[decrementHorizontalPiecePosition(positionObject.x)][
       positionObject.y
-    ] === getOppositePlayer(game.turn)
+    ] === getOppositePlayer(getTurn(game))
   ) {
     return true;
   }
@@ -652,7 +651,7 @@ export const isValidNormalMove = (
   // If the move lands on top of the opponent
   if (
     game.pieceMatrix[moveToMoveObject(move).x][moveToMoveObject(move).y] ===
-    getOppositePlayer(game.turn)
+    getOppositePlayer(getTurn(game))
   ) {
     return false;
   }
@@ -1052,7 +1051,7 @@ const getPositionFromNorthWestMove = (currentPosition: PawnPosition) => {
 
 export const getValidPawnMoveArray = (game: Game) => {
   const currentPosition = moveObjectToMove(
-    game.playerPositions[game.turn],
+    game.playerPositions[getTurn(game)],
   ) as PawnPosition;
   const validPawnMoveArray = [
     getPositionFromNorthMove(currentPosition),
@@ -1248,7 +1247,7 @@ const overlapsWall = (game: Game, wallMove: WallMove) => {
 };
 
 export const getValidWallMoveArray = (game: Game) => {
-  if (game.playerWallCounts[game.turn] < 1) {
+  if (game.playerWallCounts[getTurn(game)] < 1) {
     return [];
   }
   return getAllWallMoves()
@@ -1256,8 +1255,8 @@ export const getValidWallMoveArray = (game: Game) => {
     .filter((wallMove) => {
       if (overlapsWall(game, wallMove)) return false;
       const gameWithUnvalidatedMove = unvalidatedMove(game, wallMove);
-      const thisTurn = game.turn;
-      const thatTurn = getOppositePlayer(game.turn);
+      const thisTurn = getTurn(game);
+      const thatTurn = getOppositePlayer(getTurn(game));
       const thisShortestPath = shortestPath(gameWithUnvalidatedMove, thisTurn);
       const thatShortestPath = shortestPath(gameWithUnvalidatedMove, thatTurn);
       return Boolean(thisShortestPath && thatShortestPath);
