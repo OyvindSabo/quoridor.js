@@ -257,6 +257,8 @@ export type PawnMoveObject = {
   y: VerticalPiecePosition;
 };
 
+export type WallOrientation = 'h' | 'v';
+
 export type WallMoveObject = {
   x: HorizontalWallPosition;
   y: VerticalWallPosition;

@@ -1,10 +1,11 @@
 import { getTurn } from './getTurn';
-import { Game, Move } from './types';
+import { Game, Move, PawnPosition } from './types';
 import {
   doesWallMoveOverlapExistingWall,
   getOppositePlayer,
   isValidNormalMove,
   isWallPosition,
+  moveObjectToMove,
   shortestPath,
   unvalidatedMove,
 } from './utils';
@@ -24,5 +25,9 @@ export const isValidMove = (game: Game, move: Move) => {
     }
     return false;
   }
-  return isValidNormalMove(game, currentPosition, move);
+  return isValidNormalMove(
+    game,
+    moveObjectToMove(currentPosition) as PawnPosition,
+    move,
+  );
 };
