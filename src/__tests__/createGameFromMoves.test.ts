@@ -1,6 +1,6 @@
 import { createGameFromMoves } from '../createGameFromMoves';
 
-test('Test that game is correctly initialized', () => {
+test('Test that game is correctly initialized from empty move array', () => {
   expect(createGameFromMoves([])).toStrictEqual({
     board: {
       a1: null,

@@ -8,9 +8,46 @@ npm install quoridor
 
 ## API
 
+### createNewGame: () => Game
+
+Generates a new game.
+
+```TypeScript
+import { createNewGame, getUnicodeRepresentation } from 'quoridor';
+
+const game = createNewGame();
+
+console.log(getUnicodeRepresentation(game));
+
+// ┌───╫───╫───╫───╫───╫───╫───╫───╫───╫───╫───┐
+// │   ║   ║   ║   ║   ║   ║   ║   ║   ║   ║   │
+// │   ┌───┬───┬───┬───┬───┬───┬───┬───┬───┐   │
+// │ 9 │   │   │   │   │ 2 │   │   │   │   │   │
+// │   ├───┼───┼───┼───┼───┼───┼───┼───┼───┤   │
+// │ 8 │   │   │   │   │   │   │   │   │   │   │
+// │   ├───┼───┼───┼───┼───┼───┼───┼───┼───┤   │
+// │ 7 │   │   │   │   │   │   │   │   │   │   │
+// │   ├───┼───┼───┼───┼───┼───┼───┼───┼───┤   │
+// │ 6 │   │   │   │   │   │   │   │   │   │   │
+// │   ├───┼───┼───┼───┼───┼───┼───┼───┼───┤   │
+// │ 5 │   │   │   │   │   │   │   │   │   │   │
+// │   ├───┼───┼───┼───┼───┼───┼───┼───┼───┤   │
+// │ 4 │   │   │   │   │   │   │   │   │   │   │
+// │   ├───┼───┼───┼───┼───┼───┼───┼───┼───┤   │
+// │ 3 │   │   │   │   │   │   │   │   │   │   │
+// │   ├───┼───┼───┼───┼───┼───┼───┼───┼───┤   │
+// │ 2 │   │   │   │   │   │   │   │   │   │   │
+// │   ├───┼───┼───┼───┼───┼───┼───┼───┼───┤   │
+// │ 1 │   │   │   │   │ 1 │   │   │   │   │   │
+// │   └───┴───┴───┴───┴───┴───┴───┴───┴───┘   │
+// │   ║ A ║ B ║ C ║ D ║ E ║ F ║ G ║ H ║ I ║   │
+// └───╫───╫───╫───╫───╫───╫───╫───╫───╫───╫───┘
+
+```
+
 ### createGameFromMoves: (moves: Move[]) => Game
 
-Generates a game from an array of moves. Does not validate the moves.
+Generates a game from an array of moves. Does not verify that the moves are valid.
 
 ```TypeScript
 import { createGameFromMoves, getUnicodeRepresentation } from 'quoridor';
@@ -50,11 +87,9 @@ console.log(getUnicodeRepresentation(game));
 Returns a string representation of the board game state using Unicode box-drawing characters.
 
 ```TypeScript
-import { createGameFromMoves, getUnicodeRepresentation } from 'quoridor';
+import { createNewGame, getUnicodeRepresentation } from 'quoridor';
 
-const game = createGameFromMoves([]);
-
-const unicodeRepresentation = getUnicodeRepresentation(game)
+const unicodeRepresentation = getUnicodeRepresentation(createNewGame())
 
 console.log(unicodeRepresentation);
 
@@ -92,8 +127,9 @@ Checks if a move is valid.
 import { createGameFromMoves, isMoveValid } from 'quoridor';
 
 const game = createGameFromMoves(['e2', 'e8', 'd7v']);
+const move = 'd7';
 
-const moveIsValid = isMoveValid(game, 'd7');
+const moveIsValid = isMoveValid(game, move);
 
 console.log(moveIsValid);
 

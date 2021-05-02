@@ -1,3 +1,4 @@
+export { createNewGame } from './createNewGame';
 export { createGameFromMoves } from './createGameFromMoves';
 export { isMoveValid } from './isMoveValid';
 export { getUnicodeRepresentation } from './getUnicodeRepresentation';
