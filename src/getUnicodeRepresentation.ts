@@ -10,7 +10,7 @@ const numberToLetter = (num: number) => {
   return String.fromCharCode(96 + num);
 };
 
-export const getAsciiRepresentation = (game: Game) => {
+export const getUnicodeRepresentation = (game: Game) => {
   let board = '┌───';
   for (let wallIndex = 1; wallIndex <= 10; wallIndex++) {
     if (game.playerWallCounts[2] >= wallIndex) {

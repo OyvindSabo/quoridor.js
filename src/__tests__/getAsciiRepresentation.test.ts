@@ -1,8 +1,8 @@
 import { createGameFromMoves } from '../createGameFromMoves';
-import { getAsciiRepresentation } from '../getAsciiRepresentation';
+import { getUnicodeRepresentation } from '../getUnicodeRepresentation';
 
 test('Test that initial game position is correctly visualized', () => {
-  expect(getAsciiRepresentation(createGameFromMoves([]))).toBe(
+  expect(getUnicodeRepresentation(createGameFromMoves([]))).toBe(
     `┌───╫───╫───╫───╫───╫───╫───╫───╫───╫───╫───┐
 │   ║   ║   ║   ║   ║   ║   ║   ║   ║   ║   │
 │   ┌───┬───┬───┬───┬───┬───┬───┬───┬───┐   │
@@ -30,7 +30,7 @@ test('Test that initial game position is correctly visualized', () => {
 });
 
 test('Test that a horizontal wall placed by player 1 is correctly visualized', () => {
-  expect(getAsciiRepresentation(createGameFromMoves(['a1h']))).toBe(
+  expect(getUnicodeRepresentation(createGameFromMoves(['a1h']))).toBe(
     `┌───╫───╫───╫───╫───╫───╫───╫───╫───╫───╫───┐
 │   ║   ║   ║   ║   ║   ║   ║   ║   ║   ║   │
 │   ┌───┬───┬───┬───┬───┬───┬───┬───┬───┐   │

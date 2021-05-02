@@ -8,16 +8,20 @@ npm install quoridor
 
 ## API
 
+### getUnicodeRepresentation: (game: Game) => string
+
+Returns a string representation of the board game state using Unicode box-drawing characters.
+
 ### createGameFromMoves: (moves: Move[]) => Game
 
 Generates a game from an array of moves. Does not validate the moves.
 
 ```TypeScript
-import { createGameFromMoves, getAsciiRepresentation } from 'quoridor';
+import { createGameFromMoves, getUnicodeRepresentation } from 'quoridor';
 
 const game = createGameFromMoves(['e2', 'e8', 'd7v']);
 
-console.log(getAsciiRepresentation(game));
+console.log(getUnicodeRepresentation(game));
 
 // ┌───╫───╫───╫───╫───╫───╫───╫───╫───╫───╫───┐
 // │   ║   ║   ║   ║   ║   ║   ║   ║   ║   ║   │
