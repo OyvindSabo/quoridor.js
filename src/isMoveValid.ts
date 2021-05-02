@@ -10,7 +10,7 @@ import {
   unvalidatedMove,
 } from './utils';
 
-export const isValidMove = (game: Game, move: Move) => {
+export const isMoveValid = (game: Game, move: Move) => {
   // Handle wall moves
   const currentPosition = game.playerPositions[getTurn(game)];
   if (isWallPosition(move)) {

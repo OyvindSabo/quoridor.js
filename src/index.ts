@@ -1,5 +1,5 @@
 export { createGameFromMoves } from './createGameFromMoves';
-export { isValidMove } from './isValidMove';
+export { isMoveValid } from './isMoveValid';
 export { getUnicodeRepresentation } from './getUnicodeRepresentation';
 export { makeMove } from './makeMove';
 export { isGameOver } from './isGameOver';
@@ -8,10 +8,14 @@ export { getValidMoveArray } from './getValidMoveArray';
 export { getTurn } from './getTurn';
 
 import { getUnicodeRepresentation } from './getUnicodeRepresentation';
+import { isMoveValid } from './isMoveValid';
 
 /**
  * Deprecated. This function has been renamed to getUnicodeRepresentation.
  */
-const getAsciiRepresentation = getUnicodeRepresentation;
+export const getAsciiRepresentation = getUnicodeRepresentation;
 
-export { getAsciiRepresentation };
+/**
+ * Deprecated. This function has been renamed to isMoveValid.
+ */
+export const isValidMove = isMoveValid;

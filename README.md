@@ -49,16 +49,16 @@ console.log(getUnicodeRepresentation(game));
 
 ```
 
-### isValidMove: (game: Game, move: Move) => boolean
+### isMoveValid: (game: Game, move: Move) => boolean
 
 Checks if a move is valid.
 
 ```TypeScript
-import { createGameFromMoves, isValidMove } from 'quoridor';
+import { createGameFromMoves, isMoveValid } from 'quoridor';
 
 const game = createGameFromMoves(['e2', 'e8', 'd7v']);
 
-const moveIsValid = isValidMove(game, 'd7');
+const moveIsValid = isMoveValid(game, 'd7');
 
 console.log(moveIsValid);
 
