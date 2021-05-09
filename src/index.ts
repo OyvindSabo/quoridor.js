@@ -7,6 +7,7 @@ export { isGameOver } from './isGameOver';
 export { getWinner } from './getWinner';
 export { getValidMoveArray } from './getValidMoveArray';
 export { getTurn } from './getTurn';
+export { undoLastMove } from './undoLastMove';
 
 import { getUnicodeRepresentation } from './getUnicodeRepresentation';
 import { isMoveValid } from './isMoveValid';
