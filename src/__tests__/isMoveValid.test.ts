@@ -39,5 +39,5 @@ test('Test that jumping forward over opponent is a valid move', () => {
       createGameFromMoves(['e2', 'e8', 'e3', 'e7', 'e4', 'e6', 'a1h', 'e5']),
       'e6',
     ),
-  ).toBe(false);
+  ).toBe(true);
 });

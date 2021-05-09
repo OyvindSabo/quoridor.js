@@ -378,10 +378,9 @@ const hasWallAbove = (game: Game, move: PawnMove) => {
 const isDoubleUpMove = (currentPosition: PawnPosition, move: PawnMove) => {
   // TODO: Surely this must be wrong, or?
   if (
-    letterToNumber(getHorizontalCoordinate(currentPosition)) -
-      letterToNumber(getHorizontalCoordinate(move)) ===
-      -2 &&
-    getHorizontalCoordinate(currentPosition) === getHorizontalCoordinate(move)
+    getVerticalCoordinate(move) - getVerticalCoordinate(currentPosition) ===
+      2 &&
+    getHorizontalCoordinate(move) === getHorizontalCoordinate(currentPosition)
   ) {
     return true;
   }
@@ -703,8 +702,9 @@ export const isValidNormalMove = (
           y: incrementVerticalPiecePosition(y),
         }) as PawnPosition,
       )
-    )
+    ) {
       return false;
+    }
     return true;
   }
   if (
