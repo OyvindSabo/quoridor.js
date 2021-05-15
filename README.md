@@ -205,7 +205,7 @@ console.log(getUnicodeRepresentation(gameWithLastMoveUndone));
 Returns a new game with the most recently undone move redone. If no moves have been undone yet, an identical game is returned.
 
 ```TypeScript
-import { createGameFromMoves, undo, getUnicodeRepresentation } from 'quoridor';
+import { createGameFromMoves, redo, undo, getUnicodeRepresentation } from 'quoridor';
 
 const game = createGameFromMoves(['e2', 'e8', 'd7v']);
 const gameWithUndoneMove = undo(game);
