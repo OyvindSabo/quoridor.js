@@ -286,7 +286,8 @@ export type Game = {
   board: Board;
   pieceMatrix: PlayerMatrix;
   wallMatrix: WallMatrix;
-  history: Move[];
+  pastMoves: Move[];
+  futureMoves: Move[];
   playerPositions: Record<
     Player,
     PiecePosition & { previousPosition?: PiecePosition }

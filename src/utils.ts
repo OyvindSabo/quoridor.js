@@ -308,7 +308,8 @@ export const unvalidatedMove = (game: Game, move: Move): Game => {
           previousPosition: game.playerPositions[getTurn(game)],
         },
       },
-      history: [...game.history, move],
+      pastMoves: [...game.pastMoves, move],
+      futureMoves: [],
     };
   } else {
     const pieceMatrixWithRemovedPiece = {
@@ -334,7 +335,8 @@ export const unvalidatedMove = (game: Game, move: Move): Game => {
           previousPosition: game.playerPositions[getTurn(game)],
         },
       },
-      history: [...game.history, move],
+      pastMoves: [...game.pastMoves, move],
+      futureMoves: [],
       pieceMatrix: {
         ...pieceMatrixWithRemovedPiece,
         [getHorizontalCoordinate(move)]: {
@@ -1291,3 +1293,11 @@ export const getValidWallMoveArray = (game: Game) => {
       return Boolean(thisShortestPath && thatShortestPath);
     });
 };
+
+export const butlast = <T>(array: T[]) => array.slice(0, -1);
+
+export const first = <T>(array: T[]) => array[0];
+
+export const last = <T>(array: T[]) => array[array.length - 1];
+
+export const rest = <T>(array: T[]) => array.slice(1);
