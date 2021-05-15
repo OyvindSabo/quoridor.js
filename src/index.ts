@@ -8,6 +8,7 @@ export { getWinner } from './getWinner';
 export { getValidMoveArray } from './getValidMoveArray';
 export { getTurn } from './getTurn';
 export { undo } from './undo';
+export { redo } from './redo';
 
 import { getUnicodeRepresentation } from './getUnicodeRepresentation';
 import { isMoveValid } from './isMoveValid';
