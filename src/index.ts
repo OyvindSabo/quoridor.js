@@ -7,10 +7,11 @@ export { isGameOver } from './isGameOver';
 export { getWinner } from './getWinner';
 export { getValidMoveArray } from './getValidMoveArray';
 export { getTurn } from './getTurn';
-export { undoLastMove } from './undoLastMove';
+export { undo } from './undo';
 
 import { getUnicodeRepresentation } from './getUnicodeRepresentation';
 import { isMoveValid } from './isMoveValid';
+import { undo } from './undo';
 
 /**
  * Deprecated. This function has been renamed to getUnicodeRepresentation.
@@ -21,3 +22,8 @@ export const getAsciiRepresentation = getUnicodeRepresentation;
  * Deprecated. This function has been renamed to isMoveValid.
  */
 export const isValidMove = isMoveValid;
+
+/**
+ * Deprecated. This function has been renamed to undo.
+ */
+export const undoLastMove = undo;

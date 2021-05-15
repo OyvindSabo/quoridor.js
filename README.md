@@ -136,15 +136,15 @@ console.log(moveIsValid);
 // false
 ```
 
-### undoLastMove: (game: Game) => Game
+### undo: (game: Game) => Game
 
 Returns a new game with the last move undone. If no moves have been made yet, an identical game is returned.
 
 ```TypeScript
-import { createGameFromMoves, undoLastMove, getUnicodeRepresentation } from 'quoridor';
+import { createGameFromMoves, undo, getUnicodeRepresentation } from 'quoridor';
 
 const game = createGameFromMoves(['e2', 'e8', 'd7v']);
-const gameWithLastMoveUndone = undoLastMove(game);
+const gameWithLastMoveUndone = undo(game);
 
 console.log(getUnicodeRepresentation(game));
 
