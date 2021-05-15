@@ -144,7 +144,7 @@ Returns a new game with the most recent move undone. If no moves have been made 
 import { createGameFromMoves, undo, getUnicodeRepresentation } from 'quoridor';
 
 const game = createGameFromMoves(['e2', 'e8', 'd7v']);
-const gameWithLastMoveUndone = undo(game);
+const gameWithUndoneMove = undo(game);
 
 console.log(getUnicodeRepresentation(game));
 
@@ -172,7 +172,7 @@ console.log(getUnicodeRepresentation(game));
 // │   ║ A ║ B ║ C ║ D ║ E ║ F ║ G ║ H ║ I     │
 // └───╫───╫───╫───╫───╫───╫───╫───╫───╫───────┘
 
-console.log(getUnicodeRepresentation(gameWithLastMoveUndone));
+console.log(getUnicodeRepresentation(gameWithUndoneMove));
 
 // ┌───╫───╫───╫───╫───╫───╫───╫───╫───╫───╫───┐
 // │   ║   ║   ║   ║   ║   ║   ║   ║   ║   ║   │
@@ -209,7 +209,7 @@ import { createGameFromMoves, redo, undo, getUnicodeRepresentation } from 'quori
 
 const game = createGameFromMoves(['e2', 'e8', 'd7v']);
 const gameWithUndoneMove = undo(game);
-const gameWithUndoneMoveRedone = redo(gameWithLastMoveUndone);
+const gameWithUndoneMoveRedone = redo(gameWithUndoneMove);
 
 console.log(getUnicodeRepresentation(game));
 
