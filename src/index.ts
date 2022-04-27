@@ -9,7 +9,7 @@ export { getValidMoveArray } from './getValidMoveArray';
 export { getTurn } from './getTurn';
 export { undo } from './undo';
 export { redo } from './redo';
-
+export { isMove } from './isMove';
 import { getUnicodeRepresentation } from './getUnicodeRepresentation';
 import { isMoveValid } from './isMoveValid';
 import { undo } from './undo';

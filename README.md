@@ -136,6 +136,32 @@ console.log(moveIsValid);
 // false
 ```
 
+### isMove: (maybeMove: string) => boolean
+
+Checks if a string is a move. This can be convenient when using TypeScript since
+it can be used as a type guard to safely cast a string to a Move.
+
+```TypeScript
+import { isMove } from 'quoridor';
+
+const game = createGameFromMoves(['e2', 'e8', 'd7v']);
+const move = 'd7';
+
+const moveIsValid = isMove(game, move);
+
+console.log(isMove('a1'));
+
+// true
+
+console.log(isMove('humbug'));
+
+// false
+
+console.log(isMove('i9'))
+
+// false
+```
+
 ### undo: (game: Game) => Game
 
 Returns a new game with the most recent move undone. If no moves have been made yet, an identical game is returned.
