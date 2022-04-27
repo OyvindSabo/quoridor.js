@@ -81,6 +81,40 @@ const quoridorDistance = (
   return Math.abs(coordinateA.y - endRowNumber);
 };
 
+const canGoLeft = (wallIntMatrix: any[][], x: number, y: number) => {
+  return (
+    x > 0 && // Is not on leftmost row
+    !(
+      (y < 8 && wallIntMatrix[x - 1][y].v) ||
+      (y > 0 && wallIntMatrix[x - 1][y - 1].v)
+    ) // Does not have wall to the left
+  );
+};
+
+const canGoUp = (wallIntMatrix: any[][], x: number, y: number) => {
+  return (
+    y < 8 && // Is not on top row
+    !((x < 8 && wallIntMatrix[x][y].h) || (x > 0 && wallIntMatrix[x - 1][y].h)) // Is not a wall above
+  );
+};
+
+const canGoRight = (wallIntMatrix: any[][], x: number, y: number) => {
+  return (
+    x < 8 && // is not rightmost row
+    !((y < 8 && wallIntMatrix[x][y].v) || (y > 0 && wallIntMatrix[x][y - 1].v)) // Is not wall to the right
+  );
+};
+
+const canGoDown = (wallIntMatrix: any[][], x: number, y: number) => {
+  return (
+    y > 0 && // Is not on bottom row
+    !(
+      (x < 8 && wallIntMatrix[x][y - 1].h) ||
+      (x > 0 && wallIntMatrix[x - 1][y - 1].h)
+    ) // Is not wall below
+  );
+};
+
 /* Create matrix of node objects from board */
 const boardToNodeMatrix = (
   board: any, // PlayerMatrix,
@@ -113,48 +147,16 @@ const boardToNodeMatrix = (
   //
   for (const x of Object.keys(nodeMatrix).map(Number)) {
     for (const y of Object.keys(nodeMatrix[x]).map(Number)) {
-      if (
-        x > 0 &&
-        !(
-          x < 8 &&
-          y < 8 &&
-          (wallIntMatrix[x - 1][y].v ||
-            (y > 0 && wallIntMatrix[x - 1][y - 1].v))
-        )
-      ) {
+      if (canGoLeft(wallIntMatrix, x, y)) {
         nodeMatrix[x][y].addNeighbour(nodeMatrix[x - 1][y]); // Add neighbour to the left
       }
-      if (
-        y < nodeMatrix[x].length - 1 &&
-        !(
-          x < 8 &&
-          y < 8 &&
-          (wallIntMatrix[x][y].h || (x > 0 && wallIntMatrix[x - 1][y].h))
-        )
-      ) {
-        // new
+      if (canGoUp(wallIntMatrix, x, y)) {
         nodeMatrix[x][y].addNeighbour(nodeMatrix[x][y + 1]); // Add neighbour above
       }
-      // TODO: There is something very fishy here
-      if (
-        x < nodeMatrix.length - 1 &&
-        !(
-          x > 1 &&
-          x < 8 &&
-          y < 8 &&
-          (wallIntMatrix[y][x].v || (y > 0 && wallIntMatrix[y - 1][x].v))
-        )
-      ) {
+      if (canGoRight(wallIntMatrix, x, y)) {
         nodeMatrix[x][y].addNeighbour(nodeMatrix[x + 1][y]); // Add neighbour to the right
       }
-      if (
-        y > 0 &&
-        !(
-          x < 8 &&
-          y < 8 &&
-          (wallIntMatrix[x][y - 1].h || (x > 0 && wallIntMatrix[x - 1][y - 1]))
-        )
-      ) {
+      if (canGoDown(wallIntMatrix, x, y)) {
         nodeMatrix[x][y].addNeighbour(nodeMatrix[x][y - 1]); // Add neghbour below
       }
     }
@@ -210,18 +212,25 @@ const numberToLetter = (num: number) => {
   return String.fromCharCode(96 + num);
 };
 
-const getPath = (goalNode: QuoridorNode, startPiece: Player) => {
-  if (goalNode.distanceFromStart === 0) return [goalNode];
-  const path = [goalNode.coordinates].map(({ x, y }) => ({
-    x: numberToLetter(y),
-    y: x + 1,
-  }));
+/**
+ * Return the moves that have to be made from the start node to reach the end
+ * node. In other words, do not return the start node, but include the end node,
+ * unless the end node is the start node. Then we return an empty list
+ */
+const getPath = (
+  goalNode: QuoridorNode,
+  startPiece: Player,
+): { x: string; y: number }[] => {
+  if (goalNode.distanceFromStart === 0) return [];
+  const goalCoordinates = {
+    x: numberToLetter(goalNode.coordinates.y + 1),
+    y: goalNode.coordinates.x + 1,
+  };
   const previousNode = goalNode.reachedFrom!;
   if (previousNode.value === startPiece) {
-    return path;
+    return [goalCoordinates];
   }
-  path.unshift(...((getPath(previousNode, startPiece) as unknown) as any));
-  return path;
+  return [...getPath(previousNode, startPiece), goalCoordinates];
 };
 
 export const aStar = (
@@ -241,7 +250,7 @@ export const aStar = (
   while (!reachedGoal) {
     // While goal is not reached
     const mostPromisingNode = getMostPromisingNode(
-      discoveredNodes.filter((node) => relaxedNodes.indexOf(node) === -1),
+      discoveredNodes.filter((node) => !relaxedNodes.includes(node)),
     ); // Choose the nodes whose distance from start is lowest
     if (!mostPromisingNode) {
       return null;
@@ -249,7 +258,7 @@ export const aStar = (
     relaxedNodes.push(mostPromisingNode.relax()); // Relax the most promising node and push it to relaxedNodes
     discoveredNodes.push(
       ...mostPromisingNode.neighbours.filter(
-        (node: QuoridorNode) => discoveredNodes.indexOf(node) === -1,
+        (node: QuoridorNode) => !discoveredNodes.includes(node),
       ),
     ); // Add all previouly unrelaxed neighbours of the most promising node
     reachedGoal = hasReachedGoal(mostPromisingNode, startPiece);
@@ -261,7 +270,7 @@ export const aStar = (
   const path = getPath(goalNode as QuoridorNode, startPiece);
   visualizeOpenedCells(
     discoveredNodes.filter(
-      (node) => node !== undefined && '12O'.indexOf(`${node.value}`) === -1,
+      (node) => node !== undefined && !'12O'.includes(`${node.value}`),
     ),
   );
   return path;
