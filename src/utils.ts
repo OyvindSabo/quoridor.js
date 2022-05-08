@@ -1559,6 +1559,8 @@ export const getValidWallMoveArray = (game: Game) => {
   }
   const thisTurn = getTurn(game);
   const thatTurn = getOppositePlayer(getTurn(game));
+  const thisPlayersCurrentPosition = game.playerPositions[thisTurn];
+  const thatPlayersCurrentPosition = game.playerPositions[thatTurn];
   const thisPlayersShortestPath = shortestPath(game, thisTurn);
   const thatPlayersShortestPath = shortestPath(game, thatTurn);
   if (thisPlayersShortestPath === null || thatPlayersShortestPath === null) {
@@ -1569,16 +1571,34 @@ export const getValidWallMoveArray = (game: Game) => {
     .filter((wallMove) => {
       if (overlapsWall(game, wallMove)) return false;
       if (
-        !overlapsPath(thisPlayersShortestPath, wallMove) &&
-        !overlapsPath(thatPlayersShortestPath, wallMove)
+        /**
+         * shortestPath returns a list of moves, so it does not include the
+         * initial position. We need the initial position here to check if a
+         * wall blocks the first step of a path. To simplify this, consider
+         * changing shortestPath to include the initial position in the path.
+         */
+        !overlapsPath(
+          [thisPlayersCurrentPosition, ...thisPlayersShortestPath],
+          wallMove,
+        ) &&
+        !overlapsPath(
+          [thatPlayersCurrentPosition, ...thatPlayersShortestPath],
+          wallMove,
+        )
       ) {
         return true;
       }
       const gameWithUnvalidatedMove = unvalidatedMove(game, wallMove);
-      const thisTurn = getTurn(game);
-      const thatTurn = getOppositePlayer(getTurn(game));
-      const thisShortestPath = shortestPath(gameWithUnvalidatedMove, thisTurn);
-      const thatShortestPath = shortestPath(gameWithUnvalidatedMove, thatTurn);
+      const thisTurnAfterMove = getTurn(game);
+      const thatTurnAfterMove = getOppositePlayer(getTurn(game));
+      const thisShortestPath = shortestPath(
+        gameWithUnvalidatedMove,
+        thisTurnAfterMove,
+      );
+      const thatShortestPath = shortestPath(
+        gameWithUnvalidatedMove,
+        thatTurnAfterMove,
+      );
       return Boolean(thisShortestPath && thatShortestPath);
     });
 };
