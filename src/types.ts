@@ -9,6 +9,26 @@ export type HorizontalPiecePosition =
   | 'h'
   | 'i';
 
+export type IncrementableHorizontalPiecePosition =
+  | 'a'
+  | 'b'
+  | 'c'
+  | 'd'
+  | 'e'
+  | 'f'
+  | 'g'
+  | 'h';
+
+export type DecrementableHorizontalPiecePosition =
+  | 'b'
+  | 'c'
+  | 'd'
+  | 'e'
+  | 'f'
+  | 'g'
+  | 'h'
+  | 'i';
+
 export type HorizontalWallPosition =
   | 'a'
   | 'b'
@@ -19,9 +39,35 @@ export type HorizontalWallPosition =
   | 'g'
   | 'h';
 
+export type IncrementableHorizontalWallPosition =
+  | 'a'
+  | 'b'
+  | 'c'
+  | 'd'
+  | 'e'
+  | 'f'
+  | 'g';
+
+export type DecrementableHorizontalWallPosition =
+  | 'b'
+  | 'c'
+  | 'd'
+  | 'e'
+  | 'f'
+  | 'g'
+  | 'h';
+
 export type VerticalPiecePosition = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
+export type IncrementableVerticalPiecePosition = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+
+export type DecrementableVerticalPiecePosition = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+
 export type VerticalWallPosition = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+
+export type IncrementableVerticalWallPosition = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+export type DecrementableVerticalWallPosition = 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 export type PiecePosition = {
   x: HorizontalPiecePosition;
