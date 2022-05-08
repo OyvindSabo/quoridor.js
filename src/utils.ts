@@ -1567,13 +1567,13 @@ export const getValidWallMoveArray = (game: Game) => {
   return getAllWallMoves()
     .map((moveObject) => moveObjectToMove(moveObject) as WallMove)
     .filter((wallMove) => {
+      if (overlapsWall(game, wallMove)) return false;
       if (
         !overlapsPath(thisPlayersShortestPath, wallMove) &&
         !overlapsPath(thatPlayersShortestPath, wallMove)
       ) {
         return true;
       }
-      if (overlapsWall(game, wallMove)) return false;
       const gameWithUnvalidatedMove = unvalidatedMove(game, wallMove);
       const thisTurn = getTurn(game);
       const thatTurn = getOppositePlayer(getTurn(game));
