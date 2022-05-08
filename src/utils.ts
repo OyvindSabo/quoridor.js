@@ -375,18 +375,17 @@ const isSingleUpMove = (currentPosition: PawnPosition, move: PawnMove) => {
 
 const hasWallAbove = (game: Game, move: PawnMove) => {
   const horizontalCoordinate = getHorizontalCoordinate(move);
+  const verticalCoordinate = getVerticalCoordinate(move);
   if (
-    game.wallMatrix[getHorizontalCoordinate(move) as HorizontalWallPosition][
-      getVerticalCoordinate(move) as VerticalWallPosition
-    ].h ||
-    (letterToNumber(getHorizontalCoordinate(move) as HorizontalPiecePosition) >
-      1 &&
+    (isHorizontalWallPosition(horizontalCoordinate) &&
+      isVerticalWallPosition(verticalCoordinate) &&
+      game.wallMatrix[horizontalCoordinate][verticalCoordinate].h) ||
+    (letterToNumber(getHorizontalCoordinate(move)) > 1 &&
       isDecrementableHorizontalPiecePosition(horizontalCoordinate) &&
-      game.wallMatrix[
-        decrementHorizontalPiecePosition(
-          horizontalCoordinate,
-        ) as HorizontalWallPosition
-      ][getVerticalCoordinate(move) as VerticalWallPosition].h)
+      isVerticalWallPosition(verticalCoordinate) &&
+      game.wallMatrix[decrementHorizontalPiecePosition(horizontalCoordinate)][
+        verticalCoordinate
+      ].h)
   ) {
     return true;
   }
@@ -432,14 +431,18 @@ const isUpLeftMove = (currentPosition: PawnPosition, move: PawnMove) => {
 };
 
 const hasWallToTheRight = (game: Game, move: PawnMove) => {
+  const horizontalCoordinate = getHorizontalCoordinate(move);
+  const verticalCoordinate = getVerticalCoordinate(move);
   if (
     (getVerticalCoordinate(move) < 9 &&
-      game.wallMatrix[getHorizontalCoordinate(move) as HorizontalWallPosition][
-        getVerticalCoordinate(move) as VerticalWallPosition
-      ].v) ||
+      isHorizontalWallPosition(horizontalCoordinate) &&
+      isVerticalWallPosition(verticalCoordinate) &&
+      game.wallMatrix[horizontalCoordinate][verticalCoordinate].v) ||
     (getVerticalCoordinate(move) > 1 &&
-      game.wallMatrix[getHorizontalCoordinate(move) as HorizontalWallPosition][
-        (getVerticalCoordinate(move) - 1) as VerticalWallPosition
+      isHorizontalWallPosition(horizontalCoordinate) &&
+      isDecrementableVerticalPiecePosition(verticalCoordinate) &&
+      game.wallMatrix[horizontalCoordinate][
+        decrementVerticalPiecePosition(verticalCoordinate)
       ].v)
   ) {
     return true;
@@ -475,18 +478,19 @@ const isRightUpMove = (currentPosition: PawnPosition, move: PawnMove) => {
 
 const hasWallToTheLeft = (game: Game, move: PawnMove) => {
   const horizontalCoordinate = getHorizontalCoordinate(move);
+  const verticalCoordinate = getVerticalCoordinate(move);
   if (
     (getVerticalCoordinate(move) < 9 &&
       isDecrementableHorizontalPiecePosition(horizontalCoordinate) &&
-      game.wallMatrix[
-        decrementHorizontalPiecePosition(
-          horizontalCoordinate,
-        ) as HorizontalWallPosition
-      ][getVerticalCoordinate(move) as VerticalWallPosition].v) ||
+      isVerticalWallPosition(verticalCoordinate) &&
+      game.wallMatrix[decrementHorizontalPiecePosition(horizontalCoordinate)][
+        verticalCoordinate
+      ].v) ||
     (getVerticalCoordinate(move) > 1 &&
       isDecrementableHorizontalPiecePosition(horizontalCoordinate) &&
+      isDecrementableVerticalPiecePosition(verticalCoordinate) &&
       game.wallMatrix[decrementHorizontalPiecePosition(horizontalCoordinate)][
-        (getVerticalCoordinate(move) - 1) as VerticalWallPosition
+        decrementVerticalPiecePosition(verticalCoordinate)
       ].v)
   ) {
     return true;
@@ -546,14 +550,18 @@ const isRightDownMove = (currentPosition: PawnPosition, move: PawnMove) => {
 
 const hasWallBelow = (game: Game, move: PawnMove) => {
   const horizontalCoordinate = getHorizontalCoordinate(move);
+  const verticalCoordinate = getVerticalCoordinate(move);
   if (
-    game.wallMatrix[horizontalCoordinate as HorizontalWallPosition][
-      (getVerticalCoordinate(move) - 1) as VerticalWallPosition
-    ].h ||
+    (isHorizontalWallPosition(horizontalCoordinate) &&
+      isDecrementableVerticalPiecePosition(verticalCoordinate) &&
+      game.wallMatrix[horizontalCoordinate][
+        decrementVerticalPiecePosition(verticalCoordinate)
+      ].h) ||
     (letterToNumber(getHorizontalCoordinate(move)) > 1 &&
       isDecrementableHorizontalPiecePosition(horizontalCoordinate) &&
+      isDecrementableVerticalPiecePosition(verticalCoordinate) &&
       game.wallMatrix[decrementHorizontalPiecePosition(horizontalCoordinate)][
-        (getVerticalCoordinate(move) - 1) as VerticalWallPosition
+        decrementVerticalPiecePosition(verticalCoordinate)
       ].h)
   ) {
     return true;
@@ -1330,10 +1338,46 @@ const overlapsWall = (game: Game, wallMove: WallMove) => {
   return false;
 };
 
+const isHorizontalWallPosition = (
+  horizontalPosition: HorizontalPiecePosition | HorizontalWallPosition,
+): horizontalPosition is HorizontalWallPosition => {
+  switch (horizontalPosition) {
+    case 'a':
+    case 'b':
+    case 'c':
+    case 'd':
+    case 'e':
+    case 'f':
+    case 'g':
+    case 'h':
+      return true;
+    default:
+      return false;
+  }
+};
+
+const isVerticalWallPosition = (
+  verticalPosition: VerticalPiecePosition | VerticalWallPosition,
+): verticalPosition is VerticalWallPosition => {
+  switch (verticalPosition) {
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+      return true;
+    default:
+      return false;
+  }
+};
+
 const isIncrementableHorizontalWallPosition = (
-  horizontalWallPosition: HorizontalWallPosition,
-): horizontalWallPosition is IncrementableHorizontalWallPosition => {
-  switch (horizontalWallPosition) {
+  horizontalPosition: HorizontalPiecePosition | HorizontalWallPosition,
+): horizontalPosition is IncrementableHorizontalWallPosition => {
+  switch (horizontalPosition) {
     case 'a':
     case 'b':
     case 'c':
@@ -1348,9 +1392,9 @@ const isIncrementableHorizontalWallPosition = (
 };
 
 const isDecrementableHorizontalWallPosition = (
-  horizontalWallPosition: HorizontalWallPosition,
-): horizontalWallPosition is DecrementableHorizontalWallPosition => {
-  switch (horizontalWallPosition) {
+  horizontalPosition: HorizontalPiecePosition | HorizontalWallPosition,
+): horizontalPosition is DecrementableHorizontalWallPosition => {
+  switch (horizontalPosition) {
     case 'b':
     case 'c':
     case 'd':
@@ -1365,9 +1409,9 @@ const isDecrementableHorizontalWallPosition = (
 };
 
 const isIncrementableVerticalWallPosition = (
-  horizontalWallPosition: VerticalWallPosition,
-): horizontalWallPosition is IncrementableVerticalWallPosition => {
-  switch (horizontalWallPosition) {
+  horizontalPosition: VerticalPiecePosition | VerticalWallPosition,
+): horizontalPosition is IncrementableVerticalWallPosition => {
+  switch (horizontalPosition) {
     case 1:
     case 2:
     case 3:
@@ -1382,9 +1426,9 @@ const isIncrementableVerticalWallPosition = (
 };
 
 const isDecrementableVerticalWallPosition = (
-  horizontalWallPosition: VerticalWallPosition,
-): horizontalWallPosition is DecrementableVerticalWallPosition => {
-  switch (horizontalWallPosition) {
+  horizontalPosition: VerticalPiecePosition | VerticalWallPosition,
+): horizontalPosition is DecrementableVerticalWallPosition => {
+  switch (horizontalPosition) {
     case 2:
     case 3:
     case 4:
