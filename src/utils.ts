@@ -17,6 +17,7 @@ import {
   MoveObject,
   PawnMove,
   PawnPosition,
+  PiecePosition,
   Player,
   PlayerMatrix,
   VerticalPiecePosition,
@@ -697,6 +698,22 @@ const isLeftUpMove = (currentPosition: PawnPosition, move: PawnMove) => {
   return false;
 };
 
+const isOnRightmostRow = (move: PawnPosition) => {
+  return getHorizontalCoordinate(move) === 'i';
+};
+
+const isOnLeftmostRow = (move: PawnPosition) => {
+  return getHorizontalCoordinate(move) === 'a';
+};
+
+const isOnTopRow = (move: PawnPosition) => {
+  return getVerticalCoordinate(move) === 9;
+};
+
+const isOnBottomRow = (move: PawnPosition) => {
+  return getVerticalCoordinate(move) === 1;
+};
+
 export const isValidNormalMove = (
   game: Game,
   currentPosition: PawnPosition,
@@ -759,9 +776,16 @@ export const isValidNormalMove = (
           x,
           y: incrementVerticalPiecePosition(y),
         }) as PawnPosition,
+      ) &&
+      !isOnTopRow(
+        moveObjectToMove({
+          x,
+          y: incrementVerticalPiecePosition(y),
+        }) as PawnPosition,
       )
-    )
+    ) {
       return false;
+    }
     if (hasWallAbove(game, currentPosition)) return false;
     if (
       isIncrementableVerticalPiecePosition(y) &&
@@ -784,6 +808,12 @@ export const isValidNormalMove = (
       isIncrementableVerticalPiecePosition(y) &&
       !hasWallAbove(
         game,
+        moveObjectToMove({
+          x,
+          y: incrementVerticalPiecePosition(y),
+        }) as PawnMove,
+      ) &&
+      !isOnTopRow(
         moveObjectToMove({
           x,
           y: incrementVerticalPiecePosition(y),
@@ -841,9 +871,16 @@ export const isValidNormalMove = (
           x: incrementHorizontalPiecePosition(x),
           y,
         }) as PawnMove,
+      ) &&
+      !isOnRightmostRow(
+        moveObjectToMove({
+          x: incrementHorizontalPiecePosition(x),
+          y,
+        }) as PawnMove,
       )
-    )
+    ) {
       return false;
+    }
     if (hasWallToTheRight(game, currentPosition)) return false;
     if (
       isIncrementableHorizontalPiecePosition(x) &&
@@ -854,8 +891,9 @@ export const isValidNormalMove = (
           y,
         }) as PawnMove,
       )
-    )
+    ) {
       return false;
+    }
     return true;
   }
   if (
@@ -866,6 +904,12 @@ export const isValidNormalMove = (
       isIncrementableHorizontalPiecePosition(x) &&
       !hasWallToTheRight(
         game,
+        moveObjectToMove({
+          x: incrementHorizontalPiecePosition(x),
+          y,
+        }) as PawnMove,
+      ) &&
+      !isOnRightmostRow(
         moveObjectToMove({
           x: incrementHorizontalPiecePosition(x),
           y,
@@ -925,9 +969,16 @@ export const isValidNormalMove = (
           x,
           y: decrementVerticalPiecePosition(y),
         }) as PawnMove,
+      ) &&
+      !isOnBottomRow(
+        moveObjectToMove({
+          x,
+          y: decrementVerticalPiecePosition(y),
+        }) as PawnPosition,
       )
-    )
+    ) {
       return false;
+    }
     if (hasWallBelow(game, currentPosition)) return false;
     if (
       isDecrementableVerticalPiecePosition(y) &&
@@ -937,9 +988,16 @@ export const isValidNormalMove = (
           x,
           y: decrementVerticalPiecePosition(y),
         }) as PawnMove,
+      ) &&
+      !isOnBottomRow(
+        moveObjectToMove({
+          x,
+          y: decrementVerticalPiecePosition(y),
+        }) as PawnMove,
       )
-    )
+    ) {
       return false;
+    }
     return true;
   }
   if (
@@ -954,6 +1012,12 @@ export const isValidNormalMove = (
           x,
           y: decrementVerticalPiecePosition(y),
         }) as PawnMove,
+      ) &&
+      !isOnBottomRow(
+        moveObjectToMove({
+          x,
+          y: decrementVerticalPiecePosition(y),
+        }) as PawnPosition,
       )
     )
       return false;
@@ -1007,9 +1071,16 @@ export const isValidNormalMove = (
           x: decrementHorizontalPiecePosition(x),
           y,
         }) as PawnMove,
+      ) &&
+      !isOnLeftmostRow(
+        moveObjectToMove({
+          x: decrementHorizontalPiecePosition(x),
+          y,
+        }) as PawnMove,
       )
-    )
+    ) {
       return false;
+    }
     if (hasWallToTheLeft(game, currentPosition)) return false;
     if (
       isDecrementableHorizontalPiecePosition(x) &&
@@ -1036,9 +1107,16 @@ export const isValidNormalMove = (
           x: decrementHorizontalPiecePosition(x),
           y,
         }) as PawnMove,
+      ) &&
+      !isOnLeftmostRow(
+        moveObjectToMove({
+          x: decrementHorizontalPiecePosition(x),
+          y,
+        }) as PawnMove,
       )
-    )
+    ) {
       return false;
+    }
     if (hasWallToTheLeft(game, currentPosition)) return false;
     if (
       isDecrementableHorizontalPiecePosition(x) &&

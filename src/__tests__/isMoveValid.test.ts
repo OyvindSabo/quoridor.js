@@ -58,3 +58,187 @@ test('Test that blocking all paths for a player is not a valid move', () => {
   // Adding walls around player 2
   expect(isMoveValid(createGameFromMoves(['d8v', 'e8h']), 'f8v')).toBe(false);
 });
+
+test('Test that right up diagonal move against right border is valid', () => {
+  expect(
+    isMoveValid(
+      createGameFromMoves([
+        'f1',
+        'e8',
+        'g1',
+        'e7',
+        'h1',
+        'e6',
+        'i1',
+        'e5',
+        'i2',
+        'f5',
+        'i3',
+        'g5',
+        'i4',
+        'h5',
+        'i5',
+      ]),
+      'i6',
+    ),
+  ).toBe(true);
+});
+
+test('Test that right down diagonal move against right border is valid', () => {
+  expect(
+    isMoveValid(
+      createGameFromMoves([
+        'f1',
+        'e8',
+        'g1',
+        'e7',
+        'h1',
+        'e6',
+        'i1',
+        'e5',
+        'i2',
+        'f5',
+        'i3',
+        'g5',
+        'i4',
+        'h5',
+        'i5',
+      ]),
+      'i4',
+    ),
+  ).toBe(true);
+});
+
+test('Test that left up diagonal move against left border is valid', () => {
+  expect(
+    isMoveValid(
+      createGameFromMoves([
+        'd1',
+        'e8',
+        'c1',
+        'e7',
+        'b1',
+        'e6',
+        'a1',
+        'e5',
+        'a2',
+        'd5',
+        'a3',
+        'c5',
+        'a4',
+        'b5',
+        'a5',
+      ]),
+      'a6',
+    ),
+  ).toBe(true);
+});
+
+test('Test that left down diagonal move against left border is valid', () => {
+  expect(
+    isMoveValid(
+      createGameFromMoves([
+        'd1',
+        'e8',
+        'c1',
+        'e7',
+        'b1',
+        'e6',
+        'a1',
+        'e5',
+        'a2',
+        'd5',
+        'a3',
+        'c5',
+        'a4',
+        'b5',
+        'a5',
+      ]),
+      'a4',
+    ),
+  ).toBe(true);
+});
+
+test('Test that down right diagonal move against bottom border is valid', () => {
+  expect(
+    isMoveValid(
+      createGameFromMoves([
+        'e2',
+        'e8',
+        'e3',
+        'e7',
+        'e4',
+        'e6',
+        'e5',
+        'e4',
+        'e3',
+        'e2',
+        'e1',
+      ]),
+      'f1',
+    ),
+  ).toBe(true);
+});
+
+test('Test that down right diagonal move against bottom border is valid', () => {
+  expect(
+    isMoveValid(
+      createGameFromMoves([
+        'e2',
+        'e8',
+        'e3',
+        'e7',
+        'e4',
+        'e6',
+        'e5',
+        'e4',
+        'e3',
+        'e2',
+        'e1',
+      ]),
+      'd1',
+    ),
+  ).toBe(true);
+});
+
+test('Test that up right diagonal move against top border is valid', () => {
+  expect(
+    isMoveValid(
+      createGameFromMoves([
+        'e2',
+        'e8',
+        'e3',
+        'e7',
+        'e4',
+        'e6',
+        'e5',
+        'e4h',
+        'e7',
+        'e8',
+        'e9',
+      ]),
+      'f9',
+    ),
+  ).toBe(true);
+});
+
+test('Test that up left diagonal move against top border is valid', () => {
+  expect(
+    isMoveValid(
+      createGameFromMoves([
+        'e2',
+        'e8',
+        'e3',
+        'e7',
+        'e4',
+        'e6',
+        'e5',
+        'e4h',
+        'e7',
+        'e8',
+        'e9',
+      ]),
+      'd9',
+    ),
+  ).toBe(true);
+});
