@@ -10,6 +10,7 @@ export { getTurn } from './getTurn';
 export { undo } from './undo';
 export { redo } from './redo';
 export { isMove } from './isMove';
+export { makeUnvalidatedMove } from './makeUnvalidatedMove';
 import { getUnicodeRepresentation } from './getUnicodeRepresentation';
 import { isMoveValid } from './isMoveValid';
 import { undo } from './undo';
