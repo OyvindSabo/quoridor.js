@@ -1,4 +1,5 @@
 import { aStar } from './aStar';
+import { possiblyTrappedPositions } from './consts';
 import { getTurn } from './getTurn';
 import { makeUnvalidatedMove } from './makeUnvalidatedMove';
 import {
@@ -18,9 +19,7 @@ import {
   MoveObject,
   PawnMove,
   PawnPosition,
-  PiecePosition,
   Player,
-  PlayerMatrix,
   VerticalPiecePosition,
   VerticalWallPosition,
   WallMove,
@@ -1309,6 +1308,8 @@ const getAllWallMoves = () => {
 };
 
 const overlapsWall = (game: Game, wallMove: WallMove) => {
+  const numberOfPlacedWalls = getNumberOfPlacedWalls(game);
+  if (numberOfPlacedWalls === 0) return false;
   const x = getHorizontalCoordinate(wallMove) as HorizontalWallPosition;
   const y = getVerticalCoordinate(wallMove) as VerticalWallPosition;
   if (isHorizontalWallMove(wallMove)) {
@@ -1604,6 +1605,10 @@ const overlapsPath = (
   return false;
 };
 
+const getNumberOfPlacedWalls = (game: Game) => {
+  return 20 - game.playerWallCounts[1] - game.playerWallCounts[2];
+};
+
 export const getValidWallMoveArray = (game: Game) => {
   if (game.playerWallCounts[getTurn(game)] < 1) {
     return [];
@@ -1617,9 +1622,18 @@ export const getValidWallMoveArray = (game: Game) => {
     (moveObject) => moveObjectToMove(moveObject) as WallMove,
   );
 
-  // The first placed wall can never be invalid, so no need to check for validity
-  if (game.playerWallCounts[1] === 10 && game.playerWallCounts[2] === 10) {
-    return allWallMoves;
+  const numberOfPlacedWalls = getNumberOfPlacedWalls(game);
+  if (numberOfPlacedWalls <= 2) {
+    if (
+      !possiblyTrappedPositions[(numberOfPlacedWalls + 1) as 1 | 2].includes(
+        moveObjectToMove(game.playerPositions[1]) as PawnPosition,
+      ) &&
+      !possiblyTrappedPositions[(numberOfPlacedWalls + 1) as 1 | 2].includes(
+        moveObjectToMove(game.playerPositions[2]) as PawnPosition,
+      )
+    ) {
+      return allWallMoves.filter((wallMove) => !overlapsWall(game, wallMove));
+    }
   }
 
   const thisPlayersShortestPath = shortestPath(game, thisTurn);
