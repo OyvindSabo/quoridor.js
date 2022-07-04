@@ -1084,7 +1084,7 @@ const getShortestPathWithNoObstacles = (game: Game, player: Player) => {
   const shortestPathVerticalCoordinates =
     player === 1
       ? verticalPiecePositions.slice(playerPosition.y)
-      : verticalPiecePositions.slice(0, -playerPosition.y);
+      : [...verticalPiecePositions].reverse().slice(10 - playerPosition.y);
   return shortestPathVerticalCoordinates.map((y) => ({
     x: playerPosition.x,
     y,

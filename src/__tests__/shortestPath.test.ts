@@ -14,6 +14,16 @@ test('Test that a shortest path to the other side of the board is found if there
     { x: 'e', y: 8 },
     { x: 'e', y: 9 },
   ]);
+  expect(shortestPath(createNewGame(), 2)).toEqual([
+    { x: 'e', y: 8 },
+    { x: 'e', y: 7 },
+    { x: 'e', y: 6 },
+    { x: 'e', y: 5 },
+    { x: 'e', y: 4 },
+    { x: 'e', y: 3 },
+    { x: 'e', y: 2 },
+    { x: 'e', y: 1 },
+  ]);
 });
 
 test('Test that shortest path does not go up through the right part of a horizontal wall', () => {
