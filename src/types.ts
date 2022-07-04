@@ -159,6 +159,9 @@ export type PawnPosition =
 
 export type PawnMove = PawnPosition;
 
+// TODO: Split this into HorizontalWallPosition and VerticalWallPosition and
+// rename existing HorizontalWallPosition and VerticalWallPosition to
+// HorizontalWallCoordinate and VerticalWallCoordinate, respectively.
 export type WallPosition =
   | 'a1h'
   | 'a1v'

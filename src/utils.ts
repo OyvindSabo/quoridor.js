@@ -5,6 +5,7 @@ import {
   possiblyTrappedPositions,
   verticallyDecrementableWallPositions,
   verticallyIncrementableWallPositions,
+  verticalPiecePositions,
 } from './consts';
 import { getTurn } from './getTurn';
 import { makeUnvalidatedMove } from './makeUnvalidatedMove';
@@ -253,12 +254,12 @@ const incrementVerticalPiecePosition = (
   }
 };
 
-const isHorizontalWallMove = (wallMove: WallMove) => {
-  return wallMove.charAt(2) === 'h';
+const isHorizontalWallMove = (move: PawnMove | WallMove): move is WallMove => {
+  return move.charAt(2) === 'h';
 };
 
-const isVerticalWallMove = (wallMove: WallMove) => {
-  return wallMove.charAt(2) === 'v';
+const isVerticalWallMove = (move: PawnMove | WallMove): move is WallMove => {
+  return move.charAt(2) === 'v';
 };
 
 export const doesWallMoveOverlapExistingWall = (
@@ -1078,8 +1079,49 @@ export const isValidNormalMove = (
   return false;
 };
 
+const getShortestPathWithNoObstacles = (game: Game, player: Player) => {
+  const playerPosition = game.playerPositions[player];
+  const shortestPathVerticalCoordinates =
+    player === 1
+      ? verticalPiecePositions.slice(playerPosition.y)
+      : verticalPiecePositions.slice(0, -playerPosition.y);
+  return shortestPathVerticalCoordinates.map((y) => ({
+    x: playerPosition.x,
+    y,
+  }));
+};
+
+const doesHorizontalWallBlockPlayer = (
+  game: Game,
+  player: Player,
+  horizontalWall: WallPosition,
+) => {
+  const { x: playerX, y: playerY } = game.playerPositions[player];
+  const wallX = getHorizontalCoordinate(horizontalWall);
+  const wallY = getVerticalCoordinate(horizontalWall);
+  const wallOverlapsWithPlayerColumn =
+    playerX === wallX ||
+    (isIncrementableHorizontalWallPosition(wallX) &&
+      playerX === incrementHorizontalWallPosition(wallX));
+  if (!wallOverlapsWithPlayerColumn) return false;
+  if (player === 1) {
+    return wallY >= playerY;
+  }
+  return wallY < playerY;
+};
+
 export const shortestPath = (game: Game, player: Player) => {
-  return aStar(game.pieceMatrix, game.wallMatrix, player);
+  const placedHorizontalWalls = game.pastMoves.filter(isHorizontalWallMove);
+  if (
+    placedHorizontalWalls.some((wall) =>
+      doesHorizontalWallBlockPlayer(game, player, wall),
+    )
+  ) {
+    return aStar(game.pieceMatrix, game.wallMatrix, player);
+  }
+  // The shortest path has no obstacles if no horizontal walls have been placed
+  // between the player and the goal
+  return getShortestPathWithNoObstacles(game, player);
 };
 
 const numberToLetter = (num: number) => {
