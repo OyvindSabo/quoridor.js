@@ -1738,6 +1738,17 @@ const doesWallHaveAtLeastTwoNeighborWalls = (
   );
 };
 
+const doesWallMoveHaveSameDirectionAsAllPreviousWallMoves = (
+  game: Game,
+  wallMove: WallMove,
+) => {
+  const pastWallMoves = game.pastMoves.filter(isWallPosition);
+  const orientation = getWallOrientation(wallMove);
+  return orientation === 'h'
+    ? pastWallMoves.every(isHorizontalWallMove)
+    : pastWallMoves.every(isVerticalWallMove);
+};
+
 const isHorizontalWallPosition = (
   horizontalPosition: HorizontalPiecePosition | HorizontalWallPosition,
 ): horizontalPosition is HorizontalWallPosition => {
@@ -2075,6 +2086,9 @@ export const getValidWallMoveArray = (game: Game) => {
         wallMove,
       )
     ) {
+      return true;
+    }
+    if (doesWallMoveHaveSameDirectionAsAllPreviousWallMoves(game, wallMove)) {
       return true;
     }
     if (!doesWallHaveAtLeastTwoNeighborWalls(game, wallMove)) {
