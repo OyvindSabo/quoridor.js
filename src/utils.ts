@@ -1,7 +1,25 @@
 import { aStar } from './aStar';
 import {
+  decrementedHorizontalPiecePositions,
+  decrementedHorizontalWallPositions,
+  decrementedVerticalPiecePositions,
+  decrementedVerticalWallPositions,
   horizontallyDecrementableWallPositions,
   horizontallyIncrementableWallPositions,
+  incrementedHorizontalPiecePositions,
+  incrementedHorizontalWallPositions,
+  incrementedVerticalPiecePositions,
+  incrementedVerticalWallPositions,
+  isDecrementableHorizontalPiecePositionMap,
+  isDecrementableHorizontalWallPositionMap,
+  isDecrementableVerticalPiecePositionMap,
+  isDecrementableVerticalWallPositionMap,
+  isHorizontalWallCoordinateMap,
+  isIncrementableHorizontalPiecePositionMap,
+  isIncrementableHorizontalWallPositionMap,
+  isIncrementableVerticalPiecePositionMap,
+  isIncrementableVerticalWallPositionMap,
+  isVerticalWallCoordinateMap,
   possiblyTrappedPositions,
   verticallyDecrementableWallPositions,
   verticallyIncrementableWallPositions,
@@ -81,177 +99,49 @@ const letterToNumber = (letter: HorizontalPiecePosition) => {
 const decrementHorizontalWallPosition = (
   horizontalWallPosition: DecrementableHorizontalWallPosition,
 ) => {
-  switch (horizontalWallPosition) {
-    case 'b':
-      return 'a';
-    case 'c':
-      return 'b';
-    case 'd':
-      return 'c';
-    case 'e':
-      return 'd';
-    case 'f':
-      return 'e';
-    case 'g':
-      return 'f';
-    case 'h':
-      return 'g';
-  }
+  return decrementedHorizontalWallPositions[horizontalWallPosition];
 };
 
 const decrementHorizontalPiecePosition = (
   horizontalPiecePosition: DecrementableHorizontalPiecePosition,
 ) => {
-  switch (horizontalPiecePosition) {
-    case 'b':
-      return 'a';
-    case 'c':
-      return 'b';
-    case 'd':
-      return 'c';
-    case 'e':
-      return 'd';
-    case 'f':
-      return 'e';
-    case 'g':
-      return 'f';
-    case 'h':
-      return 'g';
-    case 'i':
-      return 'h';
-  }
+  return decrementedHorizontalPiecePositions[horizontalPiecePosition];
 };
 
 const incrementHorizontalWallPosition = (
   horizontalWallPosition: IncrementableHorizontalWallPosition,
 ): HorizontalWallPosition => {
-  switch (horizontalWallPosition) {
-    case 'a':
-      return 'b';
-    case 'b':
-      return 'c';
-    case 'c':
-      return 'd';
-    case 'd':
-      return 'e';
-    case 'e':
-      return 'f';
-    case 'f':
-      return 'g';
-    case 'g':
-      return 'h';
-  }
+  return incrementedHorizontalWallPositions[horizontalWallPosition];
 };
 
 const incrementHorizontalPiecePosition = (
   horizontalPiecePosition: IncrementableHorizontalPiecePosition,
 ) => {
-  switch (horizontalPiecePosition) {
-    case 'a':
-      return 'b';
-    case 'b':
-      return 'c';
-    case 'c':
-      return 'd';
-    case 'd':
-      return 'e';
-    case 'e':
-      return 'f';
-    case 'f':
-      return 'g';
-    case 'g':
-      return 'h';
-    case 'h':
-      return 'i';
-  }
+  return incrementedHorizontalPiecePositions[horizontalPiecePosition];
 };
 
 const decrementVerticalWallPosition = (
   verticalWallPosition: DecrementableVerticalWallPosition,
 ) => {
-  switch (verticalWallPosition) {
-    case 2:
-      return 1;
-    case 3:
-      return 2;
-    case 4:
-      return 3;
-    case 5:
-      return 4;
-    case 6:
-      return 5;
-    case 7:
-      return 6;
-    case 8:
-      return 7;
-  }
+  return decrementedVerticalWallPositions[verticalWallPosition];
 };
 
 const decrementVerticalPiecePosition = (
   verticalPiecePosition: DecrementableVerticalPiecePosition,
 ) => {
-  switch (verticalPiecePosition) {
-    case 2:
-      return 1;
-    case 3:
-      return 2;
-    case 4:
-      return 3;
-    case 5:
-      return 4;
-    case 6:
-      return 5;
-    case 7:
-      return 6;
-    case 8:
-      return 7;
-    case 9:
-      return 8;
-  }
+  return decrementedVerticalPiecePositions[verticalPiecePosition];
 };
 
 const incrementVerticalWallPosition = (
   verticalWallPosition: IncrementableVerticalWallPosition,
 ): VerticalWallPosition => {
-  switch (verticalWallPosition) {
-    case 1:
-      return 2;
-    case 2:
-      return 3;
-    case 3:
-      return 4;
-    case 4:
-      return 5;
-    case 5:
-      return 6;
-    case 6:
-      return 7;
-    case 7:
-      return 8;
-  }
+  return incrementedVerticalWallPositions[verticalWallPosition];
 };
 
 const incrementVerticalPiecePosition = (
   verticalPiecePosition: IncrementableVerticalPiecePosition,
 ) => {
-  switch (verticalPiecePosition) {
-    case 1:
-      return 2;
-    case 2:
-      return 3;
-    case 3:
-      return 4;
-    case 4:
-      return 5;
-    case 5:
-      return 6;
-    case 6:
-      return 7;
-    case 7:
-      return 8;
-    case 8:
-      return 9;
-  }
+  return incrementedVerticalPiecePositions[verticalPiecePosition];
 };
 
 const isHorizontalWallMove = (move: PawnMove | WallMove): move is WallMove => {
@@ -1975,105 +1865,37 @@ const doesWallMoveHaveSameDirectionAsAllPreviousWallMoves = (
 const isHorizontalWallPosition = (
   horizontalPosition: HorizontalPiecePosition | HorizontalWallPosition,
 ): horizontalPosition is HorizontalWallPosition => {
-  switch (horizontalPosition) {
-    case 'a':
-    case 'b':
-    case 'c':
-    case 'd':
-    case 'e':
-    case 'f':
-    case 'g':
-    case 'h':
-      return true;
-    default:
-      return false;
-  }
+  return isHorizontalWallCoordinateMap[horizontalPosition];
 };
 
 const isVerticalWallPosition = (
   verticalPosition: VerticalPiecePosition | VerticalWallPosition,
 ): verticalPosition is VerticalWallPosition => {
-  switch (verticalPosition) {
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-      return true;
-    default:
-      return false;
-  }
+  return isVerticalWallCoordinateMap[verticalPosition];
 };
 
 const isIncrementableHorizontalWallPosition = (
   horizontalPosition: HorizontalPiecePosition | HorizontalWallPosition,
 ): horizontalPosition is IncrementableHorizontalWallPosition => {
-  switch (horizontalPosition) {
-    case 'a':
-    case 'b':
-    case 'c':
-    case 'd':
-    case 'e':
-    case 'f':
-    case 'g':
-      return true;
-    default:
-      return false;
-  }
+  return isIncrementableHorizontalWallPositionMap[horizontalPosition];
 };
 
 const isDecrementableHorizontalWallPosition = (
   horizontalPosition: HorizontalPiecePosition | HorizontalWallPosition,
 ): horizontalPosition is DecrementableHorizontalWallPosition => {
-  switch (horizontalPosition) {
-    case 'b':
-    case 'c':
-    case 'd':
-    case 'e':
-    case 'f':
-    case 'g':
-    case 'h':
-      return true;
-    default:
-      return false;
-  }
+  return isDecrementableHorizontalWallPositionMap[horizontalPosition];
 };
 
 const isIncrementableVerticalWallPosition = (
   horizontalPosition: VerticalPiecePosition | VerticalWallPosition,
 ): horizontalPosition is IncrementableVerticalWallPosition => {
-  switch (horizontalPosition) {
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-      return true;
-    default:
-      return false;
-  }
+  return isIncrementableVerticalWallPositionMap[horizontalPosition];
 };
 
 const isDecrementableVerticalWallPosition = (
   horizontalPosition: VerticalPiecePosition | VerticalWallPosition,
 ): horizontalPosition is DecrementableVerticalWallPosition => {
-  switch (horizontalPosition) {
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-      return true;
-    default:
-      return false;
-  }
+  return isDecrementableVerticalWallPositionMap[horizontalPosition];
 };
 
 const isHorizontallyIncrementableWallPosition = (
@@ -2104,73 +1926,25 @@ const isVerticallyDecrementableWallPosition = (
 const isIncrementableHorizontalPiecePosition = (
   horizontalPiecePosition: HorizontalPiecePosition,
 ): horizontalPiecePosition is IncrementableHorizontalPiecePosition => {
-  switch (horizontalPiecePosition) {
-    case 'a':
-    case 'b':
-    case 'c':
-    case 'd':
-    case 'e':
-    case 'f':
-    case 'g':
-    case 'h':
-      return true;
-    default:
-      return false;
-  }
+  return isIncrementableHorizontalPiecePositionMap[horizontalPiecePosition];
 };
 
 const isDecrementableHorizontalPiecePosition = (
-  horizontalWallPosition: HorizontalPiecePosition,
-): horizontalWallPosition is DecrementableHorizontalPiecePosition => {
-  switch (horizontalWallPosition) {
-    case 'b':
-    case 'c':
-    case 'd':
-    case 'e':
-    case 'f':
-    case 'g':
-    case 'h':
-    case 'i':
-      return true;
-    default:
-      return false;
-  }
+  horizontalPiecePosition: HorizontalPiecePosition,
+): horizontalPiecePosition is DecrementableHorizontalPiecePosition => {
+  return isDecrementableHorizontalPiecePositionMap[horizontalPiecePosition];
 };
 
 const isIncrementableVerticalPiecePosition = (
-  horizontalPiecePosition: VerticalPiecePosition,
-): horizontalPiecePosition is IncrementableVerticalPiecePosition => {
-  switch (horizontalPiecePosition) {
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-      return true;
-    default:
-      return false;
-  }
+  verticalPiecePosition: VerticalPiecePosition,
+): verticalPiecePosition is IncrementableVerticalPiecePosition => {
+  return isIncrementableVerticalPiecePositionMap[verticalPiecePosition];
 };
 
 const isDecrementableVerticalPiecePosition = (
-  horizontalPiecePosition: VerticalPiecePosition,
-): horizontalPiecePosition is DecrementableVerticalPiecePosition => {
-  switch (horizontalPiecePosition) {
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
-      return true;
-    default:
-      return false;
-  }
+  verticalPiecePosition: VerticalPiecePosition,
+): verticalPiecePosition is DecrementableVerticalPiecePosition => {
+  return isDecrementableVerticalPiecePositionMap[verticalPiecePosition];
 };
 
 export const overlapsPath = (
