@@ -124,7 +124,7 @@ const decrementHorizontalPiecePosition = (
 
 const incrementHorizontalWallPosition = (
   horizontalWallPosition: IncrementableHorizontalWallPosition,
-) => {
+): HorizontalWallPosition => {
   switch (horizontalWallPosition) {
     case 'a':
       return 'b';
@@ -212,7 +212,7 @@ const decrementVerticalPiecePosition = (
 
 const incrementVerticalWallPosition = (
   verticalWallPosition: IncrementableVerticalWallPosition,
-) => {
+): VerticalWallPosition => {
   switch (verticalWallPosition) {
     case 1:
       return 2;
@@ -260,6 +260,10 @@ const isHorizontalWallMove = (move: PawnMove | WallMove): move is WallMove => {
 
 const isVerticalWallMove = (move: PawnMove | WallMove): move is WallMove => {
   return move.charAt(2) === 'v';
+};
+
+export const isPawnMove = (move: PawnMove | WallMove): move is PawnMove => {
+  return move.length === 2;
 };
 
 export const doesWallMoveOverlapExistingWall = (
@@ -1701,40 +1705,259 @@ const doesVerticalWallHaveBoardEdgeBelow = (wallMove: WallMove) => {
   return getVerticalCoordinate(wallMove) === 1;
 };
 
-const doesWallHaveAtLeastTwoNeighborWalls = (
-  game: Game,
-  wallMove: WallMove,
-) => {
+export const getNumberOfNeighborWalls = (game: Game, wallMove: WallMove) => {
   if (isHorizontalWallMove(wallMove)) {
-    return (
-      [
-        doesHorizontalWallHaveVerticalWallAboveRight(game, wallMove),
-        doesHorizontalWallHaveVerticalWallAboveLeft(game, wallMove),
-        doesHorizontalWallHaveVerticalWallBelowRight(game, wallMove),
-        doesHorizontalWallHaveVerticalWallBelowLeft(game, wallMove),
-        doesHorizontalWallHaveHorizontalWallRight(game, wallMove),
-        doesHorizontalWallHaveHorizontalWallLeft(game, wallMove),
-        doesHorizontalWallHaveVerticalWallAbove(game, wallMove),
-        doesHorizontalWallHaveVerticalWallBelow(game, wallMove),
-        doesHorizontalWallHaveBoardEdgeRight(wallMove),
-        doesHorizontalWallHaveBoardEdgeLeft(wallMove),
-      ].filter(Boolean).length >= 2
-    );
+    return [
+      doesHorizontalWallHaveVerticalWallAboveRight(game, wallMove),
+      doesHorizontalWallHaveVerticalWallAboveLeft(game, wallMove),
+      doesHorizontalWallHaveVerticalWallBelowRight(game, wallMove),
+      doesHorizontalWallHaveVerticalWallBelowLeft(game, wallMove),
+      doesHorizontalWallHaveHorizontalWallRight(game, wallMove),
+      doesHorizontalWallHaveHorizontalWallLeft(game, wallMove),
+      doesHorizontalWallHaveVerticalWallAbove(game, wallMove),
+      doesHorizontalWallHaveVerticalWallBelow(game, wallMove),
+      doesHorizontalWallHaveBoardEdgeRight(wallMove),
+      doesHorizontalWallHaveBoardEdgeLeft(wallMove),
+    ].filter(Boolean).length;
   }
   // isVerticalWallMove
+  return [
+    doesVerticalWallHaveHorizontalWallAboveRight(game, wallMove),
+    doesVerticalWallHaveHorizontalWallAboveLeft(game, wallMove),
+    doesVerticalWallHaveHorizontalWallBelowRight(game, wallMove),
+    doesVerticalWallHaveHorizontalWallBelowLeft(game, wallMove),
+    doesVerticalWallHaveVerticalWallAbove(game, wallMove),
+    doesVerticalWallHaveVerticalWallBelow(game, wallMove),
+    doesVerticalWallHaveHorizontalWallAbove(game, wallMove),
+    doesVerticalWallHaveHorizontalWallBelow(game, wallMove),
+    doesVerticalWallHaveBoardEdgeAbove(wallMove),
+    doesVerticalWallHaveBoardEdgeBelow(wallMove),
+  ].filter(Boolean).length;
+};
+
+const isWallAdjacentToPosition = (wall: WallPosition, pawn: PawnPosition) => {
+  const wallX = getHorizontalCoordinate(wall);
+  const wallY = getVerticalCoordinate(wall);
+  const wallOrientation = getWallOrientation(wall);
+  const pawnX = getHorizontalCoordinate(pawn);
+  const pawnY = getVerticalCoordinate(pawn);
+
+  // ––
+  //   x
+  if (
+    wallOrientation === 'h' &&
+    [wallX]
+      .filter(isIncrementableHorizontalWallPosition)
+      .map(incrementHorizontalWallPosition)
+      .filter(isIncrementableHorizontalWallPosition)
+      .map(incrementHorizontalWallPosition)[0] === pawnX &&
+    wallY === pawnY
+  ) {
+    return true;
+  }
+
+  //  ––
+  //   x
+  if (
+    wallOrientation === 'h' &&
+    [wallX]
+      .filter(isIncrementableHorizontalWallPosition)
+      .map(incrementHorizontalWallPosition)[0] === pawnX &&
+    wallY === pawnY
+  ) {
+    return true;
+  }
+
+  //   ––
+  //   x
+  if (wallOrientation === 'h' && wallX === pawnX && wallY === pawnY)
+    if (
+      wallOrientation === 'h' &&
+      [wallX]
+        .filter(isDecrementableHorizontalWallPosition)
+        .map(decrementHorizontalWallPosition)[0] === pawnX &&
+      wallY === pawnY
+    ) {
+      //    ––
+      //   x
+      return true;
+    }
+
+  //  |
+  //  |
+  //   x
+  if (
+    wallOrientation === 'v' &&
+    [wallX]
+      .filter(isIncrementableHorizontalWallPosition)
+      .map(incrementHorizontalWallPosition)[0] === pawnX &&
+    [wallY]
+      .filter(isDecrementableVerticalWallPosition)
+      .map(decrementVerticalWallPosition)[0] === pawnY
+  ) {
+    return true;
+  }
+
+  //  |
+  //  |x
+  if (
+    wallOrientation === 'v' &&
+    [wallX]
+      .filter(isIncrementableHorizontalWallPosition)
+      .map(incrementHorizontalWallPosition)[0] === pawnX &&
+    wallY === pawnY
+  ) {
+    return true;
+  }
+
+  //  |x
+  //  |
+  if (
+    wallOrientation === 'v' &&
+    [wallX]
+      .filter(isIncrementableHorizontalWallPosition)
+      .map(incrementHorizontalWallPosition)[0] === pawnX &&
+    [wallY]
+      .filter(isIncrementableVerticalWallPosition)
+      .map(incrementVerticalWallPosition)[0] === pawnY
+  ) {
+    return true;
+  }
+
+  //   x
+  //  |
+  //  |
+  if (
+    wallOrientation === 'v' &&
+    [wallX]
+      .filter(isIncrementableHorizontalWallPosition)
+      .map(incrementHorizontalWallPosition)[0] === pawnX &&
+    [wallY]
+      .filter(isIncrementableVerticalWallPosition)
+      .map(incrementVerticalWallPosition)
+      .filter(isIncrementableVerticalWallPosition)
+      .map(incrementVerticalWallPosition)[0] === pawnY
+  ) {
+    return true;
+  }
+
+  //    |
+  //    |
+  //   x
+  if (
+    wallOrientation === 'v' &&
+    wallX === pawnX &&
+    [wallY]
+      .filter(isDecrementableVerticalWallPosition)
+      .map(decrementVerticalWallPosition)[0] === pawnY
+  ) {
+    return true;
+  }
+
+  //    |
+  //   x|
+  if (wallOrientation === 'v' && wallX === pawnX && wallY === pawnY) {
+    return true;
+  }
+
+  //   x|
+  //    |
+  if (
+    wallOrientation === 'v' &&
+    wallX === pawnX &&
+    [wallY]
+      .filter(isIncrementableVerticalWallPosition)
+      .map(incrementVerticalWallPosition)[0] === pawnY
+  ) {
+    return true;
+  }
+
+  //   x
+  //    |
+  //    |
+  if (
+    wallOrientation === 'v' &&
+    wallX === pawnX &&
+    [wallY]
+      .filter(isIncrementableVerticalWallPosition)
+      .map(incrementVerticalWallPosition)
+      .filter(isIncrementableVerticalWallPosition)
+      .map(incrementVerticalWallPosition)[0] === pawnY
+  ) {
+    return true;
+  }
+
+  //   x
+  // ––
+  if (
+    wallOrientation === 'h' &&
+    [wallX]
+      .filter(isIncrementableHorizontalWallPosition)
+      .map(incrementHorizontalWallPosition)
+      .filter(isIncrementableHorizontalWallPosition)
+      .map(incrementHorizontalWallPosition)[0] === pawnX &&
+    [wallY]
+      .filter(isIncrementableVerticalWallPosition)
+      .map(incrementVerticalWallPosition)[0] === pawnY
+  ) {
+    return true;
+  }
+
+  //   x
+  //  ––
+  if (
+    wallOrientation === 'h' &&
+    [wallX]
+      .filter(isIncrementableHorizontalWallPosition)
+      .map(incrementHorizontalWallPosition)[0] === pawnX &&
+    [wallY]
+      .filter(isIncrementableVerticalWallPosition)
+      .map(incrementVerticalWallPosition)[0] === pawnY
+  ) {
+    return true;
+  }
+
+  //   x
+  //   ––
+  if (
+    wallOrientation === 'h' &&
+    wallX === pawnX &&
+    [wallY]
+      .filter(isIncrementableVerticalWallPosition)
+      .map(incrementVerticalWallPosition)[0] === pawnY
+  ) {
+    return true;
+  }
+
+  //   x
+  //    ––
+  if (
+    wallOrientation === 'h' &&
+    [wallX]
+      .filter(isDecrementableHorizontalWallPosition)
+      .map(decrementHorizontalWallPosition)[0] === pawnX &&
+    [wallY]
+      .filter(isIncrementableVerticalWallPosition)
+      .map(incrementVerticalWallPosition)[0] === pawnY
+  ) {
+    return true;
+  }
+  return false;
+};
+
+export const isWallAdjacentToAtLeastOnePawn = (
+  game: Game,
+  wall: WallPosition,
+) => {
+  const player1Position = moveObjectToMove(
+    game.playerPositions[1],
+  ) as PawnPosition;
+  const player2Position = moveObjectToMove(
+    game.playerPositions[2],
+  ) as PawnPosition;
   return (
-    [
-      doesVerticalWallHaveHorizontalWallAboveRight(game, wallMove),
-      doesVerticalWallHaveHorizontalWallAboveLeft(game, wallMove),
-      doesVerticalWallHaveHorizontalWallBelowRight(game, wallMove),
-      doesVerticalWallHaveHorizontalWallBelowLeft(game, wallMove),
-      doesVerticalWallHaveVerticalWallAbove(game, wallMove),
-      doesVerticalWallHaveVerticalWallBelow(game, wallMove),
-      doesVerticalWallHaveHorizontalWallAbove(game, wallMove),
-      doesVerticalWallHaveHorizontalWallBelow(game, wallMove),
-      doesVerticalWallHaveBoardEdgeAbove(wallMove),
-      doesVerticalWallHaveBoardEdgeBelow(wallMove),
-    ].filter(Boolean).length >= 2
+    isWallAdjacentToPosition(wall, player1Position) ||
+    isWallAdjacentToPosition(wall, player2Position)
   );
 };
 
@@ -1950,7 +2173,7 @@ const isDecrementableVerticalPiecePosition = (
   }
 };
 
-const overlapsPath = (
+export const overlapsPath = (
   path: {
     x: string;
     y: number;
@@ -2091,7 +2314,7 @@ export const getValidWallMoveArray = (game: Game) => {
     if (doesWallMoveHaveSameDirectionAsAllPreviousWallMoves(game, wallMove)) {
       return true;
     }
-    if (!doesWallHaveAtLeastTwoNeighborWalls(game, wallMove)) {
+    if (getNumberOfNeighborWalls(game, wallMove) < 2) {
       return true;
     }
     const gameWithUnvalidatedMove = makeUnvalidatedMove(game, wallMove);
