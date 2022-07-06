@@ -560,6 +560,7 @@ export const isValidNormalMove = (
   const x = getHorizontalCoordinate(currentPosition);
   const y = getVerticalCoordinate(currentPosition);
 
+  // TODO: I might no longer need this now that this is properly typed
   // If move is outside board
   if (
     letterToNumber(getHorizontalCoordinate(move)) < 1 ||
@@ -973,16 +974,18 @@ export const isValidNormalMove = (
   return false;
 };
 
-const getShortestPathWithNoObstacles = (game: Game, player: Player) => {
+const getShortestPathWithNoObstacles = (
+  game: Game,
+  player: Player,
+): PawnPosition[] => {
   const playerPosition = game.playerPositions[player];
   const shortestPathVerticalCoordinates =
     player === 1
-      ? verticalPiecePositions.slice(playerPosition.y)
-      : [...verticalPiecePositions].reverse().slice(10 - playerPosition.y);
-  return shortestPathVerticalCoordinates.map((y) => ({
-    x: playerPosition.x,
-    y,
-  }));
+      ? verticalPiecePositions.slice(playerPosition.y - 1)
+      : [...verticalPiecePositions].reverse().slice(9 - playerPosition.y);
+  return shortestPathVerticalCoordinates.map(
+    (y) => `${playerPosition.x}${y}` as PawnPosition,
+  );
 };
 
 const doesHorizontalWallBlockPlayer = (
@@ -1004,14 +1007,17 @@ const doesHorizontalWallBlockPlayer = (
   return wallY < playerY;
 };
 
-export const shortestPath = (game: Game, player: Player) => {
+export const shortestPath = (
+  game: Game,
+  player: Player,
+): PawnPosition[] | null => {
   const placedHorizontalWalls = game.pastMoves.filter(isHorizontalWallMove);
   if (
     placedHorizontalWalls.some((wall) =>
       doesHorizontalWallBlockPlayer(game, player, wall),
     )
   ) {
-    return aStar(game.pieceMatrix, game.wallMatrix, player);
+    return aStar(game, player);
   }
   // The shortest path has no obstacles if no horizontal walls have been placed
   // between the player and the goal
@@ -1030,7 +1036,7 @@ const incrementLetter = (letter: HorizontalPiecePosition) => {
   return numberToLetter(letterToNumber(letter) + 1);
 };
 
-const getPositionFromNorthMove = (currentPosition: PawnPosition) => {
+export const getPositionFromNorthMove = (currentPosition: PawnPosition) => {
   return moveObjectToMove({
     x: getHorizontalCoordinate(currentPosition),
     y: (getVerticalCoordinate(currentPosition) + 1) as VerticalPiecePosition,
@@ -1041,7 +1047,7 @@ const getPositionFromNorthNorthMove = (currentPosition: PawnPosition) => {
   return getPositionFromNorthMove(getPositionFromNorthMove(currentPosition));
 };
 
-const getPositionFromEastMove = (currentPosition: PawnPosition) => {
+export const getPositionFromEastMove = (currentPosition: PawnPosition) => {
   return moveObjectToMove({
     x: incrementLetter(
       getHorizontalCoordinate(currentPosition),
@@ -1058,7 +1064,7 @@ const getPositionFromEastEastMove = (currentPosition: PawnPosition) => {
   return getPositionFromEastMove(getPositionFromEastMove(currentPosition));
 };
 
-const getPositionFromSouthMove = (currentPosition: PawnPosition) => {
+export const getPositionFromSouthMove = (currentPosition: PawnPosition) => {
   return moveObjectToMove({
     x: getHorizontalCoordinate(currentPosition),
     y: (getVerticalCoordinate(currentPosition) - 1) as VerticalPiecePosition,
@@ -1073,7 +1079,7 @@ const getPositionFromSouthSouthMove = (currentPosition: PawnPosition) => {
   return getPositionFromSouthMove(getPositionFromSouthMove(currentPosition));
 };
 
-const getPositionFromWestMove = (currentPosition: PawnPosition) => {
+export const getPositionFromWestMove = (currentPosition: PawnPosition) => {
   return moveObjectToMove({
     x: decrementLetter(
       getHorizontalCoordinate(currentPosition),
@@ -1947,23 +1953,19 @@ const isDecrementableVerticalPiecePosition = (
   return isDecrementableVerticalPiecePositionMap[verticalPiecePosition];
 };
 
-export const overlapsPath = (
-  path: {
-    x: string;
-    y: number;
-  }[],
-  wallMove: WallPosition,
-) => {
+export const overlapsPath = (path: PawnPosition[], wallMove: WallPosition) => {
   if (
     path.some(
       (pathStep) =>
-        pathStep.x === getHorizontalCoordinate(wallMove) &&
-        pathStep.y === getVerticalCoordinate(wallMove),
+        getHorizontalCoordinate(pathStep) ===
+          getHorizontalCoordinate(wallMove) &&
+        getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove),
     ) &&
     path.some(
       (pathStep) =>
-        pathStep.x === getHorizontalCoordinate(wallMove) &&
-        pathStep.y === getVerticalCoordinate(wallMove) + 1,
+        getHorizontalCoordinate(pathStep) ===
+          getHorizontalCoordinate(wallMove) &&
+        getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove) + 1,
     )
   ) {
     return true;
@@ -1973,18 +1975,18 @@ export const overlapsPath = (
       const horizontalWallCoordinate = getHorizontalCoordinate(wallMove);
       return (
         isIncrementableHorizontalWallPosition(horizontalWallCoordinate) &&
-        pathStep.x ===
+        getHorizontalCoordinate(pathStep) ===
           incrementHorizontalWallPosition(horizontalWallCoordinate) &&
-        pathStep.y === getVerticalCoordinate(wallMove)
+        getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove)
       );
     }) &&
     path.some((pathStep) => {
       const horizontalWallCoordinate = getHorizontalCoordinate(wallMove);
       return (
         isIncrementableHorizontalWallPosition(horizontalWallCoordinate) &&
-        pathStep.x ===
+        getHorizontalCoordinate(pathStep) ===
           incrementHorizontalWallPosition(horizontalWallCoordinate) &&
-        pathStep.y === getVerticalCoordinate(wallMove) + 1
+        getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove) + 1
       );
     })
   ) {
@@ -1993,16 +1995,17 @@ export const overlapsPath = (
   if (
     path.some(
       (pathStep) =>
-        pathStep.x === getHorizontalCoordinate(wallMove) &&
-        pathStep.y === getVerticalCoordinate(wallMove),
+        getHorizontalCoordinate(pathStep) ===
+          getHorizontalCoordinate(wallMove) &&
+        getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove),
     ) &&
     path.some((pathStep) => {
       const horizontalWallCoordinate = getHorizontalCoordinate(wallMove);
       return (
         isIncrementableHorizontalWallPosition(horizontalWallCoordinate) &&
-        pathStep.x ===
+        getHorizontalCoordinate(pathStep) ===
           incrementHorizontalWallPosition(horizontalWallCoordinate) &&
-        pathStep.y === getVerticalCoordinate(wallMove)
+        getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove)
       );
     })
   ) {
@@ -2011,16 +2014,17 @@ export const overlapsPath = (
   if (
     path.some(
       (pathStep) =>
-        pathStep.x === getHorizontalCoordinate(wallMove) &&
-        pathStep.y === getVerticalCoordinate(wallMove) + 1,
+        getHorizontalCoordinate(pathStep) ===
+          getHorizontalCoordinate(wallMove) &&
+        getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove) + 1,
     ) &&
     path.some((pathStep) => {
       const horizontalWallCoordinate = getHorizontalCoordinate(wallMove);
       return (
         isIncrementableHorizontalWallPosition(horizontalWallCoordinate) &&
-        pathStep.x ===
+        getHorizontalCoordinate(pathStep) ===
           incrementHorizontalWallPosition(horizontalWallCoordinate) &&
-        pathStep.y === getVerticalCoordinate(wallMove) + 1
+        getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove) + 1
       );
     })
   ) {
@@ -2039,8 +2043,6 @@ export const getValidWallMoveArray = (game: Game) => {
   }
   const thisTurn = getTurn(game);
   const thatTurn = getOppositePlayer(getTurn(game));
-  const thisPlayersCurrentPosition = game.playerPositions[thisTurn];
-  const thatPlayersCurrentPosition = game.playerPositions[thatTurn];
 
   const allWallMoves = getAllWallMoves().map(
     (moveObject) => moveObjectToMove(moveObject) as WallMove,
@@ -2068,20 +2070,8 @@ export const getValidWallMoveArray = (game: Game) => {
   return allWallMoves.filter((wallMove) => {
     if (overlapsWall(game, wallMove)) return false;
     if (
-      /**
-       * shortestPath returns a list of moves, so it does not include the
-       * initial position. We need the initial position here to check if a
-       * wall blocks the first step of a path. To simplify this, consider
-       * changing shortestPath to include the initial position in the path.
-       */
-      !overlapsPath(
-        [thisPlayersCurrentPosition, ...thisPlayersShortestPath],
-        wallMove,
-      ) &&
-      !overlapsPath(
-        [thatPlayersCurrentPosition, ...thatPlayersShortestPath],
-        wallMove,
-      )
+      !overlapsPath(thisPlayersShortestPath, wallMove) &&
+      !overlapsPath(thatPlayersShortestPath, wallMove)
     ) {
       return true;
     }

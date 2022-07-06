@@ -1,8 +1,9 @@
-import { Game, Move } from './types';
+import { Game, Move, PawnPosition } from './types';
 import {
   getNumberOfNeighborWalls,
   isPawnMove,
   isWallAdjacentToAtLeastOnePawn,
+  moveObjectToMove,
   overlapsPath,
   shortestPath,
 } from './utils';
@@ -17,19 +18,16 @@ import {
 export const isMoveInteresting = (game: Game, move: Move) => {
   if (isPawnMove(move)) return true;
   if (getNumberOfNeighborWalls(game, move) > 0) return true;
-  const player1CurrentPosition = game.playerPositions[1];
+
   const player1ShortestPath = shortestPath(game, 1);
   if (!player1ShortestPath) return false;
-  if (overlapsPath([player1CurrentPosition, ...player1ShortestPath], move)) {
-    return true;
-  }
-  const player2CurrentPosition = game.playerPositions[2];
+  if (overlapsPath(player1ShortestPath, move)) return true;
+
   const player2ShortestPath = shortestPath(game, 2);
   if (!player2ShortestPath) return false;
-  if (overlapsPath([player2CurrentPosition, ...player2ShortestPath], move)) {
-    return true;
-  }
+  if (overlapsPath(player2ShortestPath, move)) return true;
   if (isWallAdjacentToAtLeastOnePawn(game, move)) return true;
+
   return false;
 };
 
