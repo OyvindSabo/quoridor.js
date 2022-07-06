@@ -1,13 +1,17 @@
 import { pawnPositions } from './consts';
 import { Game, PawnPosition, Player } from './types';
 import {
-  getPositionFromEastMove,
-  getPositionFromNorthMove,
-  getPositionFromSouthMove,
-  getPositionFromWestMove,
   getVerticalCoordinate,
+  horizontallyDecrementPawnPosition,
+  horizontallyIncrementPawnPosition,
+  isHorizontallyDecrementablePawnPosition,
+  isHorizontallyIncrementablePawnPosition,
   isValidNormalMove,
+  isVerticallyDecrementablePawnPosition,
+  isVerticallyIncrementablePawnPosition,
   moveObjectToMove,
+  verticallyDecrementPawnPosition,
+  verticallyIncrementPawnPosition,
 } from './utils';
 
 const getValidSurroundingPositions = (
@@ -17,17 +21,22 @@ const getValidSurroundingPositions = (
   relaxedPositions: Set<PawnPosition>,
 ) => {
   return [
-    getPositionFromNorthMove(position),
-    getPositionFromEastMove(position),
-    getPositionFromSouthMove(position),
-    getPositionFromWestMove(position),
+    isVerticallyIncrementablePawnPosition(position) &&
+      verticallyIncrementPawnPosition(position),
+    isHorizontallyIncrementablePawnPosition(position) &&
+      horizontallyIncrementPawnPosition(position),
+    isVerticallyDecrementablePawnPosition(position) &&
+      verticallyDecrementPawnPosition(position),
+    isHorizontallyDecrementablePawnPosition(position) &&
+      horizontallyDecrementPawnPosition(position),
   ].filter((newPosition) => {
     return (
+      newPosition &&
       isValidNormalMove(game, position, newPosition) &&
       !discoveredPositions.has(newPosition) &&
       !relaxedPositions.has(newPosition)
     );
-  });
+  }) as PawnPosition[];
 };
 
 // TODO: Maybe this could rather be a map from position to distance
