@@ -6,7 +6,7 @@ import {
   horizontallyIncrementPawnPosition,
   isHorizontallyDecrementablePawnPosition,
   isHorizontallyIncrementablePawnPosition,
-  isValidNormalMove,
+  isValidAStarMove,
   isVerticallyDecrementablePawnPosition,
   isVerticallyIncrementablePawnPosition,
   moveObjectToMove,
@@ -32,9 +32,9 @@ const getValidSurroundingPositions = (
   ].filter((newPosition) => {
     return (
       newPosition &&
-      isValidNormalMove(game, position, newPosition) &&
       !discoveredPositions.has(newPosition) &&
-      !relaxedPositions.has(newPosition)
+      !relaxedPositions.has(newPosition) &&
+      isValidAStarMove(game, position, newPosition)
     );
   }) as PawnPosition[];
 };

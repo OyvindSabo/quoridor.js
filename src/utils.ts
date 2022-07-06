@@ -566,6 +566,34 @@ const isOnBottomRow = (move: PawnPosition) => {
   return getVerticalCoordinate(move) === 1;
 };
 
+export const isValidAStarMove = (
+  game: Game,
+  currentPosition: PawnPosition,
+  move: PawnMove,
+) => {
+  // If up move
+  if (isSingleUpMove(currentPosition, move)) {
+    return !hasWallAbove(game, currentPosition);
+  }
+
+  // If right move
+  if (isSingleRightMove(currentPosition, move)) {
+    return !hasWallToTheRight(game, currentPosition);
+  }
+
+  // If down move
+  if (isSingleDownMove(currentPosition, move)) {
+    return !hasWallBelow(game, currentPosition);
+  }
+
+  // If left move
+  if (isSingleLeftMove(currentPosition, move)) {
+    return !hasWallToTheLeft(game, currentPosition);
+  }
+
+  return false;
+};
+
 export const isValidNormalMove = (
   game: Game,
   currentPosition: PawnPosition,
@@ -575,7 +603,8 @@ export const isValidNormalMove = (
   const y = getVerticalCoordinate(currentPosition);
 
   // TODO: I might no longer need this now that this is properly typed
-  // If move is outside board
+  // If move is outside board, but it seems like the getNorthWestMove etc. are a
+  // bit incorrectly typed.
   if (
     letterToNumber(getHorizontalCoordinate(move)) < 1 ||
     letterToNumber(getHorizontalCoordinate(move)) > 9
@@ -787,7 +816,7 @@ export const isValidNormalMove = (
 
   // If down move
   if (isSingleDownMove(currentPosition, move)) {
-    if (hasWallBelow(game, moveObjectToMove({ x, y }) as PawnMove)) {
+    if (hasWallBelow(game, currentPosition)) {
       return false;
     }
     return true;
