@@ -1169,7 +1169,7 @@ export const getValidPawnMoveArray = (game: Game) => {
   ].filter(
     (newPosition) =>
       newPosition && isValidNormalMove(game, currentPosition, newPosition),
-  );
+  ) as PawnPosition[];
   return validPawnMoveArray;
 };
 
