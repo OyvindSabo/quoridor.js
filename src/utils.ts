@@ -31,6 +31,7 @@ import {
   verticallyIncrementableWallPositions,
   verticallyIncrementedPawnPositions,
   verticalPiecePositions,
+  wallPositions,
 } from './consts';
 import { getShortestPath } from './getShortestPath';
 import { getTurn } from './getTurn';
@@ -599,19 +600,18 @@ export const isValidNormalMove = (
   currentPosition: PawnPosition,
   move: PawnMove,
 ) => {
-  const x = getHorizontalCoordinate(currentPosition);
-  const y = getVerticalCoordinate(currentPosition);
-
   // TODO: I might no longer need this now that this is properly typed
   // If move is outside board, but it seems like the getNorthWestMove etc. are a
   // bit incorrectly typed.
   if (
     letterToNumber(getHorizontalCoordinate(move)) < 1 ||
     letterToNumber(getHorizontalCoordinate(move)) > 9
-  )
+  ) {
     return false;
-  if (getVerticalCoordinate(move) < 1 || getVerticalCoordinate(move) > 9)
+  }
+  if (getVerticalCoordinate(move) < 1 || getVerticalCoordinate(move) > 9) {
     return false;
+  }
 
   // If the move lands on top of the opponent
   if (
@@ -633,14 +633,8 @@ export const isValidNormalMove = (
   ) {
     if (hasWallAbove(game, currentPosition)) return false;
     if (
-      isIncrementableVerticalPiecePosition(y) &&
-      hasWallAbove(
-        game,
-        moveObjectToMove({
-          x,
-          y: incrementVerticalPiecePosition(y),
-        }) as PawnPosition,
-      )
+      isVerticallyIncrementablePawnPosition(currentPosition) &&
+      hasWallAbove(game, verticallyIncrementPawnPosition(currentPosition))
     ) {
       return false;
     }
@@ -651,35 +645,19 @@ export const isValidNormalMove = (
     hasOpponentAbove(game, currentPosition)
   ) {
     if (
-      isIncrementableVerticalPiecePosition(y) &&
-      !hasWallAbove(
-        game,
-        moveObjectToMove({
-          x,
-          y: incrementVerticalPiecePosition(y),
-        }) as PawnPosition,
-      ) &&
-      !isOnTopRow(
-        moveObjectToMove({
-          x,
-          y: incrementVerticalPiecePosition(y),
-        }) as PawnPosition,
-      )
+      isVerticallyIncrementablePawnPosition(currentPosition) &&
+      !hasWallAbove(game, verticallyIncrementPawnPosition(currentPosition)) &&
+      !isOnTopRow(verticallyIncrementPawnPosition(currentPosition))
     ) {
       return false;
     }
     if (hasWallAbove(game, currentPosition)) return false;
     if (
-      isIncrementableVerticalPiecePosition(y) &&
-      hasWallToTheRight(
-        game,
-        moveObjectToMove({
-          x,
-          y: incrementVerticalPiecePosition(y),
-        }) as PawnPosition,
-      )
-    )
+      isVerticallyIncrementablePawnPosition(currentPosition) &&
+      hasWallToTheRight(game, verticallyIncrementPawnPosition(currentPosition))
+    ) {
       return false;
+    }
     return true;
   }
   if (
@@ -687,34 +665,19 @@ export const isValidNormalMove = (
     hasOpponentAbove(game, currentPosition)
   ) {
     if (
-      isIncrementableVerticalPiecePosition(y) &&
-      !hasWallAbove(
-        game,
-        moveObjectToMove({
-          x,
-          y: incrementVerticalPiecePosition(y),
-        }) as PawnMove,
-      ) &&
-      !isOnTopRow(
-        moveObjectToMove({
-          x,
-          y: incrementVerticalPiecePosition(y),
-        }) as PawnMove,
-      )
-    )
+      isVerticallyIncrementablePawnPosition(currentPosition) &&
+      !hasWallAbove(game, verticallyIncrementPawnPosition(currentPosition)) &&
+      !isOnTopRow(verticallyIncrementPawnPosition(currentPosition))
+    ) {
       return false;
+    }
     if (hasWallAbove(game, currentPosition)) return false;
     if (
-      isIncrementableVerticalPiecePosition(y) &&
-      hasWallToTheLeft(
-        game,
-        moveObjectToMove({
-          x,
-          y: incrementVerticalPiecePosition(y),
-        }) as PawnMove,
-      )
-    )
+      isHorizontallyDecrementablePawnPosition(currentPosition) &&
+      hasWallToTheLeft(game, horizontallyDecrementPawnPosition(currentPosition))
+    ) {
       return false;
+    }
     return true;
   }
 
@@ -729,16 +692,14 @@ export const isValidNormalMove = (
   ) {
     if (hasWallToTheRight(game, currentPosition)) return false;
     if (
-      isIncrementableHorizontalPiecePosition(x) &&
+      isHorizontallyIncrementablePawnPosition(currentPosition) &&
       hasWallToTheRight(
         game,
-        moveObjectToMove({
-          x: incrementHorizontalPiecePosition(x),
-          y,
-        }) as PawnMove,
+        horizontallyIncrementPawnPosition(currentPosition),
       )
-    )
+    ) {
       return false;
+    }
     return true;
   }
   if (
@@ -746,33 +707,19 @@ export const isValidNormalMove = (
     hasOpponentToTheRight(game, currentPosition)
   ) {
     if (
-      isIncrementableHorizontalPiecePosition(x) &&
+      isHorizontallyIncrementablePawnPosition(currentPosition) &&
       !hasWallToTheRight(
         game,
-        moveObjectToMove({
-          x: incrementHorizontalPiecePosition(x),
-          y,
-        }) as PawnMove,
+        horizontallyIncrementPawnPosition(currentPosition),
       ) &&
-      !isOnRightmostRow(
-        moveObjectToMove({
-          x: incrementHorizontalPiecePosition(x),
-          y,
-        }) as PawnMove,
-      )
+      !isOnRightmostRow(horizontallyIncrementPawnPosition(currentPosition))
     ) {
       return false;
     }
     if (hasWallToTheRight(game, currentPosition)) return false;
     if (
-      isIncrementableHorizontalPiecePosition(x) &&
-      hasWallAbove(
-        game,
-        moveObjectToMove({
-          x: incrementHorizontalPiecePosition(x),
-          y,
-        }) as PawnMove,
-      )
+      isHorizontallyIncrementablePawnPosition(currentPosition) &&
+      hasWallAbove(game, horizontallyIncrementPawnPosition(currentPosition))
     ) {
       return false;
     }
@@ -783,34 +730,22 @@ export const isValidNormalMove = (
     hasOpponentToTheRight(game, currentPosition)
   ) {
     if (
-      isIncrementableHorizontalPiecePosition(x) &&
+      isHorizontallyIncrementablePawnPosition(currentPosition) &&
       !hasWallToTheRight(
         game,
-        moveObjectToMove({
-          x: incrementHorizontalPiecePosition(x),
-          y,
-        }) as PawnMove,
+        horizontallyIncrementPawnPosition(currentPosition),
       ) &&
-      !isOnRightmostRow(
-        moveObjectToMove({
-          x: incrementHorizontalPiecePosition(x),
-          y,
-        }) as PawnMove,
-      )
-    )
+      !isOnRightmostRow(horizontallyIncrementPawnPosition(currentPosition))
+    ) {
       return false;
+    }
     if (hasWallToTheRight(game, currentPosition)) return false;
     if (
-      isIncrementableHorizontalPiecePosition(x) &&
-      hasWallBelow(
-        game,
-        moveObjectToMove({
-          x: incrementHorizontalPiecePosition(x),
-          y,
-        }) as PawnMove,
-      )
-    )
+      isHorizontallyIncrementablePawnPosition(currentPosition) &&
+      hasWallBelow(game, horizontallyIncrementPawnPosition(currentPosition))
+    ) {
       return false;
+    }
     return true;
   }
 
@@ -827,16 +762,11 @@ export const isValidNormalMove = (
   ) {
     if (hasWallBelow(game, currentPosition)) return false;
     if (
-      isDecrementableVerticalPiecePosition(y) &&
-      hasWallBelow(
-        game,
-        moveObjectToMove({
-          x,
-          y: decrementVerticalPiecePosition(y),
-        }) as PawnMove,
-      )
-    )
+      isVerticallyDecrementablePawnPosition(currentPosition) &&
+      hasWallBelow(game, verticallyDecrementPawnPosition(currentPosition))
+    ) {
       return false;
+    }
     return true;
   }
   if (
@@ -844,39 +774,20 @@ export const isValidNormalMove = (
     hasOpponentBelow(game, currentPosition)
   ) {
     if (
-      isDecrementableVerticalPiecePosition(y) &&
-      !hasWallBelow(
-        game,
-        moveObjectToMove({
-          x,
-          y: decrementVerticalPiecePosition(y),
-        }) as PawnMove,
-      ) &&
-      !isOnBottomRow(
-        moveObjectToMove({
-          x,
-          y: decrementVerticalPiecePosition(y),
-        }) as PawnPosition,
-      )
+      isVerticallyDecrementablePawnPosition(currentPosition) &&
+      !hasWallBelow(game, verticallyDecrementPawnPosition(currentPosition)) &&
+      !isOnBottomRow(verticallyDecrementPawnPosition(currentPosition))
     ) {
       return false;
     }
     if (hasWallBelow(game, currentPosition)) return false;
     if (
-      isDecrementableVerticalPiecePosition(y) &&
+      isVerticallyDecrementablePawnPosition(currentPosition) &&
       hasWallToTheRight(
         game,
-        moveObjectToMove({
-          x,
-          y: decrementVerticalPiecePosition(y),
-        }) as PawnMove,
+        verticallyDecrementPawnPosition(currentPosition),
       ) &&
-      !isOnBottomRow(
-        moveObjectToMove({
-          x,
-          y: decrementVerticalPiecePosition(y),
-        }) as PawnMove,
-      )
+      !isOnBottomRow(verticallyDecrementPawnPosition(currentPosition))
     ) {
       return false;
     }
@@ -887,34 +798,19 @@ export const isValidNormalMove = (
     hasOpponentBelow(game, currentPosition)
   ) {
     if (
-      isDecrementableVerticalPiecePosition(y) &&
-      !hasWallBelow(
-        game,
-        moveObjectToMove({
-          x,
-          y: decrementVerticalPiecePosition(y),
-        }) as PawnMove,
-      ) &&
-      !isOnBottomRow(
-        moveObjectToMove({
-          x,
-          y: decrementVerticalPiecePosition(y),
-        }) as PawnPosition,
-      )
-    )
+      isVerticallyDecrementablePawnPosition(currentPosition) &&
+      !hasWallBelow(game, verticallyDecrementPawnPosition(currentPosition)) &&
+      !isOnBottomRow(verticallyDecrementPawnPosition(currentPosition))
+    ) {
       return false;
+    }
     if (hasWallBelow(game, currentPosition)) return false;
     if (
-      isDecrementableVerticalPiecePosition(y) &&
-      hasWallToTheLeft(
-        game,
-        moveObjectToMove({
-          x,
-          y: decrementVerticalPiecePosition(y),
-        }) as PawnMove,
-      )
-    )
+      isVerticallyDecrementablePawnPosition(currentPosition) &&
+      hasWallToTheLeft(game, verticallyDecrementPawnPosition(currentPosition))
+    ) {
       return false;
+    }
     return true;
   }
 
@@ -929,16 +825,11 @@ export const isValidNormalMove = (
   ) {
     if (hasWallToTheLeft(game, currentPosition)) return false;
     if (
-      isDecrementableHorizontalPiecePosition(x) &&
-      hasWallToTheLeft(
-        game,
-        moveObjectToMove({
-          x: decrementHorizontalPiecePosition(x),
-          y,
-        }) as PawnMove,
-      )
-    )
+      isHorizontallyDecrementablePawnPosition(currentPosition) &&
+      hasWallToTheLeft(game, horizontallyDecrementPawnPosition(currentPosition))
+    ) {
       return false;
+    }
     return true;
   }
   if (
@@ -946,35 +837,22 @@ export const isValidNormalMove = (
     hasOpponentToTheLeft(game, currentPosition)
   ) {
     if (
-      isDecrementableHorizontalPiecePosition(x) &&
+      isHorizontallyDecrementablePawnPosition(currentPosition) &&
       !hasWallToTheLeft(
         game,
-        moveObjectToMove({
-          x: decrementHorizontalPiecePosition(x),
-          y,
-        }) as PawnMove,
+        horizontallyDecrementPawnPosition(currentPosition),
       ) &&
-      !isOnLeftmostRow(
-        moveObjectToMove({
-          x: decrementHorizontalPiecePosition(x),
-          y,
-        }) as PawnMove,
-      )
+      !isOnLeftmostRow(horizontallyDecrementPawnPosition(currentPosition))
     ) {
       return false;
     }
     if (hasWallToTheLeft(game, currentPosition)) return false;
     if (
-      isDecrementableHorizontalPiecePosition(x) &&
-      hasWallBelow(
-        game,
-        moveObjectToMove({
-          x: decrementHorizontalPiecePosition(x),
-          y,
-        }) as PawnMove,
-      )
-    )
+      isHorizontallyDecrementablePawnPosition(currentPosition) &&
+      hasWallBelow(game, horizontallyDecrementPawnPosition(currentPosition))
+    ) {
       return false;
+    }
     return true;
   }
   if (
@@ -982,35 +860,22 @@ export const isValidNormalMove = (
     hasOpponentToTheLeft(game, currentPosition)
   ) {
     if (
-      isDecrementableHorizontalPiecePosition(x) &&
+      isHorizontallyDecrementablePawnPosition(currentPosition) &&
       !hasWallToTheLeft(
         game,
-        moveObjectToMove({
-          x: decrementHorizontalPiecePosition(x),
-          y,
-        }) as PawnMove,
+        horizontallyDecrementPawnPosition(currentPosition),
       ) &&
-      !isOnLeftmostRow(
-        moveObjectToMove({
-          x: decrementHorizontalPiecePosition(x),
-          y,
-        }) as PawnMove,
-      )
+      !isOnLeftmostRow(horizontallyDecrementPawnPosition(currentPosition))
     ) {
       return false;
     }
     if (hasWallToTheLeft(game, currentPosition)) return false;
     if (
-      isDecrementableHorizontalPiecePosition(x) &&
-      hasWallAbove(
-        game,
-        moveObjectToMove({
-          x: decrementHorizontalPiecePosition(x),
-          y,
-        }) as PawnMove,
-      )
-    )
+      isHorizontallyDecrementablePawnPosition(currentPosition) &&
+      hasWallAbove(game, horizontallyDecrementPawnPosition(currentPosition))
+    ) {
       return false;
+    }
     return true;
   }
 
@@ -1200,147 +1065,6 @@ export const getValidPawnMoveArray = (game: Game) => {
       newPosition && isValidNormalMove(game, currentPosition, newPosition),
   ) as PawnPosition[];
   return validPawnMoveArray;
-};
-
-const getAllWallMoves = () => {
-  const allWallMoves = [
-    { x: 'a', y: 1, w: 'h' },
-    { x: 'a', y: 1, w: 'v' },
-    { x: 'a', y: 2, w: 'h' },
-    { x: 'a', y: 2, w: 'v' },
-    { x: 'a', y: 3, w: 'h' },
-    { x: 'a', y: 3, w: 'v' },
-    { x: 'a', y: 4, w: 'h' },
-    { x: 'a', y: 4, w: 'v' },
-    { x: 'a', y: 5, w: 'h' },
-    { x: 'a', y: 5, w: 'v' },
-    { x: 'a', y: 6, w: 'h' },
-    { x: 'a', y: 6, w: 'v' },
-    { x: 'a', y: 7, w: 'h' },
-    { x: 'a', y: 7, w: 'v' },
-    { x: 'a', y: 8, w: 'h' },
-    { x: 'a', y: 8, w: 'v' },
-
-    { x: 'b', y: 1, w: 'h' },
-    { x: 'b', y: 1, w: 'v' },
-    { x: 'b', y: 2, w: 'h' },
-    { x: 'b', y: 2, w: 'v' },
-    { x: 'b', y: 3, w: 'h' },
-    { x: 'b', y: 3, w: 'v' },
-    { x: 'b', y: 4, w: 'h' },
-    { x: 'b', y: 4, w: 'v' },
-    { x: 'b', y: 5, w: 'h' },
-    { x: 'b', y: 5, w: 'v' },
-    { x: 'b', y: 6, w: 'h' },
-    { x: 'b', y: 6, w: 'v' },
-    { x: 'b', y: 7, w: 'h' },
-    { x: 'b', y: 7, w: 'v' },
-    { x: 'b', y: 8, w: 'h' },
-    { x: 'b', y: 8, w: 'v' },
-
-    { x: 'c', y: 1, w: 'h' },
-    { x: 'c', y: 1, w: 'v' },
-    { x: 'c', y: 2, w: 'h' },
-    { x: 'c', y: 2, w: 'v' },
-    { x: 'c', y: 3, w: 'h' },
-    { x: 'c', y: 3, w: 'v' },
-    { x: 'c', y: 4, w: 'h' },
-    { x: 'c', y: 4, w: 'v' },
-    { x: 'c', y: 5, w: 'h' },
-    { x: 'c', y: 5, w: 'v' },
-    { x: 'c', y: 6, w: 'h' },
-    { x: 'c', y: 6, w: 'v' },
-    { x: 'c', y: 7, w: 'h' },
-    { x: 'c', y: 7, w: 'v' },
-    { x: 'c', y: 8, w: 'h' },
-    { x: 'c', y: 8, w: 'v' },
-
-    { x: 'd', y: 1, w: 'h' },
-    { x: 'd', y: 1, w: 'v' },
-    { x: 'd', y: 2, w: 'h' },
-    { x: 'd', y: 2, w: 'v' },
-    { x: 'd', y: 3, w: 'h' },
-    { x: 'd', y: 3, w: 'v' },
-    { x: 'd', y: 4, w: 'h' },
-    { x: 'd', y: 4, w: 'v' },
-    { x: 'd', y: 5, w: 'h' },
-    { x: 'd', y: 5, w: 'v' },
-    { x: 'd', y: 6, w: 'h' },
-    { x: 'd', y: 6, w: 'v' },
-    { x: 'd', y: 7, w: 'h' },
-    { x: 'd', y: 7, w: 'v' },
-    { x: 'd', y: 8, w: 'h' },
-    { x: 'd', y: 8, w: 'v' },
-
-    { x: 'e', y: 1, w: 'h' },
-    { x: 'e', y: 1, w: 'v' },
-    { x: 'e', y: 2, w: 'h' },
-    { x: 'e', y: 2, w: 'v' },
-    { x: 'e', y: 3, w: 'h' },
-    { x: 'e', y: 3, w: 'v' },
-    { x: 'e', y: 4, w: 'h' },
-    { x: 'e', y: 4, w: 'v' },
-    { x: 'e', y: 5, w: 'h' },
-    { x: 'e', y: 5, w: 'v' },
-    { x: 'e', y: 6, w: 'h' },
-    { x: 'e', y: 6, w: 'v' },
-    { x: 'e', y: 7, w: 'h' },
-    { x: 'e', y: 7, w: 'v' },
-    { x: 'e', y: 8, w: 'h' },
-    { x: 'e', y: 8, w: 'v' },
-
-    { x: 'f', y: 1, w: 'h' },
-    { x: 'f', y: 1, w: 'v' },
-    { x: 'f', y: 2, w: 'h' },
-    { x: 'f', y: 2, w: 'v' },
-    { x: 'f', y: 3, w: 'h' },
-    { x: 'f', y: 3, w: 'v' },
-    { x: 'f', y: 4, w: 'h' },
-    { x: 'f', y: 4, w: 'v' },
-    { x: 'f', y: 5, w: 'h' },
-    { x: 'f', y: 5, w: 'v' },
-    { x: 'f', y: 6, w: 'h' },
-    { x: 'f', y: 6, w: 'v' },
-    { x: 'f', y: 7, w: 'h' },
-    { x: 'f', y: 7, w: 'v' },
-    { x: 'f', y: 8, w: 'h' },
-    { x: 'f', y: 8, w: 'v' },
-
-    { x: 'g', y: 1, w: 'h' },
-    { x: 'g', y: 1, w: 'v' },
-    { x: 'g', y: 2, w: 'h' },
-    { x: 'g', y: 2, w: 'v' },
-    { x: 'g', y: 3, w: 'h' },
-    { x: 'g', y: 3, w: 'v' },
-    { x: 'g', y: 4, w: 'h' },
-    { x: 'g', y: 4, w: 'v' },
-    { x: 'g', y: 5, w: 'h' },
-    { x: 'g', y: 5, w: 'v' },
-    { x: 'g', y: 6, w: 'h' },
-    { x: 'g', y: 6, w: 'v' },
-    { x: 'g', y: 7, w: 'h' },
-    { x: 'g', y: 7, w: 'v' },
-    { x: 'g', y: 8, w: 'h' },
-    { x: 'g', y: 8, w: 'v' },
-
-    { x: 'h', y: 1, w: 'h' },
-    { x: 'h', y: 1, w: 'v' },
-    { x: 'h', y: 2, w: 'h' },
-    { x: 'h', y: 2, w: 'v' },
-    { x: 'h', y: 3, w: 'h' },
-    { x: 'h', y: 3, w: 'v' },
-    { x: 'h', y: 4, w: 'h' },
-    { x: 'h', y: 4, w: 'v' },
-    { x: 'h', y: 5, w: 'h' },
-    { x: 'h', y: 5, w: 'v' },
-    { x: 'h', y: 6, w: 'h' },
-    { x: 'h', y: 6, w: 'v' },
-    { x: 'h', y: 7, w: 'h' },
-    { x: 'h', y: 7, w: 'v' },
-    { x: 'h', y: 8, w: 'h' },
-    { x: 'h', y: 8, w: 'v' },
-  ] as WallMoveObject[];
-  return allWallMoves;
 };
 
 const overlapsWall = (game: Game, wallMove: WallMove) => {
@@ -2123,10 +1847,6 @@ export const getValidWallMoveArray = (game: Game) => {
   const thisTurn = getTurn(game);
   const thatTurn = getOppositePlayer(getTurn(game));
 
-  const allWallMoves = getAllWallMoves().map(
-    (moveObject) => moveObjectToMove(moveObject) as WallMove,
-  );
-
   const numberOfPlacedWalls = getNumberOfPlacedWalls(game);
   if (numberOfPlacedWalls <= 2) {
     if (
@@ -2137,7 +1857,7 @@ export const getValidWallMoveArray = (game: Game) => {
         moveObjectToMove(game.playerPositions[2]) as PawnPosition,
       )
     ) {
-      return allWallMoves.filter((wallMove) => !overlapsWall(game, wallMove));
+      return wallPositions.filter((wallMove) => !overlapsWall(game, wallMove));
     }
   }
 
@@ -2146,7 +1866,7 @@ export const getValidWallMoveArray = (game: Game) => {
   if (thisPlayersShortestPath === null || thatPlayersShortestPath === null) {
     return [];
   }
-  return allWallMoves.filter((wallMove) => {
+  return wallPositions.filter((wallMove) => {
     if (overlapsWall(game, wallMove)) return false;
     if (
       !overlapsPath(thisPlayersShortestPath, wallMove) &&
