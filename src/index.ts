@@ -12,6 +12,7 @@ export { redo } from './redo';
 export { isMove } from './isMove';
 export { makeUnvalidatedMove } from './makeUnvalidatedMove';
 export { isMoveInteresting } from './isMoveInteresting';
+export { getShortestPath } from './getShortestPath';
 import { getUnicodeRepresentation } from './getUnicodeRepresentation';
 import { isMoveValid } from './isMoveValid';
 import { undo } from './undo';

@@ -1,4 +1,3 @@
-import { aStar } from './aStar';
 import {
   decrementedHorizontalPiecePositions,
   decrementedHorizontalWallPositions,
@@ -25,6 +24,7 @@ import {
   verticallyIncrementableWallPositions,
   verticalPiecePositions,
 } from './consts';
+import { getShortestPath } from './getShortestPath';
 import { getTurn } from './getTurn';
 import { makeUnvalidatedMove } from './makeUnvalidatedMove';
 import {
@@ -144,7 +144,9 @@ const incrementVerticalPiecePosition = (
   return incrementedVerticalPiecePositions[verticalPiecePosition];
 };
 
-const isHorizontalWallMove = (move: PawnMove | WallMove): move is WallMove => {
+export const isHorizontalWallMove = (
+  move: PawnMove | WallMove,
+): move is WallMove => {
   return move.charAt(2) === 'h';
 };
 
@@ -974,7 +976,7 @@ export const isValidNormalMove = (
   return false;
 };
 
-const getShortestPathWithNoObstacles = (
+export const getShortestPathWithNoObstacles = (
   game: Game,
   player: Player,
 ): PawnPosition[] => {
@@ -988,7 +990,7 @@ const getShortestPathWithNoObstacles = (
   );
 };
 
-const doesHorizontalWallBlockPlayer = (
+export const doesHorizontalWallBlockPlayer = (
   game: Game,
   player: Player,
   horizontalWall: WallPosition,
@@ -1005,23 +1007,6 @@ const doesHorizontalWallBlockPlayer = (
     return wallY >= playerY;
   }
   return wallY < playerY;
-};
-
-export const shortestPath = (
-  game: Game,
-  player: Player,
-): PawnPosition[] | null => {
-  const placedHorizontalWalls = game.pastMoves.filter(isHorizontalWallMove);
-  if (
-    placedHorizontalWalls.some((wall) =>
-      doesHorizontalWallBlockPlayer(game, player, wall),
-    )
-  ) {
-    return aStar(game, player);
-  }
-  // The shortest path has no obstacles if no horizontal walls have been placed
-  // between the player and the goal
-  return getShortestPathWithNoObstacles(game, player);
 };
 
 const numberToLetter = (num: number) => {
@@ -2062,8 +2047,8 @@ export const getValidWallMoveArray = (game: Game) => {
     }
   }
 
-  const thisPlayersShortestPath = shortestPath(game, thisTurn);
-  const thatPlayersShortestPath = shortestPath(game, thatTurn);
+  const thisPlayersShortestPath = getShortestPath(game, thisTurn);
+  const thatPlayersShortestPath = getShortestPath(game, thatTurn);
   if (thisPlayersShortestPath === null || thatPlayersShortestPath === null) {
     return [];
   }
@@ -2084,11 +2069,11 @@ export const getValidWallMoveArray = (game: Game) => {
     const gameWithUnvalidatedMove = makeUnvalidatedMove(game, wallMove);
     const thisTurnAfterMove = getTurn(game);
     const thatTurnAfterMove = getOppositePlayer(getTurn(game));
-    const thisShortestPath = shortestPath(
+    const thisShortestPath = getShortestPath(
       gameWithUnvalidatedMove,
       thisTurnAfterMove,
     );
-    const thatShortestPath = shortestPath(
+    const thatShortestPath = getShortestPath(
       gameWithUnvalidatedMove,
       thatTurnAfterMove,
     );

@@ -12,7 +12,6 @@ import {
   PawnPosition,
   VerticalPiecePosition,
   VerticalWallPosition,
-  WallPosition,
 } from './types';
 
 export const pawnPositions = [
