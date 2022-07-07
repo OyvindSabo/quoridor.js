@@ -1,18 +1,17 @@
 import { getShortestPath } from './getShortestPath';
 import { getTurn } from './getTurn';
 import { makeUnvalidatedMove } from './makeUnvalidatedMove';
-import { Game, Move, PawnPosition } from './types';
+import { Game, Move } from './types';
 import {
   doesWallMoveOverlapExistingWall,
   getOppositePlayer,
   isValidNormalMove,
   isWallPosition,
-  moveObjectToMove,
 } from './utils';
 
 export const isMoveValid = (game: Game, move: Move) => {
   // Handle wall moves
-  const currentPosition = game.playerPositions[getTurn(game)];
+  const currentPosition = game.playerPositions[getTurn(game)].position;
   if (isWallPosition(move)) {
     if (game.playerWallCounts[getTurn(game)] < 1) return false; // Check that player has enough walls
     if (doesWallMoveOverlapExistingWall(game, move)) return false; // Check that wall does not overlap other walls
@@ -25,9 +24,5 @@ export const isMoveValid = (game: Game, move: Move) => {
     }
     return false;
   }
-  return isValidNormalMove(
-    game,
-    moveObjectToMove(currentPosition) as PawnPosition,
-    move,
-  );
+  return isValidNormalMove(game, currentPosition, move);
 };

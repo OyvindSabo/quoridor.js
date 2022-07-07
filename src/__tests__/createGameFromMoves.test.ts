@@ -308,7 +308,7 @@ test('Test that game is correctly initialized from empty move array', () => {
     },
     pastMoves: [],
     futureMoves: [],
-    playerPositions: { 1: { x: 'e', y: 1 }, 2: { x: 'e', y: 9 } },
+    playerPositions: { 1: { position: 'e1' }, 2: { position: 'e9' } },
     playerWallCounts: { 1: 10, 2: 10 },
   });
 });
@@ -623,14 +623,18 @@ test('Test that game is correctly initialized from array of forward moves', () =
     futureMoves: [],
     playerPositions: {
       1: {
-        x: 'e',
-        y: 3,
-        previousPosition: { x: 'e', y: 2, previousPosition: { x: 'e', y: 1 } },
+        position: 'e3',
+        previousPosition: {
+          position: 'e2',
+          previousPosition: { position: 'e1' },
+        },
       },
       2: {
-        x: 'e',
-        y: 7,
-        previousPosition: { x: 'e', y: 8, previousPosition: { x: 'e', y: 9 } },
+        position: 'e7',
+        previousPosition: {
+          position: 'e8',
+          previousPosition: { position: 'e9' },
+        },
       },
     },
     playerWallCounts: { 1: 10, 2: 10 },

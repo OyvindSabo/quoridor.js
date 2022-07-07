@@ -1091,7 +1091,7 @@ export type Game = {
   futureMoves: Move[];
   playerPositions: Record<
     Player,
-    PiecePosition & { previousPosition?: PiecePosition }
+    { position: PawnPosition; previousPosition?: PiecePosition }
   >;
   playerWallCounts: Record<Player, WallCount>;
 };

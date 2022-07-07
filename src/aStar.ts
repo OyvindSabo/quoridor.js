@@ -87,9 +87,7 @@ const getPath = (
  * goal. The path includes the player's current position.
  */
 export const aStar = (game: Game, player: Player) => {
-  const startPosition = moveObjectToMove(
-    game.playerPositions[player],
-  ) as PawnPosition;
+  const startPosition = game.playerPositions[player].position;
   const positionToPreviousPosition: Record<
     PawnPosition,
     PawnPosition | null

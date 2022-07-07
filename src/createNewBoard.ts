@@ -1,5 +1,4 @@
-import { getAllPawnPositions } from './getAllPawnPositions';
-import { getAllWallPositions } from './getAllWallPositions';
+import { pawnAndWallPositions } from './consts';
 import { Board, Position } from './types';
 import { isWallPosition } from './utils';
 
@@ -11,7 +10,7 @@ const getDefaultValueForPosition = (position: Position) => {
 };
 
 export const createNewBoard = () => {
-  return [...getAllPawnPositions(), ...getAllWallPositions()].reduce(
+  return pawnAndWallPositions.reduce(
     (board, position) => ({
       ...board,
       [position]: getDefaultValueForPosition(position),

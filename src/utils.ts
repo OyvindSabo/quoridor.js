@@ -886,13 +886,15 @@ export const getShortestPathWithNoObstacles = (
   game: Game,
   player: Player,
 ): PawnPosition[] => {
-  const playerPosition = game.playerPositions[player];
+  const playerPosition = game.playerPositions[player].position;
   const shortestPathVerticalCoordinates =
     player === 1
-      ? verticalPiecePositions.slice(playerPosition.y - 1)
-      : [...verticalPiecePositions].reverse().slice(9 - playerPosition.y);
+      ? verticalPiecePositions.slice(getVerticalCoordinate(playerPosition) - 1)
+      : [...verticalPiecePositions]
+          .reverse()
+          .slice(9 - getVerticalCoordinate(playerPosition));
   return shortestPathVerticalCoordinates.map(
-    (y) => `${playerPosition.x}${y}` as PawnPosition,
+    (y) => `${getHorizontalCoordinate(playerPosition)}${y}` as PawnPosition,
   );
 };
 
@@ -901,7 +903,10 @@ export const doesHorizontalWallBlockPlayer = (
   player: Player,
   horizontalWall: WallPosition,
 ) => {
-  const { x: playerX, y: playerY } = game.playerPositions[player];
+  const playerX = getHorizontalCoordinate(
+    game.playerPositions[player].position,
+  );
+  const playerY = getVerticalCoordinate(game.playerPositions[player].position);
   const wallX = getHorizontalCoordinate(horizontalWall);
   const wallY = getVerticalCoordinate(horizontalWall);
   const wallOverlapsWithPlayerColumn =
@@ -1040,9 +1045,7 @@ const getPositionFromNorthWestMove = (currentPosition: PawnPosition) => {
 };
 
 export const getValidPawnMoveArray = (game: Game) => {
-  const currentPosition = moveObjectToMove(
-    game.playerPositions[getTurn(game)],
-  ) as PawnPosition;
+  const currentPosition = game.playerPositions[getTurn(game)].position;
   const validPawnMoveArray = [
     isVerticallyIncrementablePawnPosition(currentPosition) &&
       verticallyIncrementPawnPosition(currentPosition),
@@ -1648,12 +1651,8 @@ export const isWallAdjacentToAtLeastOnePawn = (
   game: Game,
   wall: WallPosition,
 ) => {
-  const player1Position = moveObjectToMove(
-    game.playerPositions[1],
-  ) as PawnPosition;
-  const player2Position = moveObjectToMove(
-    game.playerPositions[2],
-  ) as PawnPosition;
+  const player1Position = game.playerPositions[1].position;
+  const player2Position = game.playerPositions[2].position;
   return (
     isWallAdjacentToPosition(wall, player1Position) ||
     isWallAdjacentToPosition(wall, player2Position)
@@ -1851,10 +1850,10 @@ export const getValidWallMoveArray = (game: Game) => {
   if (numberOfPlacedWalls <= 2) {
     if (
       !possiblyTrappedPositions[(numberOfPlacedWalls + 1) as 1 | 2].includes(
-        moveObjectToMove(game.playerPositions[1]) as PawnPosition,
+        game.playerPositions[1].position,
       ) &&
       !possiblyTrappedPositions[(numberOfPlacedWalls + 1) as 1 | 2].includes(
-        moveObjectToMove(game.playerPositions[2]) as PawnPosition,
+        game.playerPositions[2].position,
       )
     ) {
       return wallPositions.filter((wallMove) => !overlapsWall(game, wallMove));

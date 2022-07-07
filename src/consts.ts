@@ -234,6 +234,8 @@ export const wallPositions: WallPosition[] = [
   'h8v',
 ];
 
+export const pawnAndWallPositions = [...pawnPositions, ...wallPositions];
+
 /**
  * These are the only piece positions where a player risks not having a path to the goal if a specific number of walls are placed
  */

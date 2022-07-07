@@ -15,7 +15,7 @@ import {
 } from './utils';
 
 export const makeUnvalidatedMove = (game: Game, move: Move): Game => {
-  const currentPosition = game.playerPositions[getTurn(game)];
+  const currentPosition = game.playerPositions[getTurn(game)].position;
   if (isWallPosition(move)) {
     // If wall move
     return {
@@ -52,9 +52,9 @@ export const makeUnvalidatedMove = (game: Game, move: Move): Game => {
   } else {
     const pieceMatrixWithRemovedPiece = {
       ...game.pieceMatrix,
-      [currentPosition.x]: {
-        ...game.pieceMatrix[currentPosition.x],
-        [currentPosition.y]: 0, // Remove piece from previous position
+      [getHorizontalCoordinate(currentPosition)]: {
+        ...game.pieceMatrix[getHorizontalCoordinate(currentPosition)],
+        [getVerticalCoordinate(currentPosition)]: 0, // Remove piece from previous position
       },
     } as PlayerMatrix;
     return {
@@ -68,8 +68,7 @@ export const makeUnvalidatedMove = (game: Game, move: Move): Game => {
       playerPositions: {
         ...game.playerPositions,
         [getTurn(game)]: {
-          x: getHorizontalCoordinate(move),
-          y: getVerticalCoordinate(move),
+          position: move,
           previousPosition: game.playerPositions[getTurn(game)],
         },
       },

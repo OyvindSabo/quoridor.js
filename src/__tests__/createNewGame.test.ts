@@ -308,7 +308,7 @@ test('Test that game is correctly initialized', () => {
     },
     pastMoves: [],
     futureMoves: [],
-    playerPositions: { 1: { x: 'e', y: 1 }, 2: { x: 'e', y: 9 } },
+    playerPositions: { 1: { position: 'e1' }, 2: { position: 'e9' } },
     playerWallCounts: { 1: 10, 2: 10 },
   });
 });
