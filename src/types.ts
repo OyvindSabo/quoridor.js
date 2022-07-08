@@ -1048,8 +1048,7 @@ export type VerticallyDecrementableWallPosition =
   | 'h8h'
   | 'h8v';
 
-export type Board = Record<PawnPosition, Player | null> &
-  Record<WallPosition, boolean>;
+export type Board = PlayerMatrix & WallMatrix;
 
 export type WallMove = WallPosition;
 
@@ -1070,8 +1069,6 @@ type WallCount = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 // I have renamed board to piece
 export type Game = {
   board: Board;
-  pieceMatrix: PlayerMatrix;
-  wallMatrix: WallMatrix;
   pastMoves: Move[];
   futureMoves: Move[];
   playerPositions: Record<

@@ -369,7 +369,7 @@ export const isWallPositionMap: Record<string, true | undefined> = {
 
 export const pawnAndWallPositions = [...pawnPositions, ...wallPositions];
 
-export const initialPlayerMatrix: PlayerMatrix = {
+const initialPlayerMatrix: PlayerMatrix = {
   a1: 0,
   a2: 0,
   a3: 0,
@@ -453,7 +453,7 @@ export const initialPlayerMatrix: PlayerMatrix = {
   i9: 0,
 };
 
-export const initialWallMatrix: WallMatrix = {
+const initialWallMatrix: WallMatrix = {
   a1h: false,
   a1v: false,
   a2h: false,
@@ -582,6 +582,11 @@ export const initialWallMatrix: WallMatrix = {
   h7v: false,
   h8h: false,
   h8v: false,
+};
+
+export const initialBoard: PlayerMatrix & WallMatrix = {
+  ...initialPlayerMatrix,
+  ...initialWallMatrix,
 };
 
 export const horizontalPawnCoordinates: HorizontalPiecePosition[] = [

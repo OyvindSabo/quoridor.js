@@ -1,12 +1,9 @@
-import { initialPlayerMatrix, initialWallMatrix } from './consts';
-import { createNewBoard } from './createNewBoard';
+import { initialBoard } from './consts';
 import { Game } from './types';
 
 export const createNewGame = () => {
   const game: Game = {
-    board: createNewBoard(),
-    pieceMatrix: initialPlayerMatrix,
-    wallMatrix: initialWallMatrix,
+    board: initialBoard,
     pastMoves: [],
     futureMoves: [],
     playerPositions: { 1: { position: 'e1' }, 2: { position: 'e9' } },

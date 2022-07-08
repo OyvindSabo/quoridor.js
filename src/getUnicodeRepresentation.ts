@@ -50,10 +50,10 @@ export const getUnicodeRepresentation = (game: Game) => {
     for (const x of horizontalPawnCoordinates) {
       const pawnPosition = `${x}${y}` as PawnPosition;
       const verticalWallPosition = `${x}${y}v`;
-      if (game.pieceMatrix[pawnPosition] === 0) {
+      if (game.board[pawnPosition] === 0) {
         row += '   ';
       } else {
-        row += ` ${game.pieceMatrix[pawnPosition]} `;
+        row += ` ${game.board[pawnPosition]} `;
       }
       if (
         isWallPosition(verticalWallPosition) &&
@@ -79,7 +79,7 @@ export const getUnicodeRepresentation = (game: Game) => {
           if (
             isWallPosition(horizontalWallPosition) &&
             isVerticallyDecrementableWallPosition(horizontalWallPosition) &&
-            game.wallMatrix[moveWallDown(horizontalWallPosition)]
+            game.board[moveWallDown(horizontalWallPosition)]
           ) {
             row += '╪';
           } else if (hasWallToTheRight(game, pawnPosition)) {
