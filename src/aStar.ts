@@ -9,7 +9,6 @@ import {
   isValidAStarMove,
   isVerticallyDecrementablePawnPosition,
   isVerticallyIncrementablePawnPosition,
-  moveObjectToMove,
   verticallyDecrementPawnPosition,
   verticallyIncrementPawnPosition,
 } from './utils';

@@ -21,20 +21,7 @@ export const makeUnvalidatedMove = (game: Game, move: Move): Game => {
     return {
       ...game,
       board: { ...game.board, [move]: true },
-      wallMatrix: {
-        ...game.wallMatrix,
-        [getHorizontalCoordinate(move)]: {
-          ...game.wallMatrix[
-            getHorizontalCoordinate(move) as HorizontalWallPosition
-          ],
-          [getVerticalCoordinate(move)]: {
-            ...game.wallMatrix[
-              getHorizontalCoordinate(move) as HorizontalWallPosition
-            ][getVerticalCoordinate(move) as VerticalWallPosition],
-            [getWallOrientation(move)]: true,
-          },
-        },
-      },
+      wallMatrix: { ...game.wallMatrix, [move]: true },
       playerWallCounts: {
         ...game.playerWallCounts,
         [getTurn(game)]: game.playerWallCounts[getTurn(game)] - 1,
@@ -52,10 +39,7 @@ export const makeUnvalidatedMove = (game: Game, move: Move): Game => {
   } else {
     const pieceMatrixWithRemovedPiece = {
       ...game.pieceMatrix,
-      [getHorizontalCoordinate(currentPosition)]: {
-        ...game.pieceMatrix[getHorizontalCoordinate(currentPosition)],
-        [getVerticalCoordinate(currentPosition)]: 0, // Remove piece from previous position
-      },
+      [currentPosition]: 0,
     } as PlayerMatrix;
     return {
       ...game,
@@ -76,10 +60,7 @@ export const makeUnvalidatedMove = (game: Game, move: Move): Game => {
       futureMoves: [],
       pieceMatrix: {
         ...pieceMatrixWithRemovedPiece,
-        [getHorizontalCoordinate(move)]: {
-          ...pieceMatrixWithRemovedPiece[getHorizontalCoordinate(move)],
-          [getVerticalCoordinate(move)]: getTurn(game), // Add piece to new position
-        },
+        [move]: getTurn(game), // Add piece to new position
       },
     };
   }

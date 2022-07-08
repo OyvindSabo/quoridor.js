@@ -37,7 +37,6 @@ import { getShortestPath } from './getShortestPath';
 import { getTurn } from './getTurn';
 import { makeUnvalidatedMove } from './makeUnvalidatedMove';
 import {
-  Board,
   DecrementableHorizontalPiecePosition,
   DecrementableHorizontalWallPosition,
   DecrementableVerticalPiecePosition,
@@ -54,7 +53,6 @@ import {
   IncrementableVerticalPiecePosition,
   IncrementableVerticalWallPosition,
   Move,
-  MoveObject,
   PawnMove,
   PawnPosition,
   Player,
@@ -65,7 +63,6 @@ import {
   VerticalPiecePosition,
   VerticalWallPosition,
   WallMove,
-  WallMoveObject,
   WallOrientation,
   WallPosition,
 } from './types';
@@ -96,20 +93,11 @@ export const getWallOrientation = (move: WallMove) => {
   return move.charAt(2) as WallOrientation;
 };
 
-export const moveObjectToMove = (moveObject: MoveObject) => {
-  if ((moveObject as WallMoveObject).w) {
-    return `${moveObject.x}${moveObject.y}${
-      (moveObject as WallMoveObject).w
-    }` as WallMove;
-  }
-  return `${moveObject.x}${moveObject.y}` as PawnMove;
-};
-
 const letterToNumber = (letter: HorizontalPiecePosition) => {
   return (letter.charCodeAt(0) - 96) as VerticalPiecePosition;
 };
 
-const decrementHorizontalWallPosition = (
+export const decrementHorizontalWallPosition = (
   horizontalWallPosition: DecrementableHorizontalWallPosition,
 ) => {
   return decrementedHorizontalWallPositions[horizontalWallPosition];
@@ -133,7 +121,7 @@ const incrementHorizontalPiecePosition = (
   return incrementedHorizontalPiecePositions[horizontalPiecePosition];
 };
 
-const decrementVerticalWallPosition = (
+export const decrementVerticalWallPosition = (
   verticalWallPosition: DecrementableVerticalWallPosition,
 ) => {
   return decrementedVerticalWallPositions[verticalWallPosition];
@@ -179,28 +167,24 @@ export const doesWallMoveOverlapExistingWall = (
   const y = getVerticalCoordinate(wallMove) as VerticalWallPosition;
   if (isHorizontalWallMove(wallMove)) {
     if (
-      game.wallMatrix[x][y].h ||
-      game.wallMatrix[x][y].v ||
-      (letterToNumber(x) > 1 &&
-        isDecrementableHorizontalWallPosition(x) &&
-        game.wallMatrix[decrementHorizontalWallPosition(x)][y].h) ||
-      (letterToNumber(x) < 8 &&
-        isIncrementableHorizontalWallPosition(x) &&
-        game.wallMatrix[incrementHorizontalWallPosition(x)][y].h)
+      game.wallMatrix[wallMove] ||
+      game.wallMatrix[rotateWall(wallMove)] ||
+      (isHorizontallyDecrementableWallPosition(wallMove) &&
+        game.wallMatrix[moveWallLeft(wallMove)]) ||
+      (isHorizontallyIncrementableWallPosition(wallMove) &&
+        game.wallMatrix[moveWallRight(wallMove)])
     ) {
       return true;
     }
   }
   if (isVerticalWallMove(wallMove)) {
     if (
-      game.wallMatrix[x][y].h ||
-      game.wallMatrix[x][y].v ||
-      (y > 1 &&
-        isDecrementableVerticalWallPosition(y) &&
-        game.wallMatrix[x][decrementVerticalWallPosition(y)].v) ||
-      (y < 8 &&
-        isIncrementableVerticalWallPosition(y) &&
-        game.wallMatrix[x][incrementVerticalWallPosition(y)].v)
+      game.wallMatrix[wallMove] ||
+      game.wallMatrix[rotateWall(wallMove)] ||
+      (isVerticallyDecrementableWallPosition(wallMove) &&
+        game.wallMatrix[moveWallDown(wallMove)]) ||
+      (isVerticallyIncrementableWallPosition(wallMove) &&
+        game.wallMatrix[moveWallUp(wallMove)])
     ) {
       return true;
     }
@@ -233,13 +217,16 @@ const hasWallAbove = (game: Game, move: PawnMove) => {
   if (
     (isHorizontalWallPosition(horizontalCoordinate) &&
       isVerticalWallPosition(verticalCoordinate) &&
-      game.wallMatrix[horizontalCoordinate][verticalCoordinate].h) ||
-    (letterToNumber(getHorizontalCoordinate(move)) > 1 &&
-      isDecrementableHorizontalPiecePosition(horizontalCoordinate) &&
+      game.wallMatrix[
+        `${horizontalCoordinate}${verticalCoordinate}h` as WallMove
+      ]) ||
+    (isDecrementableHorizontalPiecePosition(horizontalCoordinate) &&
       isVerticalWallPosition(verticalCoordinate) &&
-      game.wallMatrix[decrementHorizontalPiecePosition(horizontalCoordinate)][
-        verticalCoordinate
-      ].h)
+      game.wallMatrix[
+        `${decrementHorizontalPiecePosition(
+          horizontalCoordinate,
+        )}${verticalCoordinate}h` as WallMove
+      ])
   ) {
     return true;
   }
@@ -259,12 +246,10 @@ const isDoubleUpMove = (currentPosition: PawnPosition, move: PawnMove) => {
 };
 
 const hasOpponentAbove = (game: Game, position: PawnMove) => {
-  const verticalCoordinate = getVerticalCoordinate(position);
   if (
-    isIncrementableVerticalPiecePosition(verticalCoordinate) &&
-    game.pieceMatrix[getHorizontalCoordinate(position)][
-      incrementVerticalPiecePosition(verticalCoordinate)
-    ] === getOppositePlayer(getTurn(game))
+    isVerticallyIncrementablePawnPosition(position) &&
+    game.pieceMatrix[verticallyIncrementPawnPosition(position)] ===
+      getOppositePlayer(getTurn(game))
   ) {
     return true;
   }
@@ -291,13 +276,17 @@ const hasWallToTheRight = (game: Game, move: PawnMove) => {
     (getVerticalCoordinate(move) < 9 &&
       isHorizontalWallPosition(horizontalCoordinate) &&
       isVerticalWallPosition(verticalCoordinate) &&
-      game.wallMatrix[horizontalCoordinate][verticalCoordinate].v) ||
+      game.wallMatrix[
+        `${horizontalCoordinate}${verticalCoordinate}v` as WallMove
+      ]) ||
     (getVerticalCoordinate(move) > 1 &&
       isHorizontalWallPosition(horizontalCoordinate) &&
       isDecrementableVerticalPiecePosition(verticalCoordinate) &&
-      game.wallMatrix[horizontalCoordinate][
-        decrementVerticalPiecePosition(verticalCoordinate)
-      ].v)
+      game.wallMatrix[
+        `${horizontalCoordinate}${decrementVerticalPiecePosition(
+          verticalCoordinate,
+        )}v` as WallMove
+      ])
   ) {
     return true;
   }
@@ -337,15 +326,21 @@ const hasWallToTheLeft = (game: Game, move: PawnMove) => {
     (getVerticalCoordinate(move) < 9 &&
       isDecrementableHorizontalPiecePosition(horizontalCoordinate) &&
       isVerticalWallPosition(verticalCoordinate) &&
-      game.wallMatrix[decrementHorizontalPiecePosition(horizontalCoordinate)][
-        verticalCoordinate
-      ].v) ||
+      game.wallMatrix[
+        `${decrementHorizontalPiecePosition(
+          horizontalCoordinate,
+        )}${verticalCoordinate}v` as WallMove
+      ]) ||
     (getVerticalCoordinate(move) > 1 &&
       isDecrementableHorizontalPiecePosition(horizontalCoordinate) &&
       isDecrementableVerticalPiecePosition(verticalCoordinate) &&
-      game.wallMatrix[decrementHorizontalPiecePosition(horizontalCoordinate)][
-        decrementVerticalPiecePosition(verticalCoordinate)
-      ].v)
+      game.wallMatrix[
+        `${decrementHorizontalPiecePosition(
+          horizontalCoordinate,
+        )}${decrementVerticalPiecePosition(
+          verticalCoordinate,
+        )}v` as WallPosition
+      ])
   ) {
     return true;
   }
@@ -377,12 +372,10 @@ const isDoubleRightMove = (currentPosition: PawnPosition, move: PawnMove) => {
 };
 
 const hasOpponentToTheRight = (game: Game, position: PawnPosition) => {
-  const horizontalCoordinate = getHorizontalCoordinate(position);
   if (
-    isIncrementableHorizontalPiecePosition(horizontalCoordinate) &&
-    game.pieceMatrix[incrementHorizontalPiecePosition(horizontalCoordinate)][
-      getVerticalCoordinate(position)
-    ] === getOppositePlayer(getTurn(game))
+    isHorizontallyIncrementablePawnPosition(position) &&
+    game.pieceMatrix[horizontallyIncrementPawnPosition(position)] ===
+      getOppositePlayer(getTurn(game))
   ) {
     return true;
   }
@@ -408,15 +401,19 @@ const hasWallBelow = (game: Game, move: PawnMove) => {
   if (
     (isHorizontalWallPosition(horizontalCoordinate) &&
       isDecrementableVerticalPiecePosition(verticalCoordinate) &&
-      game.wallMatrix[horizontalCoordinate][
-        decrementVerticalPiecePosition(verticalCoordinate)
-      ].h) ||
+      game.wallMatrix[
+        `${horizontalCoordinate}${decrementVerticalPiecePosition(
+          verticalCoordinate,
+        )}h` as WallMove
+      ]) ||
     (letterToNumber(getHorizontalCoordinate(move)) > 1 &&
       isDecrementableHorizontalPiecePosition(horizontalCoordinate) &&
       isDecrementableVerticalPiecePosition(verticalCoordinate) &&
-      game.wallMatrix[decrementHorizontalPiecePosition(horizontalCoordinate)][
-        decrementVerticalPiecePosition(verticalCoordinate)
-      ].h)
+      game.wallMatrix[
+        `${decrementHorizontalPiecePosition(
+          horizontalCoordinate,
+        )}${decrementVerticalPiecePosition(verticalCoordinate)}h` as WallMove
+      ])
   ) {
     return true;
   }
@@ -449,12 +446,10 @@ const isDoubleDownMove = (currentPosition: PawnPosition, move: PawnMove) => {
 };
 
 const hasOpponentBelow = (game: Game, position: PawnPosition) => {
-  const verticalCoordinate = getVerticalCoordinate(position);
   if (
-    isDecrementableVerticalPiecePosition(verticalCoordinate) &&
-    game.pieceMatrix[getHorizontalCoordinate(position)][
-      decrementVerticalPiecePosition(verticalCoordinate)
-    ] === getOppositePlayer(getTurn(game))
+    isVerticallyDecrementablePawnPosition(position) &&
+    game.pieceMatrix[verticallyDecrementPawnPosition(position)] ===
+      getOppositePlayer(getTurn(game))
   ) {
     return true;
   }
@@ -512,12 +507,10 @@ const isDoubleLeftMove = (currentPosition: PawnPosition, move: PawnMove) => {
 };
 
 const hasOpponentToTheLeft = (game: Game, position: PawnPosition) => {
-  const horizontalCoordinate = getHorizontalCoordinate(position);
   if (
-    isDecrementableHorizontalPiecePosition(horizontalCoordinate) &&
-    game.pieceMatrix[decrementHorizontalPiecePosition(horizontalCoordinate)][
-      getVerticalCoordinate(position)
-    ] === getOppositePlayer(getTurn(game))
+    isHorizontallyDecrementablePawnPosition(position) &&
+    game.pieceMatrix[horizontallyDecrementPawnPosition(position)] ===
+      getOppositePlayer(getTurn(game))
   ) {
     return true;
   }
@@ -614,11 +607,7 @@ export const isValidNormalMove = (
   }
 
   // If the move lands on top of the opponent
-  if (
-    game.pieceMatrix[getHorizontalCoordinate(move)][
-      getVerticalCoordinate(move)
-    ] === getOppositePlayer(getTurn(game))
-  ) {
+  if (game.pieceMatrix[move] === getOppositePlayer(getTurn(game))) {
     return false;
   }
 
@@ -1078,30 +1067,24 @@ const overlapsWall = (game: Game, wallMove: WallMove) => {
   if (isHorizontalWallMove(wallMove)) {
     // A horizontal wall
     if (
-      game.wallMatrix[x][y].h ||
-      game.wallMatrix[x][y].v ||
-      (letterToNumber(x) > 1 &&
-        game.wallMatrix[
-          numberToLetter(letterToNumber(x) - 1) as HorizontalWallPosition
-        ][y].h) ||
-      (letterToNumber(x) < 8 &&
-        game.wallMatrix[
-          numberToLetter(letterToNumber(x) + 1) as HorizontalWallPosition
-        ][y].h)
+      game.wallMatrix[wallMove] ||
+      game.wallMatrix[rotateWall(wallMove)] ||
+      (isHorizontallyDecrementableWallPosition(wallMove) &&
+        game.wallMatrix[moveWallLeft(wallMove)]) ||
+      (isHorizontallyIncrementableWallPosition(wallMove) &&
+        game.wallMatrix[moveWallRight(wallMove)])
     ) {
       return true;
     }
   }
   if (isVerticalWallMove(wallMove)) {
     if (
-      game.wallMatrix[x][y].h ||
-      game.wallMatrix[x][y].v ||
-      (y > 1 &&
-        isDecrementableVerticalWallPosition(y) &&
-        game.wallMatrix[x][decrementVerticalWallPosition(y)].v) ||
-      (y < 8 &&
-        isIncrementableVerticalWallPosition(y) &&
-        game.wallMatrix[x][incrementVerticalWallPosition(y)].v)
+      game.wallMatrix[rotateWall(wallMove)] ||
+      game.wallMatrix[wallMove] ||
+      (isVerticallyDecrementableWallPosition(wallMove) &&
+        game.wallMatrix[moveWallDown(wallMove)]) ||
+      (isVerticallyIncrementableWallPosition(wallMove) &&
+        game.wallMatrix[moveWallUp(wallMove)])
     ) {
       return true;
     }
@@ -1158,9 +1141,11 @@ const doesHorizontalWallHaveVerticalWallAboveRight = (
     .filter(isVerticallyIncrementableWallPosition)
     .map(moveWallUp)[0];
   if (!verticalWallAboveRight) return false;
-  return game.wallMatrix[getHorizontalCoordinate(verticalWallAboveRight)][
-    getVerticalCoordinate(verticalWallAboveRight)
-  ][getWallOrientation(verticalWallAboveRight)];
+  return game.wallMatrix[
+    `${getHorizontalCoordinate(verticalWallAboveRight)}${getVerticalCoordinate(
+      verticalWallAboveRight,
+    )}${getWallOrientation(verticalWallAboveRight)}` as WallPosition
+  ];
 };
 
 const doesHorizontalWallHaveVerticalWallAboveLeft = (
@@ -1174,9 +1159,11 @@ const doesHorizontalWallHaveVerticalWallAboveLeft = (
     .filter(isVerticallyIncrementableWallPosition)
     .map(moveWallUp)[0];
   if (!verticalWallAboveLeft) return false;
-  return game.wallMatrix[getHorizontalCoordinate(verticalWallAboveLeft)][
-    getVerticalCoordinate(verticalWallAboveLeft)
-  ][getWallOrientation(verticalWallAboveLeft)];
+  return game.wallMatrix[
+    `${getHorizontalCoordinate(verticalWallAboveLeft)}${getVerticalCoordinate(
+      verticalWallAboveLeft,
+    )}${getWallOrientation(verticalWallAboveLeft)}` as WallPosition
+  ];
 };
 
 const doesHorizontalWallHaveVerticalWallBelowRight = (
@@ -1190,9 +1177,11 @@ const doesHorizontalWallHaveVerticalWallBelowRight = (
     .filter(isVerticallyDecrementableWallPosition)
     .map(moveWallDown)[0];
   if (!verticalWallBelowRight) return false;
-  return game.wallMatrix[getHorizontalCoordinate(verticalWallBelowRight)][
-    getVerticalCoordinate(verticalWallBelowRight)
-  ][getWallOrientation(verticalWallBelowRight)];
+  return game.wallMatrix[
+    `${getHorizontalCoordinate(verticalWallBelowRight)}${getVerticalCoordinate(
+      verticalWallBelowRight,
+    )}${getWallOrientation(verticalWallBelowRight)}` as WallPosition
+  ];
 };
 
 const doesHorizontalWallHaveVerticalWallBelowLeft = (
@@ -1206,9 +1195,11 @@ const doesHorizontalWallHaveVerticalWallBelowLeft = (
     .filter(isVerticallyDecrementableWallPosition)
     .map(moveWallDown)[0];
   if (!verticalWallBelowLeft) return false;
-  return game.wallMatrix[getHorizontalCoordinate(verticalWallBelowLeft)][
-    getVerticalCoordinate(verticalWallBelowLeft)
-  ][getWallOrientation(verticalWallBelowLeft)];
+  return game.wallMatrix[
+    `${getHorizontalCoordinate(verticalWallBelowLeft)}${getVerticalCoordinate(
+      verticalWallBelowLeft,
+    )}${getWallOrientation(verticalWallBelowLeft)}` as WallPosition
+  ];
 };
 
 const doesHorizontalWallHaveHorizontalWallRight = (
@@ -1221,9 +1212,11 @@ const doesHorizontalWallHaveHorizontalWallRight = (
     .filter(isHorizontallyIncrementableWallPosition)
     .map(moveWallRight)[0];
   if (!horizontalWallRight) return false;
-  return game.wallMatrix[getHorizontalCoordinate(horizontalWallRight)][
-    getVerticalCoordinate(horizontalWallRight)
-  ][getWallOrientation(horizontalWallRight)];
+  return game.wallMatrix[
+    `${getHorizontalCoordinate(horizontalWallRight)}${getVerticalCoordinate(
+      horizontalWallRight,
+    )}${getWallOrientation(horizontalWallRight)}` as WallPosition
+  ];
 };
 
 const doesHorizontalWallHaveHorizontalWallLeft = (
@@ -1236,9 +1229,11 @@ const doesHorizontalWallHaveHorizontalWallLeft = (
     .filter(isHorizontallyDecrementableWallPosition)
     .map(moveWallLeft)[0];
   if (!horizontalWallLeft) return false;
-  return game.wallMatrix[getHorizontalCoordinate(horizontalWallLeft)][
-    getVerticalCoordinate(horizontalWallLeft)
-  ][getWallOrientation(horizontalWallLeft)];
+  return game.wallMatrix[
+    `${getHorizontalCoordinate(horizontalWallLeft)}${getVerticalCoordinate(
+      horizontalWallLeft,
+    )}${getWallOrientation(horizontalWallLeft)}` as WallPosition
+  ];
 };
 
 const doesHorizontalWallHaveVerticalWallAbove = (
@@ -1250,9 +1245,11 @@ const doesHorizontalWallHaveVerticalWallAbove = (
     .map(moveWallUp)
     .map(rotateWall)[0];
   if (!verticalWallAbove) return false;
-  return game.wallMatrix[getHorizontalCoordinate(verticalWallAbove)][
-    getVerticalCoordinate(verticalWallAbove)
-  ][getWallOrientation(verticalWallAbove)];
+  return game.wallMatrix[
+    `${getHorizontalCoordinate(verticalWallAbove)}${getVerticalCoordinate(
+      verticalWallAbove,
+    )}${getWallOrientation(verticalWallAbove)}` as WallPosition
+  ];
 };
 
 const doesHorizontalWallHaveVerticalWallBelow = (
@@ -1264,9 +1261,11 @@ const doesHorizontalWallHaveVerticalWallBelow = (
     .map(moveWallDown)
     .map(rotateWall)[0];
   if (!verticalWallBelow) return false;
-  return game.wallMatrix[getHorizontalCoordinate(verticalWallBelow)][
-    getVerticalCoordinate(verticalWallBelow)
-  ][getWallOrientation(verticalWallBelow)];
+  return game.wallMatrix[
+    `${getHorizontalCoordinate(verticalWallBelow)}${getVerticalCoordinate(
+      verticalWallBelow,
+    )}${getWallOrientation(verticalWallBelow)}` as WallPosition
+  ];
 };
 
 const doesVerticalWallHaveHorizontalWallAboveRight = (
@@ -1280,9 +1279,13 @@ const doesVerticalWallHaveHorizontalWallAboveRight = (
     .filter(isVerticallyIncrementableWallPosition)
     .map(moveWallUp)[0];
   if (!horizontalWallAboveRight) return false;
-  return game.wallMatrix[getHorizontalCoordinate(horizontalWallAboveRight)][
-    getVerticalCoordinate(horizontalWallAboveRight)
-  ][getWallOrientation(horizontalWallAboveRight)];
+  return game.wallMatrix[
+    `${getHorizontalCoordinate(
+      horizontalWallAboveRight,
+    )}${getVerticalCoordinate(horizontalWallAboveRight)}${getWallOrientation(
+      horizontalWallAboveRight,
+    )}` as WallPosition
+  ];
 };
 
 const doesVerticalWallHaveHorizontalWallAboveLeft = (
@@ -1296,9 +1299,11 @@ const doesVerticalWallHaveHorizontalWallAboveLeft = (
     .filter(isVerticallyIncrementableWallPosition)
     .map(moveWallUp)[0];
   if (!horizontalWallAboveLeft) return false;
-  return game.wallMatrix[getHorizontalCoordinate(horizontalWallAboveLeft)][
-    getVerticalCoordinate(horizontalWallAboveLeft)
-  ][getWallOrientation(horizontalWallAboveLeft)];
+  return game.wallMatrix[
+    `${getHorizontalCoordinate(horizontalWallAboveLeft)}${getVerticalCoordinate(
+      horizontalWallAboveLeft,
+    )}${getWallOrientation(horizontalWallAboveLeft)}` as WallPosition
+  ];
 };
 
 const doesVerticalWallHaveHorizontalWallBelowRight = (
@@ -1312,9 +1317,13 @@ const doesVerticalWallHaveHorizontalWallBelowRight = (
     .filter(isVerticallyDecrementableWallPosition)
     .map(moveWallDown)[0];
   if (!horizontalWallBelowRight) return false;
-  return game.wallMatrix[getHorizontalCoordinate(horizontalWallBelowRight)][
-    getVerticalCoordinate(horizontalWallBelowRight)
-  ][getWallOrientation(horizontalWallBelowRight)];
+  return game.wallMatrix[
+    `${getHorizontalCoordinate(
+      horizontalWallBelowRight,
+    )}${getVerticalCoordinate(horizontalWallBelowRight)}${getWallOrientation(
+      horizontalWallBelowRight,
+    )}` as WallPosition
+  ];
 };
 
 const doesVerticalWallHaveHorizontalWallBelowLeft = (
@@ -1328,9 +1337,11 @@ const doesVerticalWallHaveHorizontalWallBelowLeft = (
     .filter(isVerticallyDecrementableWallPosition)
     .map(moveWallDown)[0];
   if (!horizontalWallBelowLeft) return false;
-  return game.wallMatrix[getHorizontalCoordinate(horizontalWallBelowLeft)][
-    getVerticalCoordinate(horizontalWallBelowLeft)
-  ][getWallOrientation(horizontalWallBelowLeft)];
+  return game.wallMatrix[
+    `${getHorizontalCoordinate(horizontalWallBelowLeft)}${getVerticalCoordinate(
+      horizontalWallBelowLeft,
+    )}${getWallOrientation(horizontalWallBelowLeft)}` as WallPosition
+  ];
 };
 
 const doesVerticalWallHaveVerticalWallAbove = (
@@ -1343,9 +1354,11 @@ const doesVerticalWallHaveVerticalWallAbove = (
     .filter(isVerticallyIncrementableWallPosition)
     .map(moveWallUp)[0];
   if (!verticalWallAbove) return false;
-  return game.wallMatrix[getHorizontalCoordinate(verticalWallAbove)][
-    getVerticalCoordinate(verticalWallAbove)
-  ][getWallOrientation(verticalWallAbove)];
+  return game.wallMatrix[
+    `${getHorizontalCoordinate(verticalWallAbove)}${getVerticalCoordinate(
+      verticalWallAbove,
+    )}${getWallOrientation(verticalWallAbove)}` as WallPosition
+  ];
 };
 
 const doesVerticalWallHaveVerticalWallBelow = (
@@ -1358,9 +1371,11 @@ const doesVerticalWallHaveVerticalWallBelow = (
     .filter(isVerticallyDecrementableWallPosition)
     .map(moveWallDown)[0];
   if (!verticalWallBelow) return false;
-  return game.wallMatrix[getHorizontalCoordinate(verticalWallBelow)][
-    getVerticalCoordinate(verticalWallBelow)
-  ][getWallOrientation(verticalWallBelow)];
+  return game.wallMatrix[
+    `${getHorizontalCoordinate(verticalWallBelow)}${getVerticalCoordinate(
+      verticalWallBelow,
+    )}${getWallOrientation(verticalWallBelow)}` as WallPosition
+  ];
 };
 
 const doesVerticalWallHaveHorizontalWallAbove = (
@@ -1372,9 +1387,11 @@ const doesVerticalWallHaveHorizontalWallAbove = (
     .map(moveWallUp)
     .map(rotateWall)[0];
   if (!horizontalWallAbove) return false;
-  return game.wallMatrix[getHorizontalCoordinate(horizontalWallAbove)][
-    getVerticalCoordinate(horizontalWallAbove)
-  ][getWallOrientation(horizontalWallAbove)];
+  return game.wallMatrix[
+    `${getHorizontalCoordinate(horizontalWallAbove)}${getVerticalCoordinate(
+      horizontalWallAbove,
+    )}${getWallOrientation(horizontalWallAbove)}` as WallPosition
+  ];
 };
 
 const doesVerticalWallHaveHorizontalWallBelow = (
@@ -1386,9 +1403,11 @@ const doesVerticalWallHaveHorizontalWallBelow = (
     .map(moveWallDown)
     .map(rotateWall)[0];
   if (!horizontalWallBelow) return false;
-  return game.wallMatrix[getHorizontalCoordinate(horizontalWallBelow)][
-    getVerticalCoordinate(horizontalWallBelow)
-  ][getWallOrientation(horizontalWallBelow)];
+  return game.wallMatrix[
+    `${getHorizontalCoordinate(horizontalWallBelow)}${getVerticalCoordinate(
+      horizontalWallBelow,
+    )}${getWallOrientation(horizontalWallBelow)}` as WallPosition
+  ];
 };
 
 const doesHorizontalWallHaveBoardEdgeRight = (wallMove: WallMove) => {
@@ -1670,13 +1689,13 @@ const doesWallMoveHaveSameDirectionAsAllPreviousWallMoves = (
     : pastWallMoves.every(isVerticalWallMove);
 };
 
-const isHorizontalWallPosition = (
+export const isHorizontalWallPosition = (
   horizontalPosition: HorizontalPiecePosition | HorizontalWallPosition,
 ): horizontalPosition is HorizontalWallPosition => {
   return isHorizontalWallCoordinateMap[horizontalPosition];
 };
 
-const isVerticalWallPosition = (
+export const isVerticalWallPosition = (
   verticalPosition: VerticalPiecePosition | VerticalWallPosition,
 ): verticalPosition is VerticalWallPosition => {
   return isVerticalWallCoordinateMap[verticalPosition];
@@ -1688,7 +1707,7 @@ const isIncrementableHorizontalWallPosition = (
   return isIncrementableHorizontalWallPositionMap[horizontalPosition];
 };
 
-const isDecrementableHorizontalWallPosition = (
+export const isDecrementableHorizontalWallPosition = (
   horizontalPosition: HorizontalPiecePosition | HorizontalWallPosition,
 ): horizontalPosition is DecrementableHorizontalWallPosition => {
   return isDecrementableHorizontalWallPositionMap[horizontalPosition];
@@ -1700,7 +1719,7 @@ const isIncrementableVerticalWallPosition = (
   return isIncrementableVerticalWallPositionMap[horizontalPosition];
 };
 
-const isDecrementableVerticalWallPosition = (
+export const isDecrementableVerticalWallPosition = (
   horizontalPosition: VerticalPiecePosition | VerticalWallPosition,
 ): horizontalPosition is DecrementableVerticalWallPosition => {
   return isDecrementableVerticalWallPositionMap[horizontalPosition];

@@ -1053,32 +1053,13 @@ export type Move = PawnMove | WallMove;
 
 export type Position = PawnPosition | WallPosition;
 
-export type PawnMoveObject = {
-  x: HorizontalPiecePosition;
-  y: VerticalPiecePosition;
-};
-
 export type WallOrientation = 'h' | 'v';
-
-export type WallMoveObject = {
-  x: HorizontalWallPosition;
-  y: VerticalWallPosition;
-  w: 'h' | 'v';
-};
-
-export type MoveObject = PawnMoveObject | WallMoveObject;
 
 export type Player = 1 | 2;
 
-export type PlayerMatrix = Record<
-  HorizontalPiecePosition,
-  Record<VerticalPiecePosition, Player | 0>
->;
+export type PlayerMatrix = Record<PawnPosition, Player | 0>;
 
-export type WallMatrix = Record<
-  HorizontalWallPosition,
-  Record<VerticalWallPosition, { h: boolean; v: boolean }>
->;
+export type WallMatrix = Record<WallPosition, boolean>;
 
 type WallCount = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 

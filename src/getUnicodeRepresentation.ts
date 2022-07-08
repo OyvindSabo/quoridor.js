@@ -1,10 +1,21 @@
+import { horizontalPawnCoordinates } from './consts';
 import {
   Game,
   HorizontalPiecePosition,
   HorizontalWallPosition,
+  PawnPosition,
   VerticalPiecePosition,
   VerticalWallPosition,
+  WallPosition,
 } from './types';
+import {
+  decrementHorizontalWallPosition,
+  decrementVerticalWallPosition,
+  isDecrementableHorizontalWallPosition,
+  isDecrementableVerticalWallPosition,
+  isHorizontalWallPosition,
+  isVerticalWallPosition,
+} from './utils';
 
 const numberToLetter = (num: number) => {
   return String.fromCharCode(96 + num);
@@ -42,65 +53,67 @@ export const getUnicodeRepresentation = (game: Game) => {
   board += '│   ┌───┬───┬───┬───┬───┬───┬───┬───┬───┐   │\n';
   for (let y: VerticalPiecePosition = 9; y > 0; y--) {
     let row = `│ ${y} │`;
-    Object.keys(game.pieceMatrix)
-      .map((x) => x as HorizontalPiecePosition)
-      .forEach((x) => {
-        if (game.pieceMatrix[x][y] === 0) {
-          row += '   ';
-        } else {
-          row += ` ${game.pieceMatrix[x][y]} `;
-        }
-        if (
-          x !== 'i' &&
-          ((y < 9 &&
-            game.wallMatrix[x as HorizontalWallPosition][
-              y as VerticalWallPosition
-            ].v) ||
-            (y > 1 &&
-              game.wallMatrix[x as HorizontalWallPosition][
-                (y - 1) as VerticalWallPosition
-              ].v))
-        ) {
-          row += '║';
-        } else {
-          row += '│';
-        }
-      });
+    horizontalPawnCoordinates.forEach((x) => {
+      if (game.pieceMatrix[`${x}${y}` as PawnPosition] === 0) {
+        row += '   ';
+      } else {
+        row += ` ${game.pieceMatrix[`${x}${y}` as PawnPosition]} `;
+      }
+      if (
+        isHorizontalWallPosition(x) &&
+        ((isVerticalWallPosition(y) &&
+          game.wallMatrix[`${x}${y}v` as WallPosition]) ||
+          (isDecrementableVerticalWallPosition(y) &&
+            game.wallMatrix[
+              `${x}${decrementVerticalWallPosition(y)}v` as WallPosition
+            ]))
+      ) {
+        row += '║';
+      } else {
+        row += '│';
+      }
+    });
     board += `${row}   │\n`;
     if (y > 1) {
       row = '│   ├';
-      Object.keys(game.pieceMatrix)
-        .map((x) => x as HorizontalPiecePosition)
-        .forEach((x, index, array) => {
+      horizontalPawnCoordinates.forEach((x, index, array) => {
+        if (
+          isDecrementableVerticalWallPosition(y) &&
+          ((isHorizontalWallPosition(x) &&
+            game.wallMatrix[
+              `${x}${decrementVerticalWallPosition(y)}h` as WallPosition
+            ]) ||
+            (isDecrementableHorizontalWallPosition(x) &&
+              game.wallMatrix[
+                `${decrementHorizontalWallPosition(
+                  x,
+                )}${decrementVerticalWallPosition(y)}h` as WallPosition
+              ]))
+        ) {
+          row += '═══';
+        } else {
+          row += '───';
+        }
+        if (isHorizontalWallPosition(x)) {
           if (
-            y < 9 &&
-            ((x !== 'i' &&
-              game.wallMatrix[x][(y - 1) as VerticalWallPosition].h) ||
-              (x !== 'a' &&
-                game.wallMatrix[array[index - 1] as HorizontalWallPosition][
-                  (y - 1) as VerticalWallPosition
-                ].h))
+            isDecrementableVerticalWallPosition(y) &&
+            game.wallMatrix[
+              `${x}${decrementVerticalWallPosition(y)}h` as WallPosition
+            ]
           ) {
-            row += '═══';
+            row += '╪';
+          } else if (
+            isDecrementableVerticalWallPosition(y) &&
+            game.wallMatrix[
+              `${x}${decrementVerticalWallPosition(y)}v` as WallPosition
+            ]
+          ) {
+            row += '╫';
           } else {
-            row += '───';
+            row += '┼';
           }
-          if (x !== 'i') {
-            if (
-              y < 9 &&
-              game.wallMatrix[x][(y - 1) as VerticalWallPosition].h
-            ) {
-              row += '╪';
-            } else if (
-              y > 1 &&
-              game.wallMatrix[x][(y - 1) as VerticalWallPosition].v
-            ) {
-              row += '╫';
-            } else {
-              row += '┼';
-            }
-          }
-        });
+        }
+      });
       row += '┤';
       board += `${row}   │\n`;
     }
