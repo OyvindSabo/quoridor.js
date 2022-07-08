@@ -1,20 +1,14 @@
 import { horizontalPawnCoordinates } from './consts';
+import { Game, PawnPosition, VerticalPiecePosition } from './types';
 import {
-  Game,
-  HorizontalPiecePosition,
-  HorizontalWallPosition,
-  PawnPosition,
-  VerticalPiecePosition,
-  VerticalWallPosition,
-  WallPosition,
-} from './types';
-import {
-  decrementHorizontalWallPosition,
-  decrementVerticalWallPosition,
-  isDecrementableHorizontalWallPosition,
-  isDecrementableVerticalWallPosition,
-  isHorizontalWallPosition,
-  isVerticalWallPosition,
+  hasWallBelow,
+  hasWallToTheRight,
+  isHorizontallyDecrementableWallPosition,
+  isHorizontalWallCoordinate,
+  isVerticallyDecrementableWallPosition,
+  isWallPosition,
+  moveWallDown,
+  moveWallLeft,
 } from './utils';
 
 const numberToLetter = (num: number) => {
@@ -53,67 +47,50 @@ export const getUnicodeRepresentation = (game: Game) => {
   board += '│   ┌───┬───┬───┬───┬───┬───┬───┬───┬───┐   │\n';
   for (let y: VerticalPiecePosition = 9; y > 0; y--) {
     let row = `│ ${y} │`;
-    horizontalPawnCoordinates.forEach((x) => {
-      if (game.pieceMatrix[`${x}${y}` as PawnPosition] === 0) {
+    for (const x of horizontalPawnCoordinates) {
+      const pawnPosition = `${x}${y}` as PawnPosition;
+      const verticalWallPosition = `${x}${y}v`;
+      if (game.pieceMatrix[pawnPosition] === 0) {
         row += '   ';
       } else {
-        row += ` ${game.pieceMatrix[`${x}${y}` as PawnPosition]} `;
+        row += ` ${game.pieceMatrix[pawnPosition]} `;
       }
       if (
-        isHorizontalWallPosition(x) &&
-        ((isVerticalWallPosition(y) &&
-          game.wallMatrix[`${x}${y}v` as WallPosition]) ||
-          (isDecrementableVerticalWallPosition(y) &&
-            game.wallMatrix[
-              `${x}${decrementVerticalWallPosition(y)}v` as WallPosition
-            ]))
+        isWallPosition(verticalWallPosition) &&
+        hasWallToTheRight(game, pawnPosition)
       ) {
         row += '║';
       } else {
         row += '│';
       }
-    });
+    }
     board += `${row}   │\n`;
     if (y > 1) {
       row = '│   ├';
-      horizontalPawnCoordinates.forEach((x, index, array) => {
-        if (
-          isDecrementableVerticalWallPosition(y) &&
-          ((isHorizontalWallPosition(x) &&
-            game.wallMatrix[
-              `${x}${decrementVerticalWallPosition(y)}h` as WallPosition
-            ]) ||
-            (isDecrementableHorizontalWallPosition(x) &&
-              game.wallMatrix[
-                `${decrementHorizontalWallPosition(
-                  x,
-                )}${decrementVerticalWallPosition(y)}h` as WallPosition
-              ]))
-        ) {
+      for (const x of horizontalPawnCoordinates) {
+        const horizontalWallPosition = `${x}${y}h`;
+        const pawnPosition = `${x}${y}` as PawnPosition;
+        if (hasWallBelow(game, pawnPosition)) {
           row += '═══';
         } else {
           row += '───';
         }
-        if (isHorizontalWallPosition(x)) {
+        if (isHorizontalWallCoordinate(x)) {
           if (
-            isDecrementableVerticalWallPosition(y) &&
-            game.wallMatrix[
-              `${x}${decrementVerticalWallPosition(y)}h` as WallPosition
-            ]
+            isWallPosition(horizontalWallPosition) &&
+            isVerticallyDecrementableWallPosition(horizontalWallPosition) &&
+            game.wallMatrix[moveWallDown(horizontalWallPosition)]
           ) {
             row += '╪';
-          } else if (
-            isDecrementableVerticalWallPosition(y) &&
-            game.wallMatrix[
-              `${x}${decrementVerticalWallPosition(y)}v` as WallPosition
-            ]
-          ) {
+          } else if (hasWallToTheRight(game, pawnPosition)) {
             row += '╫';
+            // Here we don't need to check for horizontal specifically. The x
+            // coordinate is all that matters.
           } else {
             row += '┼';
           }
         }
-      });
+      }
       row += '┤';
       board += `${row}   │\n`;
     }

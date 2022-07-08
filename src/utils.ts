@@ -1,30 +1,31 @@
 import {
   decrementedHorizontalPiecePositions,
-  decrementedHorizontalWallPositions,
+  decrementedHorizontalWallCoordinates,
   decrementedVerticalPiecePositions,
-  decrementedVerticalWallPositions,
+  decrementedVerticalWallCoordinates,
   horizontallyDecrementableWallPositions,
   horizontallyDecrementedPawnPositions,
   horizontallyIncrementableWallPositions,
   horizontallyIncrementedPawnPositions,
   incrementedHorizontalPiecePositions,
-  incrementedHorizontalWallPositions,
+  incrementedHorizontalWallCoordinates,
   incrementedVerticalPiecePositions,
-  incrementedVerticalWallPositions,
+  incrementedVerticalWallCoordinates,
   isDecrementableHorizontalPiecePositionMap,
-  isDecrementableHorizontalWallPositionMap,
+  isDecrementableHorizontalWallCoordinateMap,
   isDecrementableVerticalPiecePositionMap,
-  isDecrementableVerticalWallPositionMap,
+  isDecrementableVerticalWallCoordinateMap,
   isHorizontallyDecrementablePawnPositionMap,
   isHorizontallyIncrementablePawnPositionMap,
   isHorizontalWallCoordinateMap,
   isIncrementableHorizontalPiecePositionMap,
-  isIncrementableHorizontalWallPositionMap,
+  isIncrementableHorizontalWallCoordinateMap,
   isIncrementableVerticalPiecePositionMap,
-  isIncrementableVerticalWallPositionMap,
+  isIncrementableVerticalWallCoordinateMap,
   isVerticallyDecrementablePawnPositionMap,
   isVerticallyIncrementablePawnPositionMap,
   isVerticalWallCoordinateMap,
+  isWallPositionMap,
   possiblyTrappedPositions,
   verticallyDecrementableWallPositions,
   verticallyDecrementedPawnPositions,
@@ -38,20 +39,20 @@ import { getTurn } from './getTurn';
 import { makeUnvalidatedMove } from './makeUnvalidatedMove';
 import {
   DecrementableHorizontalPiecePosition,
-  DecrementableHorizontalWallPosition,
+  DecrementableHorizontalWallCoordinate,
   DecrementableVerticalPiecePosition,
-  DecrementableVerticalWallPosition,
+  DecrementableVerticalWallCoordinate,
   Game,
   HorizontallyDecrementablePawnPosition,
   HorizontallyDecrementableWallPosition,
   HorizontallyIncrementablePawnPosition,
   HorizontallyIncrementableWallPosition,
   HorizontalPiecePosition,
-  HorizontalWallPosition,
+  HorizontalWallCoordinate,
   IncrementableHorizontalPiecePosition,
-  IncrementableHorizontalWallPosition,
+  IncrementableHorizontalWallCoordinate,
   IncrementableVerticalPiecePosition,
-  IncrementableVerticalWallPosition,
+  IncrementableVerticalWallCoordinate,
   Move,
   PawnMove,
   PawnPosition,
@@ -61,14 +62,14 @@ import {
   VerticallyIncrementablePawnPosition,
   VerticallyIncrementableWallPosition,
   VerticalPiecePosition,
-  VerticalWallPosition,
+  VerticalWallCoordinate,
   WallMove,
   WallOrientation,
   WallPosition,
 } from './types';
 
 type GetHorizontalCoordinate = {
-  (move: WallPosition): HorizontalWallPosition;
+  (move: WallPosition): HorizontalWallCoordinate;
   (move: PawnPosition): HorizontalPiecePosition;
 };
 
@@ -79,7 +80,7 @@ export const getHorizontalCoordinate: GetHorizontalCoordinate = (
 };
 
 type GetVerticalCoordinate = {
-  (move: WallPosition): VerticalWallPosition;
+  (move: WallPosition): VerticalWallCoordinate;
   (move: PawnPosition): VerticalPiecePosition;
 };
 
@@ -97,10 +98,10 @@ const letterToNumber = (letter: HorizontalPiecePosition) => {
   return (letter.charCodeAt(0) - 96) as VerticalPiecePosition;
 };
 
-export const decrementHorizontalWallPosition = (
-  horizontalWallPosition: DecrementableHorizontalWallPosition,
+export const decrementHorizontalWallCoordinate = (
+  HorizontalWallCoordinate: DecrementableHorizontalWallCoordinate,
 ) => {
-  return decrementedHorizontalWallPositions[horizontalWallPosition];
+  return decrementedHorizontalWallCoordinates[HorizontalWallCoordinate];
 };
 
 const decrementHorizontalPiecePosition = (
@@ -109,10 +110,10 @@ const decrementHorizontalPiecePosition = (
   return decrementedHorizontalPiecePositions[horizontalPiecePosition];
 };
 
-const incrementHorizontalWallPosition = (
-  horizontalWallPosition: IncrementableHorizontalWallPosition,
-): HorizontalWallPosition => {
-  return incrementedHorizontalWallPositions[horizontalWallPosition];
+const incrementHorizontalWallCoordinate = (
+  HorizontalWallCoordinate: IncrementableHorizontalWallCoordinate,
+): HorizontalWallCoordinate => {
+  return incrementedHorizontalWallCoordinates[HorizontalWallCoordinate];
 };
 
 const incrementHorizontalPiecePosition = (
@@ -121,10 +122,10 @@ const incrementHorizontalPiecePosition = (
   return incrementedHorizontalPiecePositions[horizontalPiecePosition];
 };
 
-export const decrementVerticalWallPosition = (
-  verticalWallPosition: DecrementableVerticalWallPosition,
+export const decrementVerticalWallCoordinate = (
+  verticalWallPosition: DecrementableVerticalWallCoordinate,
 ) => {
-  return decrementedVerticalWallPositions[verticalWallPosition];
+  return decrementedVerticalWallCoordinates[verticalWallPosition];
 };
 
 const decrementVerticalPiecePosition = (
@@ -133,10 +134,10 @@ const decrementVerticalPiecePosition = (
   return decrementedVerticalPiecePositions[verticalPiecePosition];
 };
 
-const incrementVerticalWallPosition = (
-  verticalWallPosition: IncrementableVerticalWallPosition,
-): VerticalWallPosition => {
-  return incrementedVerticalWallPositions[verticalWallPosition];
+const incrementVerticalWallCoordinate = (
+  verticalWallPosition: IncrementableVerticalWallCoordinate,
+): VerticalWallCoordinate => {
+  return incrementedVerticalWallCoordinates[verticalWallPosition];
 };
 
 const incrementVerticalPiecePosition = (
@@ -163,8 +164,8 @@ export const doesWallMoveOverlapExistingWall = (
   game: Game,
   wallMove: WallMove,
 ) => {
-  const x = getHorizontalCoordinate(wallMove) as HorizontalWallPosition;
-  const y = getVerticalCoordinate(wallMove) as VerticalWallPosition;
+  const x = getHorizontalCoordinate(wallMove) as HorizontalWallCoordinate;
+  const y = getVerticalCoordinate(wallMove) as VerticalWallCoordinate;
   if (isHorizontalWallMove(wallMove)) {
     if (
       game.wallMatrix[wallMove] ||
@@ -192,8 +193,8 @@ export const doesWallMoveOverlapExistingWall = (
   return false;
 };
 
-export const isWallPosition = (move: Move): move is WallMove => {
-  return move.length === 3;
+export const isWallPosition = (move: string): move is WallMove => {
+  return Boolean(isWallPositionMap[move]);
 };
 
 export const getOppositePlayer = (player: Player) => {
@@ -215,13 +216,13 @@ const hasWallAbove = (game: Game, move: PawnMove) => {
   const horizontalCoordinate = getHorizontalCoordinate(move);
   const verticalCoordinate = getVerticalCoordinate(move);
   if (
-    (isHorizontalWallPosition(horizontalCoordinate) &&
-      isVerticalWallPosition(verticalCoordinate) &&
+    (isHorizontalWallCoordinate(horizontalCoordinate) &&
+      isVerticalWallCoordinate(verticalCoordinate) &&
       game.wallMatrix[
         `${horizontalCoordinate}${verticalCoordinate}h` as WallMove
       ]) ||
     (isDecrementableHorizontalPiecePosition(horizontalCoordinate) &&
-      isVerticalWallPosition(verticalCoordinate) &&
+      isVerticalWallCoordinate(verticalCoordinate) &&
       game.wallMatrix[
         `${decrementHorizontalPiecePosition(
           horizontalCoordinate,
@@ -269,18 +270,18 @@ const isUpLeftMove = (currentPosition: PawnPosition, move: PawnMove) => {
   return false;
 };
 
-const hasWallToTheRight = (game: Game, move: PawnMove) => {
+export const hasWallToTheRight = (game: Game, move: PawnMove) => {
   const horizontalCoordinate = getHorizontalCoordinate(move);
   const verticalCoordinate = getVerticalCoordinate(move);
   if (
     (getVerticalCoordinate(move) < 9 &&
-      isHorizontalWallPosition(horizontalCoordinate) &&
-      isVerticalWallPosition(verticalCoordinate) &&
+      isHorizontalWallCoordinate(horizontalCoordinate) &&
+      isVerticalWallCoordinate(verticalCoordinate) &&
       game.wallMatrix[
         `${horizontalCoordinate}${verticalCoordinate}v` as WallMove
       ]) ||
     (getVerticalCoordinate(move) > 1 &&
-      isHorizontalWallPosition(horizontalCoordinate) &&
+      isHorizontalWallCoordinate(horizontalCoordinate) &&
       isDecrementableVerticalPiecePosition(verticalCoordinate) &&
       game.wallMatrix[
         `${horizontalCoordinate}${decrementVerticalPiecePosition(
@@ -325,7 +326,7 @@ const hasWallToTheLeft = (game: Game, move: PawnMove) => {
   if (
     (getVerticalCoordinate(move) < 9 &&
       isDecrementableHorizontalPiecePosition(horizontalCoordinate) &&
-      isVerticalWallPosition(verticalCoordinate) &&
+      isVerticalWallCoordinate(verticalCoordinate) &&
       game.wallMatrix[
         `${decrementHorizontalPiecePosition(
           horizontalCoordinate,
@@ -395,11 +396,11 @@ const isRightDownMove = (currentPosition: PawnPosition, move: PawnMove) => {
   return false;
 };
 
-const hasWallBelow = (game: Game, move: PawnMove) => {
+export const hasWallBelow = (game: Game, move: PawnMove) => {
   const horizontalCoordinate = getHorizontalCoordinate(move);
   const verticalCoordinate = getVerticalCoordinate(move);
   if (
-    (isHorizontalWallPosition(horizontalCoordinate) &&
+    (isHorizontalWallCoordinate(horizontalCoordinate) &&
       isDecrementableVerticalPiecePosition(verticalCoordinate) &&
       game.wallMatrix[
         `${horizontalCoordinate}${decrementVerticalPiecePosition(
@@ -900,8 +901,8 @@ export const doesHorizontalWallBlockPlayer = (
   const wallY = getVerticalCoordinate(horizontalWall);
   const wallOverlapsWithPlayerColumn =
     playerX === wallX ||
-    (isIncrementableHorizontalWallPosition(wallX) &&
-      playerX === incrementHorizontalWallPosition(wallX));
+    (isIncrementableHorizontalWallCoordinate(wallX) &&
+      playerX === incrementHorizontalWallCoordinate(wallX));
   if (!wallOverlapsWithPlayerColumn) return false;
   if (player === 1) {
     return wallY >= playerY;
@@ -1062,8 +1063,8 @@ export const getValidPawnMoveArray = (game: Game) => {
 const overlapsWall = (game: Game, wallMove: WallMove) => {
   const numberOfPlacedWalls = getNumberOfPlacedWalls(game);
   if (numberOfPlacedWalls === 0) return false;
-  const x = getHorizontalCoordinate(wallMove) as HorizontalWallPosition;
-  const y = getVerticalCoordinate(wallMove) as VerticalWallPosition;
+  const x = getHorizontalCoordinate(wallMove) as HorizontalWallCoordinate;
+  const y = getVerticalCoordinate(wallMove) as VerticalWallCoordinate;
   if (isHorizontalWallMove(wallMove)) {
     // A horizontal wall
     if (
@@ -1095,32 +1096,32 @@ const overlapsWall = (game: Game, wallMove: WallMove) => {
 const moveWallRight = (
   wall: HorizontallyIncrementableWallPosition,
 ): WallPosition => {
-  const x = wall.charAt(0) as IncrementableHorizontalWallPosition;
-  const newX = incrementHorizontalWallPosition(x);
+  const x = wall.charAt(0) as IncrementableHorizontalWallCoordinate;
+  const newX = incrementHorizontalWallCoordinate(x);
   return `${newX}${wall.substring(1)}` as WallPosition;
 };
 
-const moveWallLeft = (
+export const moveWallLeft = (
   wall: HorizontallyDecrementableWallPosition,
 ): WallPosition => {
-  const x = wall.charAt(0) as DecrementableHorizontalWallPosition;
-  const newX = decrementHorizontalWallPosition(x);
+  const x = wall.charAt(0) as DecrementableHorizontalWallCoordinate;
+  const newX = decrementHorizontalWallCoordinate(x);
   return `${newX}${wall.substring(1)}` as WallPosition;
 };
 
 const moveWallUp = (
   wall: VerticallyIncrementableWallPosition,
 ): WallPosition => {
-  const y = Number(wall.charAt(1)) as IncrementableVerticalWallPosition;
-  const newY = incrementVerticalWallPosition(y);
+  const y = Number(wall.charAt(1)) as IncrementableVerticalWallCoordinate;
+  const newY = incrementVerticalWallCoordinate(y);
   return `${wall.charAt(0)}${newY}${wall.charAt(2)}` as WallPosition;
 };
 
-const moveWallDown = (
+export const moveWallDown = (
   wall: VerticallyDecrementableWallPosition,
 ): WallPosition => {
-  const y = Number(wall.charAt(1)) as DecrementableVerticalWallPosition;
-  const newY = decrementVerticalWallPosition(y);
+  const y = Number(wall.charAt(1)) as DecrementableVerticalWallCoordinate;
+  const newY = decrementVerticalWallCoordinate(y);
   return `${wall.charAt(0)}${newY}${wall.charAt(2)}` as WallPosition;
 };
 
@@ -1468,10 +1469,10 @@ const isWallAdjacentToPosition = (wall: WallPosition, pawn: PawnPosition) => {
   if (
     wallOrientation === 'h' &&
     [wallX]
-      .filter(isIncrementableHorizontalWallPosition)
-      .map(incrementHorizontalWallPosition)
-      .filter(isIncrementableHorizontalWallPosition)
-      .map(incrementHorizontalWallPosition)[0] === pawnX &&
+      .filter(isIncrementableHorizontalWallCoordinate)
+      .map(incrementHorizontalWallCoordinate)
+      .filter(isIncrementableHorizontalWallCoordinate)
+      .map(incrementHorizontalWallCoordinate)[0] === pawnX &&
     wallY === pawnY
   ) {
     return true;
@@ -1482,8 +1483,8 @@ const isWallAdjacentToPosition = (wall: WallPosition, pawn: PawnPosition) => {
   if (
     wallOrientation === 'h' &&
     [wallX]
-      .filter(isIncrementableHorizontalWallPosition)
-      .map(incrementHorizontalWallPosition)[0] === pawnX &&
+      .filter(isIncrementableHorizontalWallCoordinate)
+      .map(incrementHorizontalWallCoordinate)[0] === pawnX &&
     wallY === pawnY
   ) {
     return true;
@@ -1495,8 +1496,8 @@ const isWallAdjacentToPosition = (wall: WallPosition, pawn: PawnPosition) => {
     if (
       wallOrientation === 'h' &&
       [wallX]
-        .filter(isDecrementableHorizontalWallPosition)
-        .map(decrementHorizontalWallPosition)[0] === pawnX &&
+        .filter(isDecrementableHorizontalWallCoordinate)
+        .map(decrementHorizontalWallCoordinate)[0] === pawnX &&
       wallY === pawnY
     ) {
       //    ––
@@ -1510,11 +1511,11 @@ const isWallAdjacentToPosition = (wall: WallPosition, pawn: PawnPosition) => {
   if (
     wallOrientation === 'v' &&
     [wallX]
-      .filter(isIncrementableHorizontalWallPosition)
-      .map(incrementHorizontalWallPosition)[0] === pawnX &&
+      .filter(isIncrementableHorizontalWallCoordinate)
+      .map(incrementHorizontalWallCoordinate)[0] === pawnX &&
     [wallY]
-      .filter(isDecrementableVerticalWallPosition)
-      .map(decrementVerticalWallPosition)[0] === pawnY
+      .filter(isDecrementableVerticalWallCoordinate)
+      .map(decrementVerticalWallCoordinate)[0] === pawnY
   ) {
     return true;
   }
@@ -1524,8 +1525,8 @@ const isWallAdjacentToPosition = (wall: WallPosition, pawn: PawnPosition) => {
   if (
     wallOrientation === 'v' &&
     [wallX]
-      .filter(isIncrementableHorizontalWallPosition)
-      .map(incrementHorizontalWallPosition)[0] === pawnX &&
+      .filter(isIncrementableHorizontalWallCoordinate)
+      .map(incrementHorizontalWallCoordinate)[0] === pawnX &&
     wallY === pawnY
   ) {
     return true;
@@ -1536,11 +1537,11 @@ const isWallAdjacentToPosition = (wall: WallPosition, pawn: PawnPosition) => {
   if (
     wallOrientation === 'v' &&
     [wallX]
-      .filter(isIncrementableHorizontalWallPosition)
-      .map(incrementHorizontalWallPosition)[0] === pawnX &&
+      .filter(isIncrementableHorizontalWallCoordinate)
+      .map(incrementHorizontalWallCoordinate)[0] === pawnX &&
     [wallY]
-      .filter(isIncrementableVerticalWallPosition)
-      .map(incrementVerticalWallPosition)[0] === pawnY
+      .filter(isIncrementableVerticalWallCoordinate)
+      .map(incrementVerticalWallCoordinate)[0] === pawnY
   ) {
     return true;
   }
@@ -1551,13 +1552,13 @@ const isWallAdjacentToPosition = (wall: WallPosition, pawn: PawnPosition) => {
   if (
     wallOrientation === 'v' &&
     [wallX]
-      .filter(isIncrementableHorizontalWallPosition)
-      .map(incrementHorizontalWallPosition)[0] === pawnX &&
+      .filter(isIncrementableHorizontalWallCoordinate)
+      .map(incrementHorizontalWallCoordinate)[0] === pawnX &&
     [wallY]
-      .filter(isIncrementableVerticalWallPosition)
-      .map(incrementVerticalWallPosition)
-      .filter(isIncrementableVerticalWallPosition)
-      .map(incrementVerticalWallPosition)[0] === pawnY
+      .filter(isIncrementableVerticalWallCoordinate)
+      .map(incrementVerticalWallCoordinate)
+      .filter(isIncrementableVerticalWallCoordinate)
+      .map(incrementVerticalWallCoordinate)[0] === pawnY
   ) {
     return true;
   }
@@ -1569,8 +1570,8 @@ const isWallAdjacentToPosition = (wall: WallPosition, pawn: PawnPosition) => {
     wallOrientation === 'v' &&
     wallX === pawnX &&
     [wallY]
-      .filter(isDecrementableVerticalWallPosition)
-      .map(decrementVerticalWallPosition)[0] === pawnY
+      .filter(isDecrementableVerticalWallCoordinate)
+      .map(decrementVerticalWallCoordinate)[0] === pawnY
   ) {
     return true;
   }
@@ -1587,8 +1588,8 @@ const isWallAdjacentToPosition = (wall: WallPosition, pawn: PawnPosition) => {
     wallOrientation === 'v' &&
     wallX === pawnX &&
     [wallY]
-      .filter(isIncrementableVerticalWallPosition)
-      .map(incrementVerticalWallPosition)[0] === pawnY
+      .filter(isIncrementableVerticalWallCoordinate)
+      .map(incrementVerticalWallCoordinate)[0] === pawnY
   ) {
     return true;
   }
@@ -1600,10 +1601,10 @@ const isWallAdjacentToPosition = (wall: WallPosition, pawn: PawnPosition) => {
     wallOrientation === 'v' &&
     wallX === pawnX &&
     [wallY]
-      .filter(isIncrementableVerticalWallPosition)
-      .map(incrementVerticalWallPosition)
-      .filter(isIncrementableVerticalWallPosition)
-      .map(incrementVerticalWallPosition)[0] === pawnY
+      .filter(isIncrementableVerticalWallCoordinate)
+      .map(incrementVerticalWallCoordinate)
+      .filter(isIncrementableVerticalWallCoordinate)
+      .map(incrementVerticalWallCoordinate)[0] === pawnY
   ) {
     return true;
   }
@@ -1613,13 +1614,13 @@ const isWallAdjacentToPosition = (wall: WallPosition, pawn: PawnPosition) => {
   if (
     wallOrientation === 'h' &&
     [wallX]
-      .filter(isIncrementableHorizontalWallPosition)
-      .map(incrementHorizontalWallPosition)
-      .filter(isIncrementableHorizontalWallPosition)
-      .map(incrementHorizontalWallPosition)[0] === pawnX &&
+      .filter(isIncrementableHorizontalWallCoordinate)
+      .map(incrementHorizontalWallCoordinate)
+      .filter(isIncrementableHorizontalWallCoordinate)
+      .map(incrementHorizontalWallCoordinate)[0] === pawnX &&
     [wallY]
-      .filter(isIncrementableVerticalWallPosition)
-      .map(incrementVerticalWallPosition)[0] === pawnY
+      .filter(isIncrementableVerticalWallCoordinate)
+      .map(incrementVerticalWallCoordinate)[0] === pawnY
   ) {
     return true;
   }
@@ -1629,11 +1630,11 @@ const isWallAdjacentToPosition = (wall: WallPosition, pawn: PawnPosition) => {
   if (
     wallOrientation === 'h' &&
     [wallX]
-      .filter(isIncrementableHorizontalWallPosition)
-      .map(incrementHorizontalWallPosition)[0] === pawnX &&
+      .filter(isIncrementableHorizontalWallCoordinate)
+      .map(incrementHorizontalWallCoordinate)[0] === pawnX &&
     [wallY]
-      .filter(isIncrementableVerticalWallPosition)
-      .map(incrementVerticalWallPosition)[0] === pawnY
+      .filter(isIncrementableVerticalWallCoordinate)
+      .map(incrementVerticalWallCoordinate)[0] === pawnY
   ) {
     return true;
   }
@@ -1644,8 +1645,8 @@ const isWallAdjacentToPosition = (wall: WallPosition, pawn: PawnPosition) => {
     wallOrientation === 'h' &&
     wallX === pawnX &&
     [wallY]
-      .filter(isIncrementableVerticalWallPosition)
-      .map(incrementVerticalWallPosition)[0] === pawnY
+      .filter(isIncrementableVerticalWallCoordinate)
+      .map(incrementVerticalWallCoordinate)[0] === pawnY
   ) {
     return true;
   }
@@ -1655,11 +1656,11 @@ const isWallAdjacentToPosition = (wall: WallPosition, pawn: PawnPosition) => {
   if (
     wallOrientation === 'h' &&
     [wallX]
-      .filter(isDecrementableHorizontalWallPosition)
-      .map(decrementHorizontalWallPosition)[0] === pawnX &&
+      .filter(isDecrementableHorizontalWallCoordinate)
+      .map(decrementHorizontalWallCoordinate)[0] === pawnX &&
     [wallY]
-      .filter(isIncrementableVerticalWallPosition)
-      .map(incrementVerticalWallPosition)[0] === pawnY
+      .filter(isIncrementableVerticalWallCoordinate)
+      .map(incrementVerticalWallCoordinate)[0] === pawnY
   ) {
     return true;
   }
@@ -1689,40 +1690,40 @@ const doesWallMoveHaveSameDirectionAsAllPreviousWallMoves = (
     : pastWallMoves.every(isVerticalWallMove);
 };
 
-export const isHorizontalWallPosition = (
-  horizontalPosition: HorizontalPiecePosition | HorizontalWallPosition,
-): horizontalPosition is HorizontalWallPosition => {
+export const isHorizontalWallCoordinate = (
+  horizontalPosition: HorizontalPiecePosition | HorizontalWallCoordinate,
+): horizontalPosition is HorizontalWallCoordinate => {
   return isHorizontalWallCoordinateMap[horizontalPosition];
 };
 
-export const isVerticalWallPosition = (
-  verticalPosition: VerticalPiecePosition | VerticalWallPosition,
-): verticalPosition is VerticalWallPosition => {
+export const isVerticalWallCoordinate = (
+  verticalPosition: VerticalPiecePosition | VerticalWallCoordinate,
+): verticalPosition is VerticalWallCoordinate => {
   return isVerticalWallCoordinateMap[verticalPosition];
 };
 
-const isIncrementableHorizontalWallPosition = (
-  horizontalPosition: HorizontalPiecePosition | HorizontalWallPosition,
-): horizontalPosition is IncrementableHorizontalWallPosition => {
-  return isIncrementableHorizontalWallPositionMap[horizontalPosition];
+const isIncrementableHorizontalWallCoordinate = (
+  horizontalPosition: HorizontalPiecePosition | HorizontalWallCoordinate,
+): horizontalPosition is IncrementableHorizontalWallCoordinate => {
+  return isIncrementableHorizontalWallCoordinateMap[horizontalPosition];
 };
 
-export const isDecrementableHorizontalWallPosition = (
-  horizontalPosition: HorizontalPiecePosition | HorizontalWallPosition,
-): horizontalPosition is DecrementableHorizontalWallPosition => {
-  return isDecrementableHorizontalWallPositionMap[horizontalPosition];
+export const isDecrementableHorizontalWallCoordinate = (
+  horizontalPosition: HorizontalPiecePosition | HorizontalWallCoordinate,
+): horizontalPosition is DecrementableHorizontalWallCoordinate => {
+  return isDecrementableHorizontalWallCoordinateMap[horizontalPosition];
 };
 
-const isIncrementableVerticalWallPosition = (
-  horizontalPosition: VerticalPiecePosition | VerticalWallPosition,
-): horizontalPosition is IncrementableVerticalWallPosition => {
-  return isIncrementableVerticalWallPositionMap[horizontalPosition];
+const isIncrementableVerticalWallCoordinate = (
+  horizontalPosition: VerticalPiecePosition | VerticalWallCoordinate,
+): horizontalPosition is IncrementableVerticalWallCoordinate => {
+  return isIncrementableVerticalWallCoordinateMap[horizontalPosition];
 };
 
-export const isDecrementableVerticalWallPosition = (
-  horizontalPosition: VerticalPiecePosition | VerticalWallPosition,
-): horizontalPosition is DecrementableVerticalWallPosition => {
-  return isDecrementableVerticalWallPositionMap[horizontalPosition];
+export const isDecrementableVerticalWallCoordinate = (
+  horizontalPosition: VerticalPiecePosition | VerticalWallCoordinate,
+): horizontalPosition is DecrementableVerticalWallCoordinate => {
+  return isDecrementableVerticalWallCoordinateMap[horizontalPosition];
 };
 
 const isHorizontallyIncrementableWallPosition = (
@@ -1731,7 +1732,7 @@ const isHorizontallyIncrementableWallPosition = (
   return horizontallyIncrementableWallPositions.includes(wallPosition);
 };
 
-const isHorizontallyDecrementableWallPosition = (
+export const isHorizontallyDecrementableWallPosition = (
   wallPosition: WallPosition,
 ): wallPosition is HorizontallyDecrementableWallPosition => {
   return horizontallyDecrementableWallPositions.includes(wallPosition);
@@ -1743,7 +1744,7 @@ const isVerticallyIncrementableWallPosition = (
   return verticallyIncrementableWallPositions.includes(wallPosition);
 };
 
-const isVerticallyDecrementableWallPosition = (
+export const isVerticallyDecrementableWallPosition = (
   wallPosition: WallPosition,
 ): wallPosition is VerticallyDecrementableWallPosition => {
   return verticallyDecrementableWallPositions.includes(wallPosition);
@@ -1795,18 +1796,18 @@ export const overlapsPath = (path: PawnPosition[], wallMove: WallPosition) => {
     path.some((pathStep) => {
       const horizontalWallCoordinate = getHorizontalCoordinate(wallMove);
       return (
-        isIncrementableHorizontalWallPosition(horizontalWallCoordinate) &&
+        isIncrementableHorizontalWallCoordinate(horizontalWallCoordinate) &&
         getHorizontalCoordinate(pathStep) ===
-          incrementHorizontalWallPosition(horizontalWallCoordinate) &&
+          incrementHorizontalWallCoordinate(horizontalWallCoordinate) &&
         getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove)
       );
     }) &&
     path.some((pathStep) => {
       const horizontalWallCoordinate = getHorizontalCoordinate(wallMove);
       return (
-        isIncrementableHorizontalWallPosition(horizontalWallCoordinate) &&
+        isIncrementableHorizontalWallCoordinate(horizontalWallCoordinate) &&
         getHorizontalCoordinate(pathStep) ===
-          incrementHorizontalWallPosition(horizontalWallCoordinate) &&
+          incrementHorizontalWallCoordinate(horizontalWallCoordinate) &&
         getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove) + 1
       );
     })
@@ -1823,9 +1824,9 @@ export const overlapsPath = (path: PawnPosition[], wallMove: WallPosition) => {
     path.some((pathStep) => {
       const horizontalWallCoordinate = getHorizontalCoordinate(wallMove);
       return (
-        isIncrementableHorizontalWallPosition(horizontalWallCoordinate) &&
+        isIncrementableHorizontalWallCoordinate(horizontalWallCoordinate) &&
         getHorizontalCoordinate(pathStep) ===
-          incrementHorizontalWallPosition(horizontalWallCoordinate) &&
+          incrementHorizontalWallCoordinate(horizontalWallCoordinate) &&
         getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove)
       );
     })
@@ -1842,9 +1843,9 @@ export const overlapsPath = (path: PawnPosition[], wallMove: WallPosition) => {
     path.some((pathStep) => {
       const horizontalWallCoordinate = getHorizontalCoordinate(wallMove);
       return (
-        isIncrementableHorizontalWallPosition(horizontalWallCoordinate) &&
+        isIncrementableHorizontalWallCoordinate(horizontalWallCoordinate) &&
         getHorizontalCoordinate(pathStep) ===
-          incrementHorizontalWallPosition(horizontalWallCoordinate) &&
+          incrementHorizontalWallCoordinate(horizontalWallCoordinate) &&
         getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove) + 1
       );
     })

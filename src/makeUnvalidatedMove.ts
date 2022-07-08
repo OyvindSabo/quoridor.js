@@ -1,18 +1,6 @@
 import { getTurn } from './getTurn';
-import {
-  Board,
-  Game,
-  HorizontalWallPosition,
-  Move,
-  PlayerMatrix,
-  VerticalWallPosition,
-} from './types';
-import {
-  getHorizontalCoordinate,
-  getVerticalCoordinate,
-  getWallOrientation,
-  isWallPosition,
-} from './utils';
+import { Board, Game, Move, PlayerMatrix } from './types';
+import { isWallPosition } from './utils';
 
 export const makeUnvalidatedMove = (game: Game, move: Move): Game => {
   const currentPosition = game.playerPositions[getTurn(game)].position;

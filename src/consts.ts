@@ -1,22 +1,22 @@
 import {
   DecrementableHorizontalPiecePosition,
-  DecrementableHorizontalWallPosition,
+  DecrementableHorizontalWallCoordinate,
   DecrementableVerticalPiecePosition,
-  DecrementableVerticalWallPosition,
+  DecrementableVerticalWallCoordinate,
   HorizontallyDecrementablePawnPosition,
   HorizontallyIncrementablePawnPosition,
   HorizontalPiecePosition,
-  HorizontalWallPosition,
+  HorizontalWallCoordinate,
   IncrementableHorizontalPiecePosition,
-  IncrementableHorizontalWallPosition,
+  IncrementableHorizontalWallCoordinate,
   IncrementableVerticalPiecePosition,
-  IncrementableVerticalWallPosition,
+  IncrementableVerticalWallCoordinate,
   PawnPosition,
   PlayerMatrix,
   VerticallyDecrementablePawnPosition,
   VerticallyIncrementablePawnPosition,
   VerticalPiecePosition,
-  VerticalWallPosition,
+  VerticalWallCoordinate,
   WallMatrix,
   WallPosition,
 } from './types';
@@ -235,6 +235,137 @@ export const wallPositions: WallPosition[] = [
   'h8h',
   'h8v',
 ];
+
+export const isWallPositionMap: Record<string, true | undefined> = {
+  a1h: true,
+  a1v: true,
+  a2h: true,
+  a2v: true,
+  a3h: true,
+  a3v: true,
+  a4h: true,
+  a4v: true,
+  a5h: true,
+  a5v: true,
+  a6h: true,
+  a6v: true,
+  a7h: true,
+  a7v: true,
+  a8h: true,
+  a8v: true,
+  b1h: true,
+  b1v: true,
+  b2h: true,
+  b2v: true,
+  b3h: true,
+  b3v: true,
+  b4h: true,
+  b4v: true,
+  b5h: true,
+  b5v: true,
+  b6h: true,
+  b6v: true,
+  b7h: true,
+  b7v: true,
+  b8h: true,
+  b8v: true,
+  c1h: true,
+  c1v: true,
+  c2h: true,
+  c2v: true,
+  c3h: true,
+  c3v: true,
+  c4h: true,
+  c4v: true,
+  c5h: true,
+  c5v: true,
+  c6h: true,
+  c6v: true,
+  c7h: true,
+  c7v: true,
+  c8h: true,
+  c8v: true,
+  d1h: true,
+  d1v: true,
+  d2h: true,
+  d2v: true,
+  d3h: true,
+  d3v: true,
+  d4h: true,
+  d4v: true,
+  d5h: true,
+  d5v: true,
+  d6h: true,
+  d6v: true,
+  d7h: true,
+  d7v: true,
+  d8h: true,
+  d8v: true,
+  e1h: true,
+  e1v: true,
+  e2h: true,
+  e2v: true,
+  e3h: true,
+  e3v: true,
+  e4h: true,
+  e4v: true,
+  e5h: true,
+  e5v: true,
+  e6h: true,
+  e6v: true,
+  e7h: true,
+  e7v: true,
+  e8h: true,
+  e8v: true,
+  f1h: true,
+  f1v: true,
+  f2h: true,
+  f2v: true,
+  f3h: true,
+  f3v: true,
+  f4h: true,
+  f4v: true,
+  f5h: true,
+  f5v: true,
+  f6h: true,
+  f6v: true,
+  f7h: true,
+  f7v: true,
+  f8h: true,
+  f8v: true,
+  g1h: true,
+  g1v: true,
+  g2h: true,
+  g2v: true,
+  g3h: true,
+  g3v: true,
+  g4h: true,
+  g4v: true,
+  g5h: true,
+  g5v: true,
+  g6h: true,
+  g6v: true,
+  g7h: true,
+  g7v: true,
+  g8h: true,
+  g8v: true,
+  h1h: true,
+  h1v: true,
+  h2h: true,
+  h2v: true,
+  h3h: true,
+  h3v: true,
+  h4h: true,
+  h4v: true,
+  h5h: true,
+  h5v: true,
+  h6h: true,
+  h6v: true,
+  h7h: true,
+  h7v: true,
+  h8h: true,
+  h8v: true,
+};
 
 export const pawnAndWallPositions = [...pawnPositions, ...wallPositions];
 
@@ -1010,9 +1141,9 @@ export const verticallyDecrementableWallPositions = [
 
 export const verticalPiecePositions = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-export const decrementedHorizontalWallPositions: Record<
-  DecrementableHorizontalWallPosition,
-  IncrementableHorizontalWallPosition
+export const decrementedHorizontalWallCoordinates: Record<
+  DecrementableHorizontalWallCoordinate,
+  IncrementableHorizontalWallCoordinate
 > = {
   b: 'a',
   c: 'b',
@@ -1023,9 +1154,9 @@ export const decrementedHorizontalWallPositions: Record<
   h: 'g',
 };
 
-export const incrementedHorizontalWallPositions: Record<
-  IncrementableHorizontalWallPosition,
-  DecrementableHorizontalWallPosition
+export const incrementedHorizontalWallCoordinates: Record<
+  IncrementableHorizontalWallCoordinate,
+  DecrementableHorizontalWallCoordinate
 > = {
   a: 'b',
   b: 'c',
@@ -1036,9 +1167,9 @@ export const incrementedHorizontalWallPositions: Record<
   g: 'h',
 };
 
-export const decrementedVerticalWallPositions: Record<
-  DecrementableVerticalWallPosition,
-  IncrementableVerticalWallPosition
+export const decrementedVerticalWallCoordinates: Record<
+  DecrementableVerticalWallCoordinate,
+  IncrementableVerticalWallCoordinate
 > = {
   2: 1,
   3: 2,
@@ -1049,9 +1180,9 @@ export const decrementedVerticalWallPositions: Record<
   8: 7,
 };
 
-export const incrementedVerticalWallPositions: Record<
-  IncrementableVerticalWallPosition,
-  DecrementableVerticalWallPosition
+export const incrementedVerticalWallCoordinates: Record<
+  IncrementableVerticalWallCoordinate,
+  DecrementableVerticalWallCoordinate
 > = {
   1: 2,
   2: 3,
@@ -1119,7 +1250,7 @@ export const incrementedHorizontalPiecePositions: Record<
 };
 
 export const isHorizontalWallCoordinateMap: Record<
-  HorizontalPiecePosition | HorizontalWallPosition,
+  HorizontalPiecePosition | HorizontalWallCoordinate,
   boolean
 > = {
   a: true,
@@ -1134,7 +1265,7 @@ export const isHorizontalWallCoordinateMap: Record<
 };
 
 export const isVerticalWallCoordinateMap: Record<
-  VerticalPiecePosition | VerticalWallPosition,
+  VerticalPiecePosition | VerticalWallCoordinate,
   boolean
 > = {
   1: true,
@@ -1148,8 +1279,8 @@ export const isVerticalWallCoordinateMap: Record<
   9: false,
 };
 
-export const isIncrementableHorizontalWallPositionMap: Record<
-  HorizontalPiecePosition | HorizontalWallPosition,
+export const isIncrementableHorizontalWallCoordinateMap: Record<
+  HorizontalPiecePosition | HorizontalWallCoordinate,
   boolean
 > = {
   a: true,
@@ -1163,8 +1294,8 @@ export const isIncrementableHorizontalWallPositionMap: Record<
   i: false,
 };
 
-export const isDecrementableHorizontalWallPositionMap: Record<
-  HorizontalPiecePosition | HorizontalWallPosition,
+export const isDecrementableHorizontalWallCoordinateMap: Record<
+  HorizontalPiecePosition | HorizontalWallCoordinate,
   boolean
 > = {
   a: false,
@@ -1178,8 +1309,8 @@ export const isDecrementableHorizontalWallPositionMap: Record<
   i: false,
 };
 
-export const isIncrementableVerticalWallPositionMap: Record<
-  VerticalPiecePosition | VerticalWallPosition,
+export const isIncrementableVerticalWallCoordinateMap: Record<
+  VerticalPiecePosition | VerticalWallCoordinate,
   boolean
 > = {
   1: true,
@@ -1193,8 +1324,8 @@ export const isIncrementableVerticalWallPositionMap: Record<
   9: false,
 };
 
-export const isDecrementableVerticalWallPositionMap: Record<
-  VerticalPiecePosition | VerticalWallPosition,
+export const isDecrementableVerticalWallCoordinateMap: Record<
+  VerticalPiecePosition | VerticalWallCoordinate,
   boolean
 > = {
   1: false,
@@ -1209,7 +1340,7 @@ export const isDecrementableVerticalWallPositionMap: Record<
 };
 
 export const isIncrementableHorizontalPiecePositionMap: Record<
-  HorizontalPiecePosition | HorizontalWallPosition,
+  HorizontalPiecePosition | HorizontalWallCoordinate,
   boolean
 > = {
   a: true,
@@ -1224,7 +1355,7 @@ export const isIncrementableHorizontalPiecePositionMap: Record<
 };
 
 export const isDecrementableHorizontalPiecePositionMap: Record<
-  HorizontalPiecePosition | HorizontalWallPosition,
+  HorizontalPiecePosition | HorizontalWallCoordinate,
   boolean
 > = {
   a: false,
@@ -1239,7 +1370,7 @@ export const isDecrementableHorizontalPiecePositionMap: Record<
 };
 
 export const isIncrementableVerticalPiecePositionMap: Record<
-  VerticalPiecePosition | VerticalWallPosition,
+  VerticalPiecePosition | VerticalWallCoordinate,
   boolean
 > = {
   1: true,
@@ -1254,7 +1385,7 @@ export const isIncrementableVerticalPiecePositionMap: Record<
 };
 
 export const isDecrementableVerticalPiecePositionMap: Record<
-  VerticalPiecePosition | VerticalWallPosition,
+  VerticalPiecePosition | VerticalWallCoordinate,
   boolean
 > = {
   1: false,
