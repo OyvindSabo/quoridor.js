@@ -1060,7 +1060,7 @@ export type WallOrientation = 'h' | 'v';
 
 export type Player = 1 | 2;
 
-export type PlayerMatrix = Record<PawnPosition, Player | 0>;
+export type PlayerMatrix = Record<PawnPosition, Player | null>;
 
 export type WallMatrix = Record<WallPosition, boolean>;
 

@@ -28,7 +28,7 @@ export const makeUnvalidatedMove = (game: Game, move: Move): Game => {
       board: Object.fromEntries(
         Object.entries(game.board).map(([pos, val]) => [
           pos,
-          pos === move ? getTurn(game) : val === getTurn(game) ? 0 : val,
+          pos === move ? getTurn(game) : val === getTurn(game) ? null : val,
         ]),
       ) as Board,
       playerPositions: {

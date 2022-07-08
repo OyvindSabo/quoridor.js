@@ -50,7 +50,7 @@ export const getUnicodeRepresentation = (game: Game) => {
     for (const x of horizontalPawnCoordinates) {
       const pawnPosition = `${x}${y}` as PawnPosition;
       const verticalWallPosition = `${x}${y}v`;
-      if (game.board[pawnPosition] === 0) {
+      if (game.board[pawnPosition] === null) {
         row += '   ';
       } else {
         row += ` ${game.board[pawnPosition]} `;
