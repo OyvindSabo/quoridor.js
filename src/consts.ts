@@ -236,6 +236,11 @@ export const wallPositions: WallPosition[] = [
   'h8v',
 ];
 
+export const positions: (PawnPosition | WallPosition)[] = [
+  ...pawnPositions,
+  ...wallPositions,
+];
+
 export const isWallPositionMap: Record<string, true | undefined> = {
   a1h: true,
   a1v: true,
