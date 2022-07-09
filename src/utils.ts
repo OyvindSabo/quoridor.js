@@ -200,14 +200,10 @@ export const getOppositePlayer = (player: Player) => {
 };
 
 const isSingleUpMove = (currentPosition: PawnPosition, move: PawnMove) => {
-  if (
-    getVerticalCoordinate(currentPosition) - getVerticalCoordinate(move) ===
-      -1 &&
-    getHorizontalCoordinate(currentPosition) === getHorizontalCoordinate(move)
-  ) {
-    return true;
-  }
-  return false;
+  return (
+    isVerticallyIncrementablePawnPosition(currentPosition) &&
+    verticallyIncrementPawnPosition(currentPosition) === move
+  );
 };
 
 const hasWallAbove = (game: Game, move: PawnMove) => {
@@ -219,13 +215,8 @@ const hasWallAbove = (game: Game, move: PawnMove) => {
       game.board[
         `${horizontalCoordinate}${verticalCoordinate}h` as WallMove
       ]) ||
-    (isDecrementableHorizontalPiecePosition(horizontalCoordinate) &&
-      isVerticalWallCoordinate(verticalCoordinate) &&
-      game.board[
-        `${decrementHorizontalPiecePosition(
-          horizontalCoordinate,
-        )}${verticalCoordinate}h` as WallMove
-      ])
+    (isHorizontallyDecrementablePawnPosition(move) &&
+      game.board[`${horizontallyDecrementPawnPosition(move)}h` as WallMove])
   ) {
     return true;
   }
@@ -233,59 +224,39 @@ const hasWallAbove = (game: Game, move: PawnMove) => {
 };
 
 const isDoubleUpMove = (currentPosition: PawnPosition, move: PawnMove) => {
-  // TODO: Surely this must be wrong, or?
-  if (
-    getVerticalCoordinate(move) - getVerticalCoordinate(currentPosition) ===
-      2 &&
-    getHorizontalCoordinate(move) === getHorizontalCoordinate(currentPosition)
-  ) {
-    return true;
-  }
-  return false;
+  return (
+    [currentPosition]
+      .filter(isVerticallyIncrementablePawnPosition)
+      .map(verticallyIncrementPawnPosition)
+      .filter(isVerticallyIncrementablePawnPosition)
+      .map(verticallyIncrementPawnPosition)[0] === move
+  );
 };
 
 const hasOpponentAbove = (game: Game, position: PawnMove) => {
-  if (
+  return (
     isVerticallyIncrementablePawnPosition(position) &&
     game.board[verticallyIncrementPawnPosition(position)] ===
       getOppositePlayer(getTurn(game))
-  ) {
-    return true;
-  }
-  return false;
+  );
 };
 
 const isUpLeftMove = (currentPosition: PawnPosition, move: PawnMove) => {
-  if (
-    getVerticalCoordinate(move) - getVerticalCoordinate(currentPosition) ===
-      1 &&
-    letterToNumber(getHorizontalCoordinate(move)) -
-      letterToNumber(getHorizontalCoordinate(currentPosition)) ===
-      -1
-  ) {
-    return true;
-  }
-  return false;
+  return (
+    [currentPosition]
+      .filter(isVerticallyIncrementablePawnPosition)
+      .map(verticallyIncrementPawnPosition)
+      .filter(isHorizontallyDecrementablePawnPosition)
+      .map(horizontallyDecrementPawnPosition)[0] === move
+  );
 };
 
 export const hasWallToTheRight = (game: Game, move: PawnMove) => {
-  const horizontalCoordinate = getHorizontalCoordinate(move);
-  const verticalCoordinate = getVerticalCoordinate(move);
+  const maybeWallPosition = `${move}v`;
   if (
-    (getVerticalCoordinate(move) < 9 &&
-      isHorizontalWallCoordinate(horizontalCoordinate) &&
-      isVerticalWallCoordinate(verticalCoordinate) &&
-      game.board[
-        `${horizontalCoordinate}${verticalCoordinate}v` as WallMove
-      ]) ||
-    (getVerticalCoordinate(move) > 1 &&
-      isHorizontalWallCoordinate(horizontalCoordinate) &&
-      isDecrementableVerticalPiecePosition(verticalCoordinate) &&
-      game.board[
-        `${horizontalCoordinate}${decrementVerticalPiecePosition(
-          verticalCoordinate,
-        )}v` as WallMove
-      ])
+    (isWallPosition(maybeWallPosition) && game.board[maybeWallPosition]) ||
+    (isVerticallyDecrementablePawnPosition(move) &&
+      game.board[`${verticallyDecrementPawnPosition(move)}v` as WallMove])
   ) {
     return true;
   }
