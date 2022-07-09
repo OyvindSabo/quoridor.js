@@ -11,11 +11,15 @@ export const getHash = (game: Game) => {
   const player2Position = game.playerPositions[2].position;
   const player1WallCount = game.playerWallCounts[1];
   const player2WallCount = game.playerWallCounts[2];
+  const player1WallCountString =
+    player1WallCount === 10 ? player1WallCount : `0${player1WallCount}`;
+  const player2WallCountString =
+    player2WallCount === 10 ? player2WallCount : `0${player2WallCount}`;
   let wallPositionsString = '';
   for (const wallPosition of wallPositions) {
     if (game.board[wallPosition]) {
       wallPositionsString += wallPosition;
     }
   }
-  return `${player1Position}${player2Position}${player1WallCount}${player2WallCount}${wallPositionsString}`;
+  return `${player1Position}${player2Position}${player1WallCountString}${player2WallCountString}${wallPositionsString}`;
 };

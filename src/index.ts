@@ -14,6 +14,7 @@ export { makeUnvalidatedMove } from './makeUnvalidatedMove';
 export { isMoveInteresting } from './isMoveInteresting';
 export { getShortestPath } from './getShortestPath';
 export { getHash } from './getHash';
+export { mirrorHashHorizontally } from './mirrorHashHorizontally';
 import { getUnicodeRepresentation } from './getUnicodeRepresentation';
 import { isMoveValid } from './isMoveValid';
 import { undo } from './undo';

@@ -7,6 +7,7 @@ import {
   horizontallyDecrementedPawnPositions,
   horizontallyIncrementableWallPositions,
   horizontallyIncrementedPawnPositions,
+  horizontallyMirroredPositionsMap,
   incrementedHorizontalPiecePositions,
   incrementedHorizontalWallCoordinates,
   incrementedVerticalPiecePositions,
@@ -67,6 +68,17 @@ import {
   WallOrientation,
   WallPosition,
 } from './types';
+
+type MirrorPositionHorizontally = {
+  (position: PawnPosition): PawnPosition;
+  (position: WallPosition): WallPosition;
+};
+
+export const mirrorPositionHorizontally: MirrorPositionHorizontally = (
+  position: PawnPosition | WallPosition,
+) => {
+  return horizontallyMirroredPositionsMap[position] as any;
+};
 
 type GetHorizontalCoordinate = {
   (move: WallPosition): HorizontalWallCoordinate;
