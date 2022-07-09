@@ -3,8 +3,9 @@ import {
   decrementedHorizontalWallCoordinates,
   decrementedVerticalPiecePositions,
   decrementedVerticalWallCoordinates,
-  horizontallyDecrementableWallPositions,
+  horizontallyDecrementablePositions,
   horizontallyDecrementedPawnPositions,
+  horizontallyIncrementablePositions,
   horizontallyIncrementableWallPositions,
   horizontallyIncrementedPawnPositions,
   horizontallyMirroredPositionsMap,
@@ -16,21 +17,17 @@ import {
   isDecrementableHorizontalWallCoordinateMap,
   isDecrementableVerticalPiecePositionMap,
   isDecrementableVerticalWallCoordinateMap,
-  isHorizontallyDecrementablePawnPositionMap,
-  isHorizontallyIncrementablePawnPositionMap,
   isHorizontalWallCoordinateMap,
   isIncrementableHorizontalPiecePositionMap,
   isIncrementableHorizontalWallCoordinateMap,
   isIncrementableVerticalPiecePositionMap,
   isIncrementableVerticalWallCoordinateMap,
-  isVerticallyDecrementablePawnPositionMap,
-  isVerticallyIncrementablePawnPositionMap,
   isVerticalWallCoordinateMap,
   isWallPositionMap,
   possiblyTrappedPositions,
-  verticallyDecrementableWallPositions,
+  verticallyDecrementablePositions,
   verticallyDecrementedPawnPositions,
-  verticallyIncrementableWallPositions,
+  verticallyIncrementablePositions,
   verticallyIncrementedPawnPositions,
   verticalPiecePositions,
   wallPositions,
@@ -912,7 +909,7 @@ export const verticallyIncrementPawnPosition = (
 export const isVerticallyIncrementablePawnPosition = (
   position: PawnPosition,
 ): position is VerticallyIncrementablePawnPosition => {
-  return isVerticallyIncrementablePawnPositionMap[position];
+  return verticallyIncrementablePositions.has(position);
 };
 
 export const verticallyDecrementPawnPosition = (
@@ -924,7 +921,7 @@ export const verticallyDecrementPawnPosition = (
 export const isVerticallyDecrementablePawnPosition = (
   position: PawnPosition,
 ): position is VerticallyDecrementablePawnPosition => {
-  return isVerticallyDecrementablePawnPositionMap[position];
+  return verticallyDecrementablePositions.has(position);
 };
 
 export const horizontallyIncrementPawnPosition = (
@@ -936,7 +933,7 @@ export const horizontallyIncrementPawnPosition = (
 export const isHorizontallyIncrementablePawnPosition = (
   position: PawnPosition,
 ): position is HorizontallyIncrementablePawnPosition => {
-  return isHorizontallyIncrementablePawnPositionMap[position];
+  return horizontallyIncrementablePositions.has(position);
 };
 
 export const horizontallyDecrementPawnPosition = (
@@ -948,7 +945,7 @@ export const horizontallyDecrementPawnPosition = (
 export const isHorizontallyDecrementablePawnPosition = (
   position: PawnPosition,
 ): position is HorizontallyDecrementablePawnPosition => {
-  return isHorizontallyDecrementablePawnPositionMap[position];
+  return horizontallyDecrementablePositions.has(position);
 };
 
 const getPositionFromNorthNorthMove = (currentPosition: PawnPosition) => {
@@ -1716,19 +1713,19 @@ const isHorizontallyIncrementableWallPosition = (
 export const isHorizontallyDecrementableWallPosition = (
   wallPosition: WallPosition,
 ): wallPosition is HorizontallyDecrementableWallPosition => {
-  return horizontallyDecrementableWallPositions.includes(wallPosition);
+  return horizontallyDecrementablePositions.has(wallPosition);
 };
 
 const isVerticallyIncrementableWallPosition = (
   wallPosition: WallPosition,
 ): wallPosition is VerticallyIncrementableWallPosition => {
-  return verticallyIncrementableWallPositions.includes(wallPosition);
+  return verticallyIncrementablePositions.has(wallPosition);
 };
 
 export const isVerticallyDecrementableWallPosition = (
   wallPosition: WallPosition,
 ): wallPosition is VerticallyDecrementableWallPosition => {
-  return verticallyDecrementableWallPositions.includes(wallPosition);
+  return verticallyDecrementablePositions.has(wallPosition);
 };
 
 // Piece
