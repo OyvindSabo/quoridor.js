@@ -1757,83 +1757,73 @@ const isDecrementableVerticalPiecePosition = (
 };
 
 export const overlapsPath = (path: PawnPosition[], wallMove: WallPosition) => {
-  if (
-    path.some(
-      (pathStep) =>
-        getHorizontalCoordinate(pathStep) ===
-          getHorizontalCoordinate(wallMove) &&
-        getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove),
-    ) &&
-    path.some(
-      (pathStep) =>
-        getHorizontalCoordinate(pathStep) ===
-          getHorizontalCoordinate(wallMove) &&
-        getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove) + 1,
-    )
-  ) {
-    return true;
+  const wallMoveX = getHorizontalCoordinate(wallMove);
+  const wallMoveY = getVerticalCoordinate(wallMove);
+
+  // If is horizontal wall
+  if (isHorizontalWallMove(wallMove)) {
+    return path.some((currentPosition, index) => {
+      const previousPosition = path[index - 1] as PawnMove | undefined;
+      if (!previousPosition) return false;
+
+      const currentPositionX = getHorizontalCoordinate(currentPosition);
+      const currentPositionY = getVerticalCoordinate(currentPosition);
+      //   If there is a path position where the position is above the wall and the previous position is below the wall
+      if (
+        isSingleUpMove(previousPosition, currentPosition) &&
+        // Pawh is right above wall
+        currentPositionY === wallMoveY + 1 &&
+        // Is wall below or below left
+        (currentPositionX === wallMoveX ||
+          (isDecrementableHorizontalPiecePosition(currentPositionX) &&
+            decrementHorizontalPiecePosition(currentPositionX) === wallMoveX))
+      ) {
+        return true;
+      }
+
+      //   If there is a path position where the position is below the wall and the previous position is above the wall
+      if (
+        isSingleDownMove(previousPosition, currentPosition) &&
+        // Pawn is right below wall
+        currentPositionY === wallMoveY &&
+        // Is wall above or above left
+        (currentPositionX === wallMoveX ||
+          (isDecrementableHorizontalPiecePosition(currentPositionX) &&
+            decrementHorizontalPiecePosition(currentPositionX) === wallMoveX))
+      ) {
+        return true;
+      }
+      return false;
+    });
   }
-  if (
-    path.some((pathStep) => {
-      const horizontalWallCoordinate = getHorizontalCoordinate(wallMove);
-      return (
-        isIncrementableHorizontalWallCoordinate(horizontalWallCoordinate) &&
-        getHorizontalCoordinate(pathStep) ===
-          incrementHorizontalWallCoordinate(horizontalWallCoordinate) &&
-        getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove)
-      );
-    }) &&
-    path.some((pathStep) => {
-      const horizontalWallCoordinate = getHorizontalCoordinate(wallMove);
-      return (
-        isIncrementableHorizontalWallCoordinate(horizontalWallCoordinate) &&
-        getHorizontalCoordinate(pathStep) ===
-          incrementHorizontalWallCoordinate(horizontalWallCoordinate) &&
-        getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove) + 1
-      );
-    })
-  ) {
-    return true;
-  }
-  if (
-    path.some(
-      (pathStep) =>
-        getHorizontalCoordinate(pathStep) ===
-          getHorizontalCoordinate(wallMove) &&
-        getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove),
-    ) &&
-    path.some((pathStep) => {
-      const horizontalWallCoordinate = getHorizontalCoordinate(wallMove);
-      return (
-        isIncrementableHorizontalWallCoordinate(horizontalWallCoordinate) &&
-        getHorizontalCoordinate(pathStep) ===
-          incrementHorizontalWallCoordinate(horizontalWallCoordinate) &&
-        getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove)
-      );
-    })
-  ) {
-    return true;
-  }
-  if (
-    path.some(
-      (pathStep) =>
-        getHorizontalCoordinate(pathStep) ===
-          getHorizontalCoordinate(wallMove) &&
-        getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove) + 1,
-    ) &&
-    path.some((pathStep) => {
-      const horizontalWallCoordinate = getHorizontalCoordinate(wallMove);
-      return (
-        isIncrementableHorizontalWallCoordinate(horizontalWallCoordinate) &&
-        getHorizontalCoordinate(pathStep) ===
-          incrementHorizontalWallCoordinate(horizontalWallCoordinate) &&
-        getVerticalCoordinate(pathStep) === getVerticalCoordinate(wallMove) + 1
-      );
-    })
-  ) {
-    return true;
-  }
-  return false;
+
+  // If is vertical wall
+  return path.some((currentPosition, index) => {
+    const previousPosition = path[index - 1] as PawnPosition | undefined;
+    if (!previousPosition) return false;
+
+    const currentPositionX = getHorizontalCoordinate(currentPosition);
+    const currentPositionY = getVerticalCoordinate(currentPosition);
+    //   If there is a path position where the position is right of the wall and the previous position is left of the wall
+    if (
+      isSingleRightMove(previousPosition, currentPosition) &&
+      // Pawn is right right to wall
+      currentPositionX === incrementHorizontalPiecePosition(wallMoveX) &&
+      (currentPositionY === wallMoveY || currentPositionY - 1 === wallMoveY)
+    ) {
+      return true;
+    }
+
+    //   Id there is a path position where the position is left of the wall and the previous position is right of the wall
+    if (
+      isSingleLeftMove(previousPosition, currentPosition) &&
+      currentPositionX === wallMoveX &&
+      (currentPositionY === wallMoveY || currentPositionY - 1 === wallMoveY)
+    ) {
+      return true;
+    }
+    return false;
+  });
 };
 
 const getNumberOfPlacedWalls = (game: Game) => {
