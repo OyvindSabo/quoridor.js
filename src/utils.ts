@@ -6,7 +6,6 @@ import {
   horizontallyDecrementablePositions,
   horizontallyDecrementedPawnPositions,
   horizontallyIncrementablePositions,
-  horizontallyIncrementableWallPositions,
   horizontallyIncrementedPawnPositions,
   horizontallyMirroredPositionsMap,
   incrementedHorizontalPiecePositions,
@@ -24,6 +23,16 @@ import {
   isIncrementableVerticalWallCoordinateMap,
   isVerticalWallCoordinateMap,
   isWallPositionMap,
+  moveDownDownMap,
+  moveDownMap,
+  moveDownRightMap,
+  moveLeftLeftMap,
+  moveLeftMap,
+  moveRightMap,
+  moveRightRightMap,
+  moveUpMap,
+  moveUpRightMap,
+  moveUpUpMap,
   possiblyTrappedPositions,
   verticallyDecrementablePositions,
   verticallyDecrementedPawnPositions,
@@ -948,44 +957,36 @@ export const isHorizontallyDecrementablePawnPosition = (
   return horizontallyDecrementablePositions.has(position);
 };
 
+const getPositionFromNorthMove = (currentPosition: PawnPosition) => {
+  return moveUpMap[currentPosition] ?? null;
+};
+
 const getPositionFromNorthNorthMove = (currentPosition: PawnPosition) => {
-  return [currentPosition]
-    .filter(isVerticallyIncrementablePawnPosition)
-    .map(verticallyIncrementPawnPosition)
-    .filter(isVerticallyIncrementablePawnPosition)
-    .map(verticallyIncrementPawnPosition)[0];
+  return moveUpUpMap[currentPosition] ?? null;
 };
 
 const getPositionFromNorthEastMove = (currentPosition: PawnPosition) => {
-  return [currentPosition]
-    .filter(isVerticallyIncrementablePawnPosition)
-    .map(verticallyIncrementPawnPosition)
-    .filter(isHorizontallyIncrementablePawnPosition)
-    .map(horizontallyIncrementPawnPosition)[0];
+  return moveUpRightMap[currentPosition] ?? null;
+};
+
+const getPositionFromEastMove = (currentPosition: PawnPosition) => {
+  return moveRightMap[currentPosition] ?? null;
 };
 
 const getPositionFromEastEastMove = (currentPosition: PawnPosition) => {
-  return [currentPosition]
-    .filter(isHorizontallyIncrementablePawnPosition)
-    .map(horizontallyIncrementPawnPosition)
-    .filter(isHorizontallyIncrementablePawnPosition)
-    .map(horizontallyIncrementPawnPosition)[0];
+  return moveRightRightMap[currentPosition] ?? null;
 };
 
 const getPositionFromSouthEastMove = (currentPosition: PawnPosition) => {
-  return [currentPosition]
-    .filter(isVerticallyDecrementablePawnPosition)
-    .map(verticallyDecrementPawnPosition)
-    .filter(isHorizontallyIncrementablePawnPosition)
-    .map(horizontallyIncrementPawnPosition)[0];
+  return moveDownRightMap[currentPosition] ?? null;
+};
+
+const getPositionFromSouthMove = (currentPosition: PawnPosition) => {
+  return moveDownMap[currentPosition] ?? null;
 };
 
 const getPositionFromSouthSouthMove = (currentPosition: PawnPosition) => {
-  return [currentPosition]
-    .filter(isVerticallyDecrementablePawnPosition)
-    .map(verticallyDecrementPawnPosition)
-    .filter(isVerticallyDecrementablePawnPosition)
-    .map(verticallyDecrementPawnPosition)[0];
+  return moveDownDownMap[currentPosition] ?? null;
 };
 
 const getPositionFromSouthWestMove = (currentPosition: PawnPosition) => {
@@ -997,11 +998,11 @@ const getPositionFromSouthWestMove = (currentPosition: PawnPosition) => {
 };
 
 const getPositionFromWestWestMove = (currentPosition: PawnPosition) => {
-  return [currentPosition]
-    .filter(isHorizontallyDecrementablePawnPosition)
-    .map(horizontallyDecrementPawnPosition)
-    .filter(isHorizontallyDecrementablePawnPosition)
-    .map(horizontallyDecrementPawnPosition)[0];
+  return moveLeftLeftMap[currentPosition] ?? null;
+};
+
+const getPositionFromWestMove = (currentPosition: PawnPosition) => {
+  return moveLeftMap[currentPosition] ?? null;
 };
 
 const getPositionFromNorthWestMove = (currentPosition: PawnPosition) => {
@@ -1015,20 +1016,16 @@ const getPositionFromNorthWestMove = (currentPosition: PawnPosition) => {
 export const getValidPawnMoveArray = (game: Game) => {
   const currentPosition = game.playerPositions[getTurn(game)].position;
   const validPawnMoveArray = [
-    isVerticallyIncrementablePawnPosition(currentPosition) &&
-      verticallyIncrementPawnPosition(currentPosition),
+    getPositionFromNorthMove(currentPosition),
     getPositionFromNorthNorthMove(currentPosition),
     getPositionFromNorthEastMove(currentPosition),
-    isHorizontallyIncrementablePawnPosition(currentPosition) &&
-      horizontallyIncrementPawnPosition(currentPosition),
+    getPositionFromEastMove(currentPosition),
     getPositionFromEastEastMove(currentPosition),
     getPositionFromSouthEastMove(currentPosition),
-    isVerticallyDecrementablePawnPosition(currentPosition) &&
-      verticallyDecrementPawnPosition(currentPosition),
+    getPositionFromSouthMove(currentPosition),
     getPositionFromSouthSouthMove(currentPosition),
     getPositionFromSouthWestMove(currentPosition),
-    isHorizontallyDecrementablePawnPosition(currentPosition) &&
-      horizontallyDecrementPawnPosition(currentPosition),
+    getPositionFromWestMove(currentPosition),
     getPositionFromWestWestMove(currentPosition),
     getPositionFromNorthWestMove(currentPosition),
   ].filter(
@@ -1707,7 +1704,7 @@ export const isDecrementableVerticalWallCoordinate = (
 const isHorizontallyIncrementableWallPosition = (
   wallPosition: WallPosition,
 ): wallPosition is HorizontallyIncrementableWallPosition => {
-  return horizontallyIncrementableWallPositions.includes(wallPosition);
+  return horizontallyIncrementablePositions.has(wallPosition);
 };
 
 export const isHorizontallyDecrementableWallPosition = (
@@ -1811,7 +1808,7 @@ export const overlapsPath = (path: PawnPosition[], wallMove: WallPosition) => {
       return true;
     }
 
-    //   Id there is a path position where the position is left of the wall and the previous position is right of the wall
+    //   If there is a path position where the position is left of the wall and the previous position is right of the wall
     if (
       isSingleLeftMove(previousPosition, currentPosition) &&
       currentPositionX === wallMoveX &&
