@@ -1,5 +1,6 @@
 import { getShortestPath } from './getShortestPath';
 import { getTurn } from './getTurn';
+import { isGameOver } from './isGameOver';
 import { makeUnvalidatedMove } from './makeUnvalidatedMove';
 import { Game, Move } from './types';
 import {
@@ -10,6 +11,7 @@ import {
 } from './utils';
 
 export const isMoveValid = (game: Game, move: Move) => {
+  if (isGameOver(game)) return false;
   // Handle wall moves
   const currentPosition = game.playerPositions[getTurn(game)].position;
   if (isWallPosition(move)) {

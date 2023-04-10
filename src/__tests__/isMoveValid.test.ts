@@ -1,6 +1,6 @@
 import { createGameFromMoves } from '../createGameFromMoves';
 import { isMoveValid } from '../isMoveValid';
-import { getUnicodeRepresentation } from '../getUnicodeRepresentation';
+import { isGameOver } from '../isGameOver';
 
 test('Test that taking one step forward with no obstacles is a valid move', () => {
   expect(isMoveValid(createGameFromMoves([]), 'e2')).toBe(true);
@@ -201,44 +201,24 @@ test('Test that down right diagonal move against bottom border is valid', () => 
   ).toBe(true);
 });
 
-test('Test that up right diagonal move against top border is valid', () => {
-  expect(
-    isMoveValid(
-      createGameFromMoves([
-        'e2',
-        'e8',
-        'e3',
-        'e7',
-        'e4',
-        'e6',
-        'e5',
-        'e4h',
-        'e7',
-        'e8',
-        'e9',
-      ]),
-      'f9',
-    ),
-  ).toBe(true);
-});
-
-test('Test that up left diagonal move against top border is valid', () => {
-  expect(
-    isMoveValid(
-      createGameFromMoves([
-        'e2',
-        'e8',
-        'e3',
-        'e7',
-        'e4',
-        'e6',
-        'e5',
-        'e4h',
-        'e7',
-        'e8',
-        'e9',
-      ]),
-      'd9',
-    ),
-  ).toBe(true);
+test('Test that making a move after the game is over is not valid', () => {
+  const finishedGame = createGameFromMoves([
+    'e2',
+    'e8',
+    'e3',
+    'e7',
+    'e4',
+    'e6',
+    'e5',
+    'e4',
+    'e6',
+    'e5',
+    'e7',
+    'e4',
+    'e8',
+    'e3',
+    'e9',
+  ]);
+  expect(isGameOver(finishedGame)).toBe(true);
+  expect(isMoveValid(finishedGame, 'e2')).toBe(false);
 });
