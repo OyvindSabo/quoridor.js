@@ -1820,24 +1820,27 @@ const getNumberOfPlacedWalls = (game: Game) => {
 };
 
 export const getValidWallMoveArray = (game: Game) => {
-  if (game.playerWallCounts[getTurn(game)] < 1) {
+  const thisTurn = getTurn(game);
+  if (game.playerWallCounts[thisTurn] < 1) {
     return [];
   }
-  const thisTurn = getTurn(game);
-  const thatTurn = getOppositePlayer(getTurn(game));
+  const thatTurn = getOppositePlayer(thisTurn);
 
   const numberOfPlacedWalls = getNumberOfPlacedWalls(game);
   if (numberOfPlacedWalls <= 2) {
     if (
-      !possiblyTrappedPositions[(numberOfPlacedWalls + 1) as 1 | 2].includes(
+      !possiblyTrappedPositions[(numberOfPlacedWalls + 1) as 1 | 2].has(
         game.playerPositions[1].position,
       ) &&
-      !possiblyTrappedPositions[(numberOfPlacedWalls + 1) as 1 | 2].includes(
+      !possiblyTrappedPositions[(numberOfPlacedWalls + 1) as 1 | 2].has(
         game.playerPositions[2].position,
       )
     ) {
       return wallPositions.filter((wallMove) => !overlapsWall(game, wallMove));
     }
+    // TODO: Even if the players are in a possibly trapped position we should
+    // check if the walls are placed so that they are actually trapped to
+    // possibly avoid having to run A*.
   }
 
   const thisPlayersShortestPath = getShortestPath(game, thisTurn);

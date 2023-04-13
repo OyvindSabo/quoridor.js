@@ -824,8 +824,8 @@ export const horizontalPawnCoordinates: HorizontalPiecePosition[] = [
  * These are the only piece positions where a player risks not having a path to the goal if a specific number of walls are placed
  */
 export const possiblyTrappedPositions = {
-  1: [] as PawnPosition[],
-  2: [
+  1: new Set<PawnPosition>(),
+  2: new Set([
     'a1',
     'a2',
     'a8',
@@ -842,8 +842,8 @@ export const possiblyTrappedPositions = {
     'i2',
     'i8',
     'i9',
-  ],
-  3: [
+  ]),
+  3: new Set([
     'a1',
     'a2',
     'a3',
@@ -900,7 +900,7 @@ export const possiblyTrappedPositions = {
     'i7',
     'i8',
     'i9',
-  ],
+  ]),
 };
 
 export const horizontallyIncrementableWallPositions = [
