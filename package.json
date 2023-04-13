@@ -1,6 +1,6 @@
 {
   "name": "quoridor",
-  "version": "2.3.4",
+  "version": "2.3.5",
   "description": "A JavaScipt Quoridor library for move validation etc.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
