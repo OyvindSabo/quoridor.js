@@ -581,19 +581,6 @@ export const isValidNormalMove = (
   currentPosition: PawnPosition,
   move: PawnMove,
 ) => {
-  // TODO: I might no longer need this now that this is properly typed
-  // If move is outside board, but it seems like the getNorthWestMove etc. are a
-  // bit incorrectly typed.
-  if (
-    letterToNumber(getHorizontalCoordinate(move)) < 1 ||
-    letterToNumber(getHorizontalCoordinate(move)) > 9
-  ) {
-    return false;
-  }
-  if (getVerticalCoordinate(move) < 1 || getVerticalCoordinate(move) > 9) {
-    return false;
-  }
-
   // If the move lands on top of the opponent
   if (game.board[move] === getOppositePlayer(getTurn(game))) {
     return false;
