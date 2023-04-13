@@ -884,18 +884,6 @@ export const doesHorizontalWallBlockPlayer = (
   return wallY < playerY;
 };
 
-const numberToLetter = (num: number) => {
-  return String.fromCharCode(96 + num);
-};
-
-const decrementLetter = (letter: HorizontalPiecePosition) => {
-  return numberToLetter(letterToNumber(letter) - 1);
-};
-
-const incrementLetter = (letter: HorizontalPiecePosition) => {
-  return numberToLetter(letterToNumber(letter) + 1);
-};
-
 export const verticallyIncrementPawnPosition = (
   position: VerticallyIncrementablePawnPosition,
 ): PawnPosition => {
@@ -1002,6 +990,26 @@ const getPositionFromNorthWestMove = (currentPosition: PawnPosition) => {
 
 export const getValidPawnMoveArray = (game: Game) => {
   const currentPosition = game.playerPositions[getTurn(game)].position;
+  const unvalidatedPawnMoveArray = [
+    getPositionFromNorthMove(currentPosition),
+    getPositionFromEastMove(currentPosition),
+    getPositionFromWestMove(currentPosition),
+    getPositionFromSouthMove(currentPosition),
+  ];
+  // This can be extended to also check if the players are next to each other
+  const includeMovesOverOpponent = game.pastMoves.length >= 7;
+  if (includeMovesOverOpponent) {
+    unvalidatedPawnMoveArray.concat([
+      getPositionFromNorthNorthMove(currentPosition),
+      getPositionFromNorthEastMove(currentPosition),
+      getPositionFromNorthWestMove(currentPosition),
+      getPositionFromEastEastMove(currentPosition),
+      getPositionFromWestWestMove(currentPosition),
+      getPositionFromSouthEastMove(currentPosition),
+      getPositionFromSouthWestMove(currentPosition),
+      getPositionFromSouthSouthMove(currentPosition),
+    ]);
+  }
   const validPawnMoveArray = [
     getPositionFromNorthMove(currentPosition),
     getPositionFromNorthNorthMove(currentPosition),
