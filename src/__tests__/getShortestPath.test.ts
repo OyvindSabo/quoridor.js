@@ -3,6 +3,7 @@ import { createNewGame } from '../createNewGame';
 import { getShortestPath } from '../getShortestPath';
 
 test('Test that a shortest path to the other side of the board is found if there are no obstacles (the other player does not count as an obstacle)', () => {
+  // First test when no moves are made
   expect(getShortestPath(createNewGame(), 1)).toEqual([
     'e1',
     'e2',
@@ -16,6 +17,29 @@ test('Test that a shortest path to the other side of the board is found if there
   ]);
   expect(getShortestPath(createNewGame(), 2)).toEqual([
     'e9',
+    'e8',
+    'e7',
+    'e6',
+    'e5',
+    'e4',
+    'e3',
+    'e2',
+    'e1',
+  ]);
+  // Then test when each player has made one move so that the expected shortest
+  // path of one player is not identical to the reversed shortest path of the
+  // other
+  expect(getShortestPath(createGameFromMoves(['e2', 'e8']), 1)).toEqual([
+    'e2',
+    'e3',
+    'e4',
+    'e5',
+    'e6',
+    'e7',
+    'e8',
+    'e9',
+  ]);
+  expect(getShortestPath(createGameFromMoves(['e2', 'e8']), 2)).toEqual([
     'e8',
     'e7',
     'e6',

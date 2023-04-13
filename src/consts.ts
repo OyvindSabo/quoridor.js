@@ -236,10 +236,9 @@ export const wallPositions: WallPosition[] = [
   'h8v',
 ];
 
-export const positions = new Set<PawnPosition | WallPosition>([
-  ...pawnPositions,
-  ...wallPositions,
-]);
+export const positions = new Set<PawnPosition | WallPosition>(
+  (pawnPositions as (PawnPosition | WallPosition)[]).concat(wallPositions),
+);
 
 export const horizontallyMirroredPositionsMap: Record<
   PawnPosition,

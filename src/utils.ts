@@ -854,9 +854,9 @@ export const getShortestPathWithNoObstacles = (
   const shortestPathVerticalCoordinates =
     player === 1
       ? verticalPiecePositions.slice(getVerticalCoordinate(playerPosition) - 1)
-      : [...verticalPiecePositions]
-          .reverse()
-          .slice(9 - getVerticalCoordinate(playerPosition));
+      : verticalPiecePositions
+          .slice(0, getVerticalCoordinate(playerPosition))
+          .reverse();
   return shortestPathVerticalCoordinates.map(
     (y) => `${getHorizontalCoordinate(playerPosition)}${y}` as PawnPosition,
   );
@@ -1838,6 +1838,9 @@ export const getValidWallMoveArray = (game: Game) => {
     ) {
       return wallPositions.filter((wallMove) => !overlapsWall(game, wallMove));
     }
+    // TODO: We could have a similar lookup map to see if a wall position is
+    // possibly trapping given a number of already placed walls.
+
     // TODO: Even if the players are in a possibly trapped position we should
     // check if the walls are placed so that they are actually trapped to
     // possibly avoid having to run A*.

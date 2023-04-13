@@ -3,6 +3,7 @@ import { Board, Game, Move } from './types';
 import { isWallPosition } from './utils';
 
 export const makeUnvalidatedMove = (game: Game, move: Move): Game => {
+  const turn = getTurn(game);
   if (isWallPosition(move)) {
     // If wall move
     return {
@@ -10,16 +11,16 @@ export const makeUnvalidatedMove = (game: Game, move: Move): Game => {
       board: { ...game.board, [move]: true },
       playerWallCounts: {
         ...game.playerWallCounts,
-        [getTurn(game)]: game.playerWallCounts[getTurn(game)] - 1,
+        [turn]: game.playerWallCounts[turn] - 1,
       },
       playerPositions: {
         ...game.playerPositions,
-        [getTurn(game)]: {
-          ...game.playerPositions[getTurn(game)],
-          previousPosition: game.playerPositions[getTurn(game)],
+        [turn]: {
+          ...game.playerPositions[turn],
+          previousPosition: game.playerPositions[turn],
         },
       },
-      pastMoves: [...game.pastMoves, move],
+      pastMoves: game.pastMoves.concat(move),
       futureMoves: [],
     };
   } else {
@@ -28,17 +29,17 @@ export const makeUnvalidatedMove = (game: Game, move: Move): Game => {
       board: Object.fromEntries(
         Object.entries(game.board).map(([pos, val]) => [
           pos,
-          pos === move ? getTurn(game) : val === getTurn(game) ? null : val,
+          pos === move ? turn : val === turn ? null : val,
         ]),
       ) as Board,
       playerPositions: {
         ...game.playerPositions,
-        [getTurn(game)]: {
+        [turn]: {
           position: move,
-          previousPosition: game.playerPositions[getTurn(game)],
+          previousPosition: game.playerPositions[turn],
         },
       },
-      pastMoves: [...game.pastMoves, move],
+      pastMoves: game.pastMoves.concat(move),
       futureMoves: [],
     };
   }
