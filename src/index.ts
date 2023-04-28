@@ -16,6 +16,7 @@ export { getShortestPath } from './immutable/getShortestPath';
 export { getHash } from './immutable/getHash';
 export { mirrorHashHorizontally } from './immutable/mirrorHashHorizontally';
 export { doUndo } from './mutable/doUndo';
+export { doRedo } from './mutable/doRedo';
 import { getUnicodeRepresentation } from './immutable/getUnicodeRepresentation';
 import { isMoveValid } from './immutable/isMoveValid';
 import { undo } from './immutable/undo';
