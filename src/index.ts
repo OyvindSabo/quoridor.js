@@ -11,6 +11,7 @@ export { undo } from './immutable/undo';
 export { redo } from './immutable/redo';
 export { isMove } from './immutable/isMove';
 export { makeUnvalidatedMove } from './immutable/makeUnvalidatedMove';
+export { doMakeUnvalidatedMove } from './mutable/doMakeUnvalidatedMove';
 export { isMoveInteresting } from './immutable/isMoveInteresting';
 export { getShortestPath } from './immutable/getShortestPath';
 export { getHash } from './immutable/getHash';
