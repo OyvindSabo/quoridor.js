@@ -1,23 +1,23 @@
-export { createNewGame } from './createNewGame';
-export { createGameFromMoves } from './createGameFromMoves';
-export { isMoveValid } from './isMoveValid';
-export { getUnicodeRepresentation } from './getUnicodeRepresentation';
-export { makeMove } from './makeMove';
-export { isGameOver } from './isGameOver';
-export { getWinner } from './getWinner';
-export { getValidMoveArray } from './getValidMoveArray';
-export { getTurn } from './getTurn';
-export { undo } from './undo';
-export { redo } from './redo';
-export { isMove } from './isMove';
-export { makeUnvalidatedMove } from './makeUnvalidatedMove';
-export { isMoveInteresting } from './isMoveInteresting';
-export { getShortestPath } from './getShortestPath';
-export { getHash } from './getHash';
-export { mirrorHashHorizontally } from './mirrorHashHorizontally';
-import { getUnicodeRepresentation } from './getUnicodeRepresentation';
-import { isMoveValid } from './isMoveValid';
-import { undo } from './undo';
+export { createNewGame } from './immutable/createNewGame';
+export { createGameFromMoves } from './mutable/createGameFromMoves';
+export { isMoveValid } from './immutable/isMoveValid';
+export { getUnicodeRepresentation } from './immutable/getUnicodeRepresentation';
+export { makeMove } from './immutable/makeMove';
+export { isGameOver } from './immutable/isGameOver';
+export { getWinner } from './immutable/getWinner';
+export { getValidMoveArray } from './immutable/getValidMoveArray';
+export { getTurn } from './immutable/getTurn';
+export { undo } from './immutable/undo';
+export { redo } from './immutable/redo';
+export { isMove } from './immutable/isMove';
+export { makeUnvalidatedMove } from './immutable/makeUnvalidatedMove';
+export { isMoveInteresting } from './immutable/isMoveInteresting';
+export { getShortestPath } from './immutable/getShortestPath';
+export { getHash } from './immutable/getHash';
+export { mirrorHashHorizontally } from './immutable/mirrorHashHorizontally';
+import { getUnicodeRepresentation } from './immutable/getUnicodeRepresentation';
+import { isMoveValid } from './immutable/isMoveValid';
+import { undo } from './immutable/undo';
 
 /**
  * Deprecated. This function has been renamed to getUnicodeRepresentation.

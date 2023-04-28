@@ -1,5 +1,5 @@
 import { wallPositions } from './consts';
-import { PawnPosition, WallPosition } from './types';
+import { PawnPosition, WallPosition } from '../types';
 import { mirrorPositionHorizontally } from './utils';
 
 export const mirrorHashHorizontally = (hash: string) => {

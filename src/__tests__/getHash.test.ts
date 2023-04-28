@@ -1,6 +1,6 @@
-import { createGameFromMoves } from '../createGameFromMoves';
-import { createNewGame } from '../createNewGame';
-import { getHash } from '../getHash';
+import { createGameFromMoves } from '..';
+import { createNewGame } from '..';
+import { getHash } from '..';
 
 test('Test that state of new game is correctly hashed', () => {
   expect(getHash(createNewGame())).toStrictEqual('e1e91010');

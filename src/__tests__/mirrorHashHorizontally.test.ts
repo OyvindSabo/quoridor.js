@@ -1,7 +1,7 @@
-import { createGameFromMoves } from '../createGameFromMoves';
-import { createNewGame } from '../createNewGame';
-import { getHash } from '../getHash';
-import { mirrorHashHorizontally } from '../mirrorHashHorizontally';
+import { createGameFromMoves } from '..';
+import { createNewGame } from '..';
+import { getHash } from '..';
+import { mirrorHashHorizontally } from '..';
 
 test('Test that hash from new game is identical to its mirrored version', () => {
   expect(getHash(createNewGame())).toStrictEqual(

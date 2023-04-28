@@ -1,5 +1,5 @@
 import { getTurn } from './getTurn';
-import { Board, Game, Move } from './types';
+import { Board, Game, Move } from '../types';
 import { isWallPosition } from './utils';
 
 export const makeUnvalidatedMove = (game: Game, move: Move): Game => {

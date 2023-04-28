@@ -2,7 +2,7 @@ import { getShortestPath } from './getShortestPath';
 import { getTurn } from './getTurn';
 import { isGameOver } from './isGameOver';
 import { makeUnvalidatedMove } from './makeUnvalidatedMove';
-import { Game, Move } from './types';
+import { Game, Move } from '../types';
 import {
   doesWallMoveOverlapExistingWall,
   getOppositePlayer,

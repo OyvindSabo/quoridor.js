@@ -1,6 +1,6 @@
-import { createGameFromMoves } from '../createGameFromMoves';
-import { createNewGame } from '../createNewGame';
-import { getShortestPath } from '../getShortestPath';
+import { createGameFromMoves } from '..';
+import { createNewGame } from '..';
+import { getShortestPath } from '..';
 
 test('Test that a shortest path to the other side of the board is found if there are no obstacles (the other player does not count as an obstacle)', () => {
   // First test when no moves are made

@@ -73,7 +73,7 @@ import {
   WallMove,
   WallOrientation,
   WallPosition,
-} from './types';
+} from '../types';
 
 type MirrorPositionHorizontally = {
   (position: PawnPosition): PawnPosition;
@@ -932,39 +932,43 @@ export const isHorizontallyDecrementablePawnPosition = (
   return horizontallyDecrementablePositions.has(position);
 };
 
-const getPositionFromNorthMove = (currentPosition: PawnPosition) => {
+export const getPositionFromNorthMove = (currentPosition: PawnPosition) => {
   return moveUpMap[currentPosition] ?? null;
 };
 
-const getPositionFromNorthNorthMove = (currentPosition: PawnPosition) => {
+export const getPositionFromNorthNorthMove = (
+  currentPosition: PawnPosition,
+) => {
   return moveUpUpMap[currentPosition] ?? null;
 };
 
-const getPositionFromNorthEastMove = (currentPosition: PawnPosition) => {
+export const getPositionFromNorthEastMove = (currentPosition: PawnPosition) => {
   return moveUpRightMap[currentPosition] ?? null;
 };
 
-const getPositionFromEastMove = (currentPosition: PawnPosition) => {
+export const getPositionFromEastMove = (currentPosition: PawnPosition) => {
   return moveRightMap[currentPosition] ?? null;
 };
 
-const getPositionFromEastEastMove = (currentPosition: PawnPosition) => {
+export const getPositionFromEastEastMove = (currentPosition: PawnPosition) => {
   return moveRightRightMap[currentPosition] ?? null;
 };
 
-const getPositionFromSouthEastMove = (currentPosition: PawnPosition) => {
+export const getPositionFromSouthEastMove = (currentPosition: PawnPosition) => {
   return moveDownRightMap[currentPosition] ?? null;
 };
 
-const getPositionFromSouthMove = (currentPosition: PawnPosition) => {
+export const getPositionFromSouthMove = (currentPosition: PawnPosition) => {
   return moveDownMap[currentPosition] ?? null;
 };
 
-const getPositionFromSouthSouthMove = (currentPosition: PawnPosition) => {
+export const getPositionFromSouthSouthMove = (
+  currentPosition: PawnPosition,
+) => {
   return moveDownDownMap[currentPosition] ?? null;
 };
 
-const getPositionFromSouthWestMove = (currentPosition: PawnPosition) => {
+export const getPositionFromSouthWestMove = (currentPosition: PawnPosition) => {
   return [currentPosition]
     .filter(isVerticallyDecrementablePawnPosition)
     .map(verticallyDecrementPawnPosition)
@@ -972,15 +976,15 @@ const getPositionFromSouthWestMove = (currentPosition: PawnPosition) => {
     .map(horizontallyDecrementPawnPosition)[0];
 };
 
-const getPositionFromWestWestMove = (currentPosition: PawnPosition) => {
+export const getPositionFromWestWestMove = (currentPosition: PawnPosition) => {
   return moveLeftLeftMap[currentPosition] ?? null;
 };
 
-const getPositionFromWestMove = (currentPosition: PawnPosition) => {
+export const getPositionFromWestMove = (currentPosition: PawnPosition) => {
   return moveLeftMap[currentPosition] ?? null;
 };
 
-const getPositionFromNorthWestMove = (currentPosition: PawnPosition) => {
+export const getPositionFromNorthWestMove = (currentPosition: PawnPosition) => {
   return [currentPosition]
     .filter(isHorizontallyIncrementablePawnPosition)
     .map(horizontallyIncrementPawnPosition)

@@ -1,5 +1,5 @@
 import { getShortestPath } from './getShortestPath';
-import { Game, Move } from './types';
+import { Game, Move } from '../types';
 import {
   getNumberOfNeighborWalls,
   isPawnMove,

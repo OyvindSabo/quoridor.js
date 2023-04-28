@@ -1,9 +1,9 @@
-import { initialBoard } from './consts';
-import { Game } from './types';
+import { Game } from '../types';
+import { createNewBoard } from './createNewBoard';
 
 export const createNewGame = () => {
   const game: Game = {
-    board: initialBoard,
+    board: createNewBoard(),
     pastMoves: [],
     futureMoves: [],
     playerPositions: { 1: { position: 'e1' }, 2: { position: 'e9' } },

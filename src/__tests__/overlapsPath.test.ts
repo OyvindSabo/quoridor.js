@@ -1,4 +1,4 @@
-import { overlapsPath } from '../utils';
+import { overlapsPath } from '../immutable/utils';
 
 test('Test that vertical walls next to the path are not considered to overlap the path', () => {
   expect(

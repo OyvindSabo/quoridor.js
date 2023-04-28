@@ -19,7 +19,7 @@ import {
   VerticalWallCoordinate,
   WallMatrix,
   WallPosition,
-} from './types';
+} from '../types';
 
 export const pawnPositions = [
   'a1',
@@ -587,7 +587,7 @@ export const isWallPositionMap: Record<string, true | undefined> = {
   h8v: true,
 };
 
-const initialPlayerMatrix: PlayerMatrix = {
+export const initialPlayerMatrix: PlayerMatrix = {
   a1: null,
   a2: null,
   a3: null,
@@ -671,7 +671,7 @@ const initialPlayerMatrix: PlayerMatrix = {
   i9: null,
 };
 
-const initialWallMatrix: WallMatrix = {
+export const initialWallMatrix: WallMatrix = {
   a1h: false,
   a1v: false,
   a2h: false,
@@ -800,11 +800,6 @@ const initialWallMatrix: WallMatrix = {
   h7v: false,
   h8h: false,
   h8v: false,
-};
-
-export const initialBoard: PlayerMatrix & WallMatrix = {
-  ...initialPlayerMatrix,
-  ...initialWallMatrix,
 };
 
 export const horizontalPawnCoordinates: HorizontalPiecePosition[] = [

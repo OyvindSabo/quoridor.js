@@ -1,4 +1,4 @@
-import { Move } from './types';
+import { Move } from '../types';
 import { createNewGame } from './createNewGame';
 import { makeUnvalidatedMove } from './makeUnvalidatedMove';
 

@@ -1,5 +1,5 @@
 import { aStar } from './aStar';
-import { Game, PawnPosition, Player } from './types';
+import { Game, PawnPosition, Player } from '../types';
 import {
   doesHorizontalWallBlockPlayer,
   getShortestPathWithNoObstacles,

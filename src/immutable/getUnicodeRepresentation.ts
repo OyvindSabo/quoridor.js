@@ -1,5 +1,5 @@
 import { horizontalPawnCoordinates } from './consts';
-import { Game, PawnPosition, VerticalPiecePosition } from './types';
+import { Game, PawnPosition, VerticalPiecePosition } from '../types';
 import {
   hasWallBelow,
   hasWallToTheRight,

@@ -1,5 +1,5 @@
 import { wallPositions } from './consts';
-import { Game } from './types';
+import { Game } from '../types';
 
 /**
  * Returns a unique hash for the game state, excluding history. As long as two

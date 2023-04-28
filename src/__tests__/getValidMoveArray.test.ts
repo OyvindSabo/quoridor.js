@@ -1,6 +1,6 @@
-import { createGameFromMoves } from '../createGameFromMoves';
-import { createNewGame } from '../createNewGame';
-import { getValidMoveArray } from '../getValidMoveArray';
+import { createGameFromMoves } from '..';
+import { createNewGame } from '..';
+import { getValidMoveArray } from '..';
 
 test("Test that correct valid moves are returned when no walls block the players' shortest paths", () => {
   expect(new Set(getValidMoveArray(createNewGame()))).toEqual(

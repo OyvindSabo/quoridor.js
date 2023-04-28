@@ -1066,14 +1066,16 @@ export type WallMatrix = Record<WallPosition, boolean>;
 
 type WallCount = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
+export type PawnPositionHistory = {
+  position: PawnPosition;
+  previousPosition?: PawnPositionHistory;
+};
+
 // I have renamed board to piece
 export type Game = {
   board: Board;
   pastMoves: Move[];
   futureMoves: Move[];
-  playerPositions: Record<
-    Player,
-    { position: PawnPosition; previousPosition?: PiecePosition }
-  >;
+  playerPositions: Record<Player, PawnPositionHistory>;
   playerWallCounts: Record<Player, WallCount>;
 };

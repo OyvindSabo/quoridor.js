@@ -1,7 +1,6 @@
-import { createGameFromMoves } from '../createGameFromMoves';
-import { createNewGame } from '../createNewGame';
-import { getValidMoveArray } from '../getValidMoveArray';
-import { isMoveInteresting } from '../isMoveInteresting';
+import { createNewGame } from '..';
+import { getValidMoveArray } from '..';
+import { isMoveInteresting } from '..';
 
 test('Test interesting moves are correctly identified at the beginning of the game', () => {
   const game = createNewGame();

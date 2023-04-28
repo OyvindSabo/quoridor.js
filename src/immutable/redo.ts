@@ -1,4 +1,4 @@
-import { Game } from './types';
+import { Game } from '../types';
 import { createGameFromMoves } from './createGameFromMoves';
 import { first, rest } from './utils';
 

@@ -1,5 +1,5 @@
 import { pawnPositions } from './consts';
-import { Game, PawnPosition, Player } from './types';
+import { Game, PawnPosition, Player } from '../types';
 import {
   getVerticalCoordinate,
   horizontallyDecrementPawnPosition,
@@ -58,6 +58,7 @@ const getMostPromisingPosition = (
 ) => {
   let lowestVerticalDistanceToGoal = Infinity;
   let mostPromisingPosition: PawnPosition | null = null;
+  // TODO: forEach might not be the most efficient way to loop here.
   positions.forEach((position) => {
     const verticalDistanceToGoal = getVerticalDistanceToGoal(position, turn);
     if (verticalDistanceToGoal < lowestVerticalDistanceToGoal) {

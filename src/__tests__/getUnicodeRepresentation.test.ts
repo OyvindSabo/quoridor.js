@@ -1,5 +1,5 @@
-import { createGameFromMoves } from '../createGameFromMoves';
-import { getUnicodeRepresentation } from '../getUnicodeRepresentation';
+import { createGameFromMoves } from '..';
+import { getUnicodeRepresentation } from '..';
 
 test('Test that initial game position is correctly visualized', () => {
   expect(getUnicodeRepresentation(createGameFromMoves([]))).toBe(

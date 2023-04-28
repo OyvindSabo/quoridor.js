@@ -1,7 +1,8 @@
-import { createGameFromMoves } from '../createGameFromMoves';
+import { createGameFromMoves as immutableCreateGameFromMoves } from '../immutable/createGameFromMoves';
+import { createGameFromMoves as mutableCreateGameFromMoves } from '../mutable/createGameFromMoves';
 
 test('Test that game is correctly initialized from empty move array', () => {
-  expect(createGameFromMoves([])).toStrictEqual({
+  const expectedResult = {
     board: {
       a1: null,
       a2: null,
@@ -217,11 +218,13 @@ test('Test that game is correctly initialized from empty move array', () => {
     futureMoves: [],
     playerPositions: { 1: { position: 'e1' }, 2: { position: 'e9' } },
     playerWallCounts: { 1: 10, 2: 10 },
-  });
+  };
+  expect(immutableCreateGameFromMoves([])).toStrictEqual(expectedResult);
+  expect(mutableCreateGameFromMoves([])).toStrictEqual(expectedResult);
 });
 
 test('Test that game is correctly initialized from array of forward moves', () => {
-  expect(createGameFromMoves(['e2', 'e8', 'e3', 'e7'])).toStrictEqual({
+  const expectedResult = {
     board: {
       a1: null,
       a2: null,
@@ -452,5 +455,21 @@ test('Test that game is correctly initialized from array of forward moves', () =
       },
     },
     playerWallCounts: { 1: 10, 2: 10 },
-  });
+  };
+  expect(immutableCreateGameFromMoves(['e2', 'e8', 'e3', 'e7'])).toStrictEqual(
+    expectedResult,
+  );
+  expect(mutableCreateGameFromMoves(['e2', 'e8', 'e3', 'e7'])).toStrictEqual(
+    expectedResult,
+  );
+});
+
+test('Test that game is correctly initialized from a mix of wall moves and pawn moves', () => {
+  const expectedResult = immutableCreateGameFromMoves(['d2h', 'e1v', 'e2']);
+  expect(immutableCreateGameFromMoves(['d2h', 'e1v', 'e2'])).toStrictEqual(
+    expectedResult,
+  );
+  expect(mutableCreateGameFromMoves(['d2h', 'e1v', 'e2'])).toStrictEqual(
+    expectedResult,
+  );
 });

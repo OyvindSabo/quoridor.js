@@ -1,4 +1,4 @@
-import { Game } from './types';
+import { Game } from '../types';
 import { getVerticalCoordinate } from './utils';
 
 export const getWinner = (game: Game) => {

@@ -1,4 +1,4 @@
-import { createNewGame } from '../createNewGame';
+import { createNewGame } from '..';
 
 test('Test that game is correctly initialized', () => {
   expect(createNewGame()).toStrictEqual({

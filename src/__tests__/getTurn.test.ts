@@ -1,5 +1,5 @@
-import { createGameFromMoves } from '../createGameFromMoves';
-import { getTurn } from '../getTurn';
+import { createGameFromMoves } from '..';
+import { getTurn } from '..';
 
 test("Test that it's player 1's turn when the game starts", () => {
   expect(getTurn(createGameFromMoves([]))).toBe(1);

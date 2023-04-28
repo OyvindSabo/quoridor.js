@@ -1,4 +1,4 @@
-import { isMove } from '../isMove';
+import { isMove } from '..';
 
 test('Test that a pawn is a Move as long as it is within the boundaries of the board', () => {
   expect(isMove('a1')).toBe(true);

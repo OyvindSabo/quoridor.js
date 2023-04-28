@@ -1,5 +1,5 @@
-import { createGameFromMoves } from '../createGameFromMoves';
-import { undo } from '../undo';
+import { createGameFromMoves } from '..';
+import { undo } from '..';
 
 test('Test that nothing happens when we try to undo last move from a game with no history', () => {
   expect(undo(createGameFromMoves([]))).toStrictEqual(createGameFromMoves([]));

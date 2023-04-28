@@ -1,6 +1,6 @@
-import { createGameFromMoves } from '../createGameFromMoves';
-import { isMoveValid } from '../isMoveValid';
-import { isGameOver } from '../isGameOver';
+import { createGameFromMoves } from '..';
+import { isMoveValid } from '..';
+import { isGameOver } from '..';
 
 test('Test that taking one step forward with no obstacles is a valid move', () => {
   expect(isMoveValid(createGameFromMoves([]), 'e2')).toBe(true);
