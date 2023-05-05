@@ -1,4 +1,8 @@
-import { pawnPositions } from './consts';
+import {
+  goalPositionsMap,
+  pawnPositions,
+  verticalDistanceToGoalMap,
+} from './consts';
 import { Game, PawnPosition, Player } from '../types';
 import {
   getVerticalCoordinate,
@@ -38,15 +42,12 @@ const getValidSurroundingPositions = (
   }) as PawnPosition[];
 };
 
-// TODO: Maybe this could rather be a map from position to distance
 const getVerticalDistanceToGoal = (position: PawnPosition, turn: Player) => {
-  return turn === 1
-    ? 9 - getVerticalCoordinate(position)
-    : getVerticalCoordinate(position) - 1;
+  return verticalDistanceToGoalMap[turn][position];
 };
 
 const hasReachedGoal = (position: PawnPosition, turn: Player) => {
-  return getVerticalDistanceToGoal(position, turn) === 0;
+  return goalPositionsMap[turn].has(position);
 };
 
 /**
