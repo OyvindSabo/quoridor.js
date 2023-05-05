@@ -1024,8 +1024,6 @@ export const getValidPawnMoveArray = (game: Game) => {
 export const overlapsWall = (game: Game, wallMove: WallMove) => {
   const numberOfPlacedWalls = getNumberOfPlacedWalls(game);
   if (numberOfPlacedWalls === 0) return false;
-  const x = getHorizontalCoordinate(wallMove) as HorizontalWallCoordinate;
-  const y = getVerticalCoordinate(wallMove) as VerticalWallCoordinate;
   if (isHorizontalWallMove(wallMove)) {
     // A horizontal wall
     if (
