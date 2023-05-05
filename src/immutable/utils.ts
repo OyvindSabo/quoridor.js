@@ -588,8 +588,7 @@ export const isValidNormalMove = (
 
   // If up move
   if (isSingleUpMove(currentPosition, move)) {
-    if (hasWallAbove(game, currentPosition)) return false;
-    return true;
+    return !hasWallAbove(game, currentPosition);
   }
   if (
     isDoubleUpMove(currentPosition, move) &&
@@ -647,8 +646,7 @@ export const isValidNormalMove = (
 
   // If right move
   if (isSingleRightMove(currentPosition, move)) {
-    if (hasWallToTheRight(game, currentPosition)) return false;
-    return true;
+    return !hasWallToTheRight(game, currentPosition);
   }
   if (
     isDoubleRightMove(currentPosition, move) &&
@@ -715,10 +713,7 @@ export const isValidNormalMove = (
 
   // If down move
   if (isSingleDownMove(currentPosition, move)) {
-    if (hasWallBelow(game, currentPosition)) {
-      return false;
-    }
-    return true;
+    return !hasWallBelow(game, currentPosition);
   }
   if (
     isDoubleDownMove(currentPosition, move) &&
@@ -780,8 +775,7 @@ export const isValidNormalMove = (
 
   // If left move
   if (isSingleLeftMove(currentPosition, move)) {
-    if (hasWallToTheLeft(game, currentPosition)) return false;
-    return true;
+    return !hasWallToTheLeft(game, currentPosition);
   }
   if (
     isDoubleLeftMove(currentPosition, move) &&
