@@ -38,20 +38,7 @@ export const getValidPawnMoveArray = (game: Game) => {
       getPositionFromSouthSouthMove(currentPosition),
     ]);
   }
-  const validPawnMoveArray = [
-    getPositionFromNorthMove(currentPosition),
-    getPositionFromNorthNorthMove(currentPosition),
-    getPositionFromNorthEastMove(currentPosition),
-    getPositionFromEastMove(currentPosition),
-    getPositionFromEastEastMove(currentPosition),
-    getPositionFromSouthEastMove(currentPosition),
-    getPositionFromSouthMove(currentPosition),
-    getPositionFromSouthSouthMove(currentPosition),
-    getPositionFromSouthWestMove(currentPosition),
-    getPositionFromWestMove(currentPosition),
-    getPositionFromWestWestMove(currentPosition),
-    getPositionFromNorthWestMove(currentPosition),
-  ].filter(
+  const validPawnMoveArray = unvalidatedPawnMoveArray.filter(
     (newPosition) =>
       newPosition && isValidNormalMove(game, currentPosition, newPosition),
   ) as PawnPosition[];
