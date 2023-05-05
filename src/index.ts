@@ -5,7 +5,7 @@ export { getUnicodeRepresentation } from './immutable/getUnicodeRepresentation';
 export { makeMove } from './immutable/makeMove';
 export { isGameOver } from './immutable/isGameOver';
 export { getWinner } from './immutable/getWinner';
-export { getValidMoveArray } from './immutable/getValidMoveArray';
+export { getValidMoveArray } from './mutable/getValidMoveArray';
 export { getTurn } from './immutable/getTurn';
 export { undo } from './immutable/undo';
 export { redo } from './immutable/redo';

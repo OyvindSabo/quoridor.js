@@ -1021,7 +1021,7 @@ export const getValidPawnMoveArray = (game: Game) => {
   return validPawnMoveArray;
 };
 
-const overlapsWall = (game: Game, wallMove: WallMove) => {
+export const overlapsWall = (game: Game, wallMove: WallMove) => {
   const numberOfPlacedWalls = getNumberOfPlacedWalls(game);
   if (numberOfPlacedWalls === 0) return false;
   const x = getHorizontalCoordinate(wallMove) as HorizontalWallCoordinate;
@@ -1640,7 +1640,7 @@ export const isWallAdjacentToAtLeastOnePawn = (
   );
 };
 
-const doesWallMoveHaveSameDirectionAsAllPreviousWallMoves = (
+export const doesWallMoveHaveSameDirectionAsAllPreviousWallMoves = (
   game: Game,
   wallMove: WallMove,
 ) => {
@@ -1806,7 +1806,7 @@ export const overlapsPath = (path: PawnPosition[], wallMove: WallPosition) => {
   });
 };
 
-const getNumberOfPlacedWalls = (game: Game) => {
+export const getNumberOfPlacedWalls = (game: Game) => {
   return 20 - game.playerWallCounts[1] - game.playerWallCounts[2];
 };
 

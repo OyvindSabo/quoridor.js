@@ -1,9 +1,7 @@
 import { isGameOver } from '../immutable/isGameOver';
 import { Game, PawnPosition, WallPosition } from '../types';
-import {
-  getValidPawnMoveArray,
-  getValidWallMoveArray,
-} from '../immutable/utils';
+import { getValidWallMoveArray } from './getValidWallMoveArray';
+import { getValidPawnMoveArray } from './getValidPawnMoveArray';
 
 export const getValidMoveArray = (game: Game) => {
   if (isGameOver(game)) return [];
