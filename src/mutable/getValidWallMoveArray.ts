@@ -21,12 +21,12 @@ export const getValidWallMoveArray = (game: Game) => {
   const thatTurn = getOppositePlayer(thisTurn);
 
   const numberOfPlacedWalls = getNumberOfPlacedWalls(game);
-  if (numberOfPlacedWalls <= 2) {
+  if (numberOfPlacedWalls <= 3) {
     if (
-      !possiblyTrappedPositions[(numberOfPlacedWalls + 1) as 1 | 2].has(
+      !possiblyTrappedPositions[(numberOfPlacedWalls + 1) as 1 | 2 | 3 | 4].has(
         game.playerPositions[1].position,
       ) &&
-      !possiblyTrappedPositions[(numberOfPlacedWalls + 1) as 1 | 2].has(
+      !possiblyTrappedPositions[(numberOfPlacedWalls + 1) as 1 | 2 | 3 | 4].has(
         game.playerPositions[2].position,
       )
     ) {
