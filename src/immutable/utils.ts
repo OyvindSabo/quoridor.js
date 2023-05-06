@@ -1640,7 +1640,7 @@ export const overlapsPath = (path: PawnPosition[], wallMove: WallPosition) => {
       //   If there is a path position where the position is above the wall and the previous position is below the wall
       if (
         isSingleUpMove(previousPosition, currentPosition) &&
-        // Pawh is right above wall
+        // Pawn is right above wall
         currentPositionY === wallMoveY + 1 &&
         // Is wall below or below left
         (currentPositionX === wallMoveX ||

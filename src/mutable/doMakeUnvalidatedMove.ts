@@ -9,7 +9,7 @@ export const doMakeUnvalidatedMove = (game: Game, move: Move): void => {
     game.board[move] = true;
     game.playerWallCounts[turn] -= 1;
     game.playerPositions[turn] = {
-      ...game.playerPositions[turn],
+      position: game.playerPositions[turn].position,
       previousPosition: game.playerPositions[turn],
     };
   } else {
